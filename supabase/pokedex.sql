@@ -56,14 +56,15 @@ end$$;
 create or replace function public.resolve_pokedex_activation(p_activation_token text)
 returns table(device_status public.pokedex_status,trainer_code text)
 language plpgsql security definer set search_path=public,extensions as $$
-declare v_device pokedex_devices; v_hash text:=encode(digest(coalesce(p_activation_token,''),'sha256'),'hex');
+declare v_device pokedex_devices; v_hash text:=encode(digest(coalesce(p_activation_token,''),'sha256'),'hex'); v_exists boolean:=false;
 begin
  if (select count(*) from pokedex_activation_attempts where token_hash=v_hash and attempted_at>now()-interval '15 minutes')>=20 then
    raise exception 'TOO_MANY_ATTEMPTS';
  end if;
  select * into v_device from pokedex_devices where activation_token=p_activation_token;
- insert into pokedex_activation_attempts(token_hash,actor_user_id,result) values(v_hash,auth.uid(),case when found then v_device.status::text else 'invalid' end);
- if not found then return; end if;
+ v_exists:=found;
+ insert into pokedex_activation_attempts(token_hash,actor_user_id,result) values(v_hash,auth.uid(),case when v_exists then v_device.status::text else 'invalid' end);
+ if not v_exists then return; end if;
  device_status:=v_device.status;
  if v_device.status='activated' then select p.trainer_code into trainer_code from profiles p where p.id=v_device.trainer_id; end if;
  return next;
