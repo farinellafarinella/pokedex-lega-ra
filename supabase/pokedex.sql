@@ -32,6 +32,7 @@ alter table public.pokedex_devices enable row level security;
 alter table public.pokedex_activation_attempts enable row level security;
 alter table public.pokedex_admin_log enable row level security;
 create policy pokedex_admin_read on public.pokedex_devices for select to authenticated using(public.is_admin());
+create policy pokedex_trainer_own_read on public.pokedex_devices for select to authenticated using(trainer_id=public.my_profile_id() or public.is_admin());
 create policy pokedex_admin_log_read on public.pokedex_admin_log for select to authenticated using(public.is_admin());
 -- Nessuna policy INSERT/UPDATE client: tutte le modifiche passano dalle RPC SECURITY DEFINER.
 
@@ -52,6 +53,22 @@ begin
  end loop;
 end$$;
 
+create or replace function public.pair_pokedex(p_activation_token text)
+returns table(pokedex_id uuid,trainer_code text)
+language plpgsql security definer set search_path=public,extensions as $$
+declare v_device pokedex_devices; v_profile profiles; v_normalized text:=upper(trim(coalesce(p_activation_token,'')));
+begin
+ if auth.uid() is null then raise exception 'AUTHENTICATION_REQUIRED'; end if;
+ select * into v_profile from profiles where user_id=auth.uid() and is_active for update;
+ if not found then raise exception 'TRAINER_PROFILE_REQUIRED'; end if;
+ if exists(select 1 from pokedex_devices where trainer_id=v_profile.id and status='activated') then raise exception 'TRAINER_ALREADY_HAS_POKEDEX'; end if;
+ select * into v_device from pokedex_devices where upper(trim(activation_token))=v_normalized for update;
+ if not found then raise exception 'INVALID_POKEDEX'; end if;
+ if v_device.status<>'available' or v_device.trainer_id is not null then raise exception 'POKEDEX_NOT_AVAILABLE'; end if;
+ update pokedex_devices set status='activated',trainer_id=v_profile.id,activated_at=now(),updated_at=now() where id=v_device.id;
+ pokedex_id:=v_device.id;trainer_code:=v_profile.trainer_code;return next;
+end$$;
+
 -- Risolve una scansione senza esporre il token nei log. In produzione aggiungere rate limiting per IP nell'Edge Function/reverse proxy.
 create or replace function public.resolve_pokedex_activation(p_activation_token text)
 returns table(device_status public.pokedex_status,trainer_code text)
@@ -61,7 +78,7 @@ begin
  if (select count(*) from pokedex_activation_attempts where token_hash=v_hash and attempted_at>now()-interval '15 minutes')>=20 then
    raise exception 'TOO_MANY_ATTEMPTS';
  end if;
- select * into v_device from pokedex_devices where activation_token=p_activation_token;
+ select * into v_device from pokedex_devices where upper(trim(activation_token))=upper(trim(p_activation_token));
  v_exists:=found;
  insert into pokedex_activation_attempts(token_hash,actor_user_id,result) values(v_hash,auth.uid(),case when v_exists then v_device.status::text else 'invalid' end);
  if not v_exists then return; end if;
@@ -119,9 +136,10 @@ begin
  return true;
 end$$;
 
-revoke all on function public.generate_pokedex_devices(integer),public.resolve_pokedex_activation(text),public.activate_pokedex(text,text),public.replace_pokedex(uuid),public.delete_unassigned_pokedex(uuid) from public;
+revoke all on function public.generate_pokedex_devices(integer),public.resolve_pokedex_activation(text),public.activate_pokedex(text,text),public.pair_pokedex(text),public.replace_pokedex(uuid),public.delete_unassigned_pokedex(uuid) from public;
 grant execute on function public.resolve_pokedex_activation(text) to anon,authenticated;
 grant execute on function public.activate_pokedex(text,text) to authenticated;
+grant execute on function public.pair_pokedex(text) to authenticated;
 grant execute on function public.generate_pokedex_devices(integer),public.replace_pokedex(uuid),public.delete_unassigned_pokedex(uuid) to authenticated;
 revoke select,insert,update,delete on public.pokedex_devices,public.pokedex_activation_attempts,public.pokedex_admin_log from anon,authenticated;
 -- Gli amministratori autenticati possono leggere i device grazie alla policy pokedex_admin_read.
