@@ -26,6 +26,16 @@ supabase/essential-data.sql       otto medaglie iniziali
 supabase/create-first-admin.sql   profilo del primo amministratore
 ```
 
+## Cornice grafica Pokédex
+
+L'app è contenuta in una cornice proporzionale `1080 × 1920 px`. Inserisci l'immagine definitiva nella cartella principale con il nome:
+
+```text
+sfondo.png
+```
+
+L'area interattiva è posizionata a `47 px` da sinistra e `115 px` dall'alto, con dimensione `990 × 1145 px`. Il contenuto scorre solamente dentro questa area e la cornice viene scalata proporzionalmente su smartphone e desktop.
+
 ## Funzioni
 
 - autenticazione email/password con Supabase;

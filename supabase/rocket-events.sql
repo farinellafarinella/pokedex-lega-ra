@@ -71,5 +71,6 @@ begin
  return v_purchase;
 end$$;
 revoke all on function public.purchase_rocket_pokemon(uuid,uuid),public.confirm_rocket_collection(uuid) from public;
-grant execute on function public.purchase_rocket_pokemon(uuid,uuid),public.confirm_rocket_collection(uuid) to authenticated;
+-- Nessun permesso di acquisto: la Lista Rocket è esclusivamente informativa.
+grant execute on function public.confirm_rocket_collection(uuid) to authenticated;
 revoke insert,update,delete on public.rocket_purchases from anon,authenticated;
