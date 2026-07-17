@@ -36,6 +36,21 @@ sfondo.png
 
 L'area interattiva segue il rettangolo bianco reale della cornice: circa `45 px` da sinistra e `320 px` dall'alto, con dimensione `990 × 1555 px` sulla base logica `1080 × 1920`. Il contenuto scorre solamente dentro questa area e la cornice viene scalata proporzionalmente su smartphone e desktop.
 
+## File delle medaglie
+
+Le immagini delle medaglie vanno salvate accanto a `index.html`. Per ogni tipo servono la versione conquistata e quella bloccata:
+
+```text
+Mroccia.png       Mroccia block.png
+Macqua.png        Macqua block.png
+Melettro.png      Melettro block.png
+Merba.png         Merba block.png
+Mveleno.png       Mveleno block.png
+Mpsico.png        Mpsico block.png
+Mfuoco.png        Mfuoco block.png
+Mterra.png        Mterra block.png
+```
+
 ## Funzioni
 
 - autenticazione email/password con Supabase;
@@ -46,6 +61,8 @@ L'area interattiva segue il rettangolo bianco reale della cornice: circa `45 px`
 - Lista Rocket mensile riservata ai Pokémon;
 - classifica, medaglie e storico movimenti;
 - area amministrativa protetta dal ruolo Supabase.
+- QR premio evento da 100 Pokédollari, riscattabile una volta per account.
+- scanner unico per QR premio e QR medaglia palestra.
 
 ## Sicurezza
 

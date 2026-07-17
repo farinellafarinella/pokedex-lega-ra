@@ -15,6 +15,8 @@ Apri il progetto Supabase, quindi **SQL Editor → New query**. Esegui i file un
 3. `supabase/pokedex.sql`
 4. `supabase/rocket-events.sql`
 5. `supabase/essential-data.sql`
+6. `supabase/event-rewards.sql`
+7. `supabase/gym-badge-qr.sql`
 
 Non vengono inseriti allenatori dimostrativi. Le Schede Allenatore reali vengono create soltanto con l'attivazione del Pokédex.
 
