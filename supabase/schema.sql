@@ -99,7 +99,7 @@ declare v_name text:=trim(p_trainer_name); v_profile profiles;
 begin
  if auth.uid() is null then raise exception 'AUTHENTICATION_REQUIRED'; end if;
  if length(v_name) not between 2 and 60 or v_name !~ '^[[:alnum:]][[:alnum:] ''._-]*$' then raise exception 'INVALID_TRAINER_NAME'; end if;
- update profiles set trainer_name=v_name,updated_at=now() where user_id=auth.uid() and role='trainer' and is_active returning * into v_profile;
+ update profiles set trainer_name=v_name,updated_at=now() where user_id=auth.uid() and is_active returning * into v_profile;
  if not found then raise exception 'TRAINER_NOT_FOUND_OR_INACTIVE'; end if;
  trainer_name:=v_profile.trainer_name;updated_at:=v_profile.updated_at;return next;
 end$$;

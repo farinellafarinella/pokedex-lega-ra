@@ -8,7 +8,7 @@ begin
  if length(v_name) not between 2 and 60 then raise exception 'INVALID_TRAINER_NAME'; end if;
  if v_name !~ '^[[:alnum:]][[:alnum:] ''._-]*$' then raise exception 'INVALID_TRAINER_NAME'; end if;
  update public.profiles set trainer_name=v_name,updated_at=now()
- where user_id=auth.uid() and role='trainer' and is_active
+ where user_id=auth.uid() and is_active
  returning * into v_profile;
  if not found then raise exception 'TRAINER_NOT_FOUND_OR_INACTIVE'; end if;
  trainer_name:=v_profile.trainer_name;updated_at:=v_profile.updated_at;return next;

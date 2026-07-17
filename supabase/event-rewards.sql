@@ -36,7 +36,7 @@ returns table(new_balance bigint,amount bigint,event_name text)
 language plpgsql security definer set search_path=public,extensions as $$
 declare v_trainer public.profiles; v_reward public.event_reward_codes; v_claim public.event_reward_claims; v_tx public.transactions;
 begin
- select * into v_trainer from public.profiles where user_id=auth.uid() and role='trainer' and is_active for update;
+ select * into v_trainer from public.profiles where user_id=auth.uid() and is_active for update;
  if not found then raise exception 'TRAINER_NOT_FOUND_OR_INACTIVE'; end if;
  select * into v_reward from public.event_reward_codes where upper(trim(token))=upper(trim(p_token)) for update;
  if not found or not v_reward.is_active then raise exception 'REWARD_NOT_AVAILABLE'; end if;
