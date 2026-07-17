@@ -42,12 +42,12 @@ create policy trainer_badges_admin_write on public.trainer_badges for all to aut
 create policy transactions_participant_read on public.transactions for select to authenticated using(sender_id=public.my_profile_id() or receiver_id=public.my_profile_id() or public.is_admin());
 create policy adjustments_admin_read on public.admin_adjustments for select to authenticated using(public.is_admin());
 
-create view public.public_profiles with (security_invoker=true) as select id,trainer_code,trainer_name,registration_date,ranking_points,is_active,created_at from public.profiles where role='trainer' and is_active;
+create view public.public_profiles with (security_invoker=true) as select id,trainer_code,trainer_name,registration_date,ranking_points,is_active,created_at,balance from public.profiles where role='trainer' and is_active;
 grant select on public.public_profiles to anon,authenticated;
 -- View access requires a permissive base-table policy while columns stay restricted by the view.
 create policy profiles_public_select on public.profiles for select to anon,authenticated using(role='trainer' and is_active);
 revoke select on public.profiles from anon,authenticated;
-grant select(id,trainer_code,trainer_name,registration_date,ranking_points,is_active,created_at) on public.profiles to anon,authenticated;
+grant select(id,trainer_code,trainer_name,registration_date,ranking_points,is_active,created_at,balance) on public.profiles to anon,authenticated;
 grant select(balance,role,user_id,updated_at) on public.profiles to authenticated;
 
 create or replace function public.transfer_pokedollars(p_receiver_code text,p_amount bigint,p_description text,p_operation_id uuid)

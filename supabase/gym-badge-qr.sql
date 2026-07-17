@@ -34,7 +34,7 @@ returns table(badge_name text,earned_at timestamptz)
 language plpgsql security definer set search_path=public,extensions as $$
 declare v_profile public.profiles; v_code public.gym_badge_codes; v_trainer_badge public.trainer_badges; v_badge public.badges;
 begin
- select * into v_profile from public.profiles where user_id=auth.uid() and role='trainer' and is_active for update;
+ select * into v_profile from public.profiles where user_id=auth.uid() and is_active for update;
  if not found then raise exception 'TRAINER_NOT_FOUND_OR_INACTIVE'; end if;
  select * into v_code from public.gym_badge_codes where upper(trim(token))=upper(trim(p_token)) for update;
  if not found or not v_code.is_active then raise exception 'BADGE_CODE_NOT_AVAILABLE'; end if;
