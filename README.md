@@ -34,7 +34,7 @@ L'app è contenuta in una cornice proporzionale `1080 × 1920 px`. Inserisci l'i
 sfondo.png
 ```
 
-L'area interattiva è posizionata a `47 px` da sinistra e `115 px` dall'alto, con dimensione `990 × 1145 px`. Il contenuto scorre solamente dentro questa area e la cornice viene scalata proporzionalmente su smartphone e desktop.
+L'area interattiva segue il rettangolo bianco reale della cornice: circa `45 px` da sinistra e `320 px` dall'alto, con dimensione `990 × 1555 px` sulla base logica `1080 × 1920`. Il contenuto scorre solamente dentro questa area e la cornice viene scalata proporzionalmente su smartphone e desktop.
 
 ## Funzioni
 
