@@ -101,7 +101,7 @@
   <div class="pokedex-device">
     <div class="pokedex-screen">
       <div class="screen-scroll">
-        <header class="top"><div class="shell"><div class="logo"><span class="mark">CL</span><span>CHAMPION<small>LEAGUE</small></span></div><nav class="nav" id="nav"></nav><div style="display:flex;gap:6px"><button id="notification-button" class="btn secondary hidden" type="button" aria-label="Apri notifiche" title="Notifiche" onclick="go('notifications')">🔔</button><button id="register-button" class="btn secondary" onclick="go('register')">Registrati</button><button id="auth-button" class="btn secondary" onclick="handleAuthButton()">Accedi</button></div></div></header>
+        <header class="top"><div class="shell"><div class="logo"><span class="mark">CL</span><span>CHAMPION<small>LEAGUE</small></span></div><nav class="nav" id="nav"></nav><div style="display:flex;gap:6px"><button id="notification-button" class="btn secondary hidden" type="button" aria-label="Attiva notifiche" title="Attiva notifiche" onclick="enablePushNotifications()">🔔</button><button id="register-button" class="btn secondary" onclick="go('register')">Registrati</button><button id="auth-button" class="btn secondary" onclick="handleAuthButton()">Accedi</button></div></div></header>
         <main class="main shell" id="app"></main>
       </div>
       <div id="supabase-status" class="no-print supabase-status">Supabase: verifica…</div>
@@ -131,7 +131,7 @@
     let state=JSON.parse(localStorage.getItem('champion-league')||'null')||{trainers:[],transactions:[],gyms:initialGyms,registrations:[],rocketEvents:initialRocketEvents,rocketPokemon:initialRocketPokemon,rocketPurchases:[]};
     state.trainers=[];state.transactions=[];state.gyms=[];state.registrations=state.registrations||[];state.devices=state.devices||[];state.activationAttempts=state.activationAttempts||[];state.rocketEvents=[];state.rocketPokemon=[];state.rocketPurchases=state.rocketPurchases||[];
     const me=()=>remoteProfile||trainer(state.currentTrainerId)||state.trainers[0], money=n=>'₽ '+Number(n).toLocaleString('it-IT'), trainer=id=>state.trainers.find(t=>t.id===id), ranking=()=>[...state.trainers].sort((a,b)=>b.balance-a.balance||a.name.localeCompare(b.name,'it')), save=()=>localStorage.setItem('champion-league',JSON.stringify(state));
-    const navItems=[['dashboard','Home'],['gym','Palestra'],['rocket-list','Rocket'],['my-tickets','Biglietti'],['transactions','Movimenti'],['notifications','Notifiche'],['ranking','Classifica'],['admin','Admin']];
+    const navItems=[['dashboard','Home'],['gym','Palestra'],['rocket-list','Rocket'],['my-tickets','Biglietti'],['transactions','Movimenti'],['ranking','Classifica'],['admin','Admin']];
     function go(page,param=''){location.hash=page+(param?'/'+param:'')}
     function header(k,t,s){return `<div class="eyebrow">${k}</div><h1 class="title">${t}</h1><p class="sub">${s||''}</p>`}
     function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -251,14 +251,14 @@
     function render(){
       let hash=location.hash.slice(1)||'dashboard',[page,param]=hash.split('/');
       const requiresAdmin=page==='admin'||page.startsWith('admin-')||page==='ticket';
-      const requiresAuth=['dashboard','transfer','transactions','notifications','my-tickets','qr','scan','claim','badge'].includes(page)||requiresAdmin;
+      const requiresAuth=['dashboard','transfer','transactions','my-tickets','qr','scan','claim','badge'].includes(page)||requiresAdmin;
       document.querySelector('#nav').innerHTML=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('');
       if(!authReady){document.querySelector('#app').innerHTML='<section class="panel form success"><h2>Connessione sicura…</h2></section>';return}
       if(page==='register'){document.querySelector('#app').innerHTML=registerPage();return}
       if(page==='login'||(requiresAuth&&!authSession)){document.querySelector('#app').innerHTML=authPage();return}
       if(requiresAdmin&&remoteProfile?.role!=='admin'){document.querySelector('#app').innerHTML=activationMessage('Accesso negato','Questa sezione è riservata agli amministratori autorizzati.');return}
       if(requiresAuth&&!remoteProfile){document.querySelector('#app').innerHTML=activationMessage('Pokédex non attivato','Scansiona il QR del tuo Pokédex per creare la Scheda Allenatore.');return}
-      let views={dashboard,ranking:rankingPage,transfer:transferPage,transactions:transactionsPage,notifications:notificationsPage,'my-tickets':myTickets,qr:qrPage,scan:scanPage,gym:gymPage,'rocket-list':rocketPage,admin,'admin-gyms':adminGyms,'admin-tickets':adminTickets,'admin-pokedex':adminPokedex,'admin-rewards':adminRewards,'admin-badge-qrs':adminBadgeQrs,'admin-rocket-events':adminRocketEvents};
+      let views={dashboard,ranking:rankingPage,transfer:transferPage,transactions:transactionsPage,'my-tickets':myTickets,qr:qrPage,scan:scanPage,gym:gymPage,'rocket-list':rocketPage,admin,'admin-gyms':adminGyms,'admin-tickets':adminTickets,'admin-pokedex':adminPokedex,'admin-rewards':adminRewards,'admin-badge-qrs':adminBadgeQrs,'admin-rocket-events':adminRocketEvents};
       if(page==='activate'){document.querySelector('#app').innerHTML=activationPage(param);return}
       if(page==='claim'){document.querySelector('#app').innerHTML=claimRewardPage(param);return}
       if(page==='badge'){document.querySelector('#app').innerHTML=claimBadgePage(param);return}
