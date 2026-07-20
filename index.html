@@ -89,7 +89,7 @@
     .pokedex-screen .cols,.pokedex-screen .feature-grid,.pokedex-screen .catalog,.pokedex-screen .admin-event-grid{grid-template-columns:1fr}
     .pokedex-screen .feature{grid-column:auto!important}.pokedex-screen .profile-head{flex-direction:column}.pokedex-screen .badges{grid-template-columns:repeat(4,1fr)}
     .pokedex-screen .event-hero{grid-template-columns:1fr}.pokedex-screen .list .row{grid-template-columns:40px minmax(0,1fr) auto;padding:13px 11px}.pokedex-screen .desktop{display:none!important}
-    @media(max-width:560px){.pokedex-device{width:100vw}.pokedex-screen{border-radius:9px}.pokedex-screen .logo{font-size:12px}.pokedex-screen .mark{width:34px;height:34px}.pokedex-screen .title{font-size:27px}.pokedex-screen .top .btn{font-size:0;width:39px}.pokedex-screen .top .btn:after{content:'↪';font-size:17px}}
+    @media(max-width:560px){.pokedex-device{width:100vw}.pokedex-screen{border-radius:9px}.pokedex-screen .logo{font-size:12px}.pokedex-screen .mark{width:34px;height:34px}.pokedex-screen .title{font-size:27px}.pokedex-screen .top .btn{font-size:0;width:39px}.pokedex-screen .top .btn:after{content:'↪';font-size:17px}.pokedex-screen #notification-button:after{content:'🔔';font-size:17px}}
     @media print{body{display:block;height:auto;overflow:visible}.pokedex-device{width:100%;aspect-ratio:auto;background:none;filter:none}.pokedex-screen{position:static;width:100%;height:auto}.screen-scroll{overflow:visible}.pokedex-screen .nav{display:none!important}}
   </style>
   <style>
@@ -264,6 +264,10 @@
       if(page==='badge'){document.querySelector('#app').innerHTML=claimBadgePage(param);return}
       if(page==='ticket'){let r=state.registrations.find(x=>x.code===param),g=r&&state.gyms.find(x=>x.id===r.gymId);document.querySelector('#app').innerHTML=r?header('Verifica biglietto',r.code,`${trainer(r.trainerId)?.name} · ${g?.name}`)+`<section class="panel pad form" style="text-align:center"><span class="status ${r.status}">${r.status}</span><h2>${r.status==='valid'?'Biglietto valido':'Biglietto non utilizzabile'}</h2>${r.status==='valid'?`<button class="btn primary" onclick="checkin('${r.id}')">Segna come utilizzato</button>`:''}</section>`:'<h1>Biglietto non trovato</h1>';return}
       document.querySelector('#app').innerHTML=page==='trainer'?publicTrainer(param):(views[page]||dashboard)();
+      if(page==='dashboard'&&authSession){
+        let actions=document.querySelector('#app .actions');
+        if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary" type="button" onclick="enablePushNotifications()">🔔 Attiva notifiche</button><button class="btn secondary" type="button" onclick="handleAuthButton()">↪ Esci dall’account</button>');
+      }
     }
     async function checkSupabase(){let el=document.querySelector('#supabase-status');if(!supabaseClient){el.textContent='Supabase: non configurato';return}try{let {error}=await supabaseClient.from('badges').select('id',{head:true,count:'exact'});if(error)throw error;el.textContent='Supabase: connesso';el.style.color='#48d597';setTimeout(()=>el.remove(),3500)}catch(error){el.textContent=error.code==='PGRST205'?'Supabase: schema da installare':'Supabase: connessione non riuscita';el.style.color='#ff9da3'}}
     addEventListener('hashchange',()=>{if(activeScanner){activeScanner.clear().catch(()=>{});activeScanner=null}render()});initializeAuth();checkSupabase();
