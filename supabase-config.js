@@ -3,4 +3,5 @@
 window.CHAMPION_SUPABASE_CONFIG = {
   url: "https://dnlwznuawgnfyhsvfjmr.supabase.co",
   publishableKey: "sb_publishable_4CTz1-Bd9XJgOS_z2zcWSg_9eQsCcGP",
+  vapidPublicKey: "BCDtplvPWwqUN34sIIjHw2I8VE-6RgnWlUWHmIS17UEx6-Bnomy-rIrIL1f6jL6r3XSOWLvG0YBlE9gMrtmLb8s",
 };

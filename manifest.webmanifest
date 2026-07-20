@@ -1,0 +1,12 @@
+{
+  "id": "/",
+  "name": "Il mio Pokédex",
+  "short_name": "Pokédex",
+  "start_url": "./#dashboard",
+  "display": "standalone",
+  "background_color": "#0d0e10",
+  "theme_color": "#a71922",
+  "icons": [
+    {"src":"./apple-touch-icon.png","sizes":"any","type":"image/png","purpose":"any"}
+  ]
+}
