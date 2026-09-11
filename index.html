@@ -352,7 +352,7 @@
       const userId=authSession.user.id;
       starterModule().then(module=>module.mountCompanion(host,{client:supabaseClient,isCurrent:()=>authSession?.user.id===userId&&location.hash.slice(1).split('/')[0]===page})).catch(()=>{});
     }).observe(document.querySelector('#app'),{childList:true});
-    const starterModule=()=>import('./features/starter/starter-ui.js?v=1c73ab57f8db');
+    const starterModule=()=>import('./features/starter/starter-ui.js?v=049cf7a44628');
     function render(){
       const starterVersion=++starterRenderVersion;
       let hash=location.hash.slice(1)||'dashboard',[page,param]=hash.split('/');
