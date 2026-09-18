@@ -163,7 +163,7 @@ function bestCaptures(captures) {
 }
 
 // features/safari/api.mjs
-var SAFARI_FUNCTION = "safari-game";
+var SAFARI_FUNCTION = "hyper-responder";
 function validateResponse(data) {
   if (!data || !Number.isSafeInteger(data.revision) || data.revision < 0 || !Number.isFinite(data.balance) || data.balance < 0 || !data.state || !Array.isArray(data.state.playedDates) || !data.state.collection || !Array.isArray(data.ranking) || typeof data.access?.allowed !== "boolean" || typeof data.testMode !== "boolean") throw Error("Risposta Safari non valida. Riprova pi\xF9 tardi.");
   return data;
@@ -177,7 +177,7 @@ function createSafariAPI(client) {
         payload = await error.context?.json();
       } catch {
       }
-      const e = Error(error.context?.status === 404 ? "La Zona Safari deve essere attivata: manca la funzione safari-game su Supabase." : payload?.error || payload?.message || "Zona Safari non raggiungibile. Controlla la connessione e riprova.");
+      const e = Error(error.context?.status === 404 ? "La Zona Safari deve essere attivata: manca la funzione hyper-responder su Supabase." : payload?.error || payload?.message || "Zona Safari non raggiungibile. Controlla la connessione e riprova.");
       e.status = error.context?.status || 0;
       throw e;
     }
