@@ -1,5 +1,5 @@
 import {FISH,RARITIES} from './config.mjs';
-import {types,artwork} from '../starter/starter-ui.js?v=starter-gifs-5';
+import {types,artwork} from '../starter/starter-ui.js?v=fossil-cave-6';
 export const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const number=n=>n.toLocaleString('it-IT',{maximumFractionDigits:2});
 export const button=(id,label,disabled=false,extra='')=>`<button type="button" data-action="${id}" ${disabled?'disabled':''} ${extra}>${label}</button>`;

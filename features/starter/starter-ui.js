@@ -177,7 +177,7 @@ function artwork(id, back = false, assetBase = new URL("./assets/", import.meta.
   const isStarter = Object.values(LINES).some(line => line.includes(id));
   const animation = isStarter ? new URL(back ? `../../starter back gif/${id} b.gif` : `../../starter gif/${starterGifFiles[id]}`, import.meta.url)
     : Object.hasOwn(FOSSIL_ITEMS, id) ? new URL(`../../fossil gif/${id}.gif`, import.meta.url) : null;
-  if (animation) animation.searchParams.set('v', 'starter-gifs-5');
+  if (animation) animation.searchParams.set('v', 'fossil-cave-6');
   const backFile = back && files[id]?.[1], file = backFile || files[id]?.[0];
   const source = animation || (file ? new URL(file, assetBase) : null);
   return source ? `<img class="pokemon" src="${source}" alt="${SPECIES[id]?.name || id}${back ? ' di spalle' : ''}" width="160" height="160">` : '<svg class="pokemon placeholder" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32"/><path d="M18 50h64"/><circle cx="50" cy="50" r="10"/></svg>';
@@ -241,7 +241,7 @@ var button = (action, label, disabled = false, extra = "") => `<button data-acti
 async function mountStarter(host, { client, section = "starter", onBalance = () => {
 }, isCurrent = () => true }) {
   const root = host.attachShadow({ mode: "open" }), api = createStarterAPI(client);
-  root.innerHTML = `<link rel="stylesheet" href="${new URL("./style.css?v=starter-portrait-1", import.meta.url)}"><div id="view">Caricamento del tuo starter\u2026</div>`;
+  root.innerHTML = `<link rel="stylesheet" href="${new URL("./style.css?v=fossil-cave-1", import.meta.url)}"><div id="view">Caricamento del tuo starter\u2026</div>`;
   const view = root.querySelector("#view");
   let result = null, page = section, busy = false, message = "", selectedMove = null, difficulty = "balanced", confirmSale = false, pending = null;
   const active = () => result?.state.battle && !result.state.battle.result;
@@ -282,7 +282,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   }
   function battle(b) {
     const fighter = (c, back) => `<div class="fighter ${back ? "player" : "enemy"}">${artwork(c.id, back)}<div><strong>${c.name}</strong> \xB7 Lv. ${c.level}<p>PS ${c.hp} / ${c.maxHp}${c.status ? " \xB7 " + escape(c.status) : ""}</p><progress max="${c.maxHp}" value="${c.hp}" aria-label="PS di ${c.name}"></progress></div></div>`;
-    return `<article class="battle">${fighter(b.enemy, false)}${fighter(b.player, true)}<p>Turno ${b.turn}</p>${b.result ? `<h2>${b.result === "win" ? "Vittoria!" : "Sconfitta"}</h2><p>+${b.settlement?.coins || 0} \u20BD \xB7 +${b.settlement?.xp || 0} XP</p>${button("close", "Scegli un altro avversario")}` : `<div class="moves">${b.player.moves.map((m, i) => button("move", `${m.name}<small>PP ${m.pp}/${m.maxPp} \xB7 ${types[m.type]}</small>`, m.pp === 0 || !arenaAccess().open, `data-slot="${i}"`)).join("")}${b.player.moves.every((m) => m.pp === 0) ? button("move", "Scontro", !arenaAccess().open, 'data-slot="-1"') : ""}</div>${button("abandon", "Abbandona la lotta")}</article>`}${b.result ? "</article>" : ""}<details open><summary>Registro della lotta</summary><ul>${result.state.log.slice(-12).map((t) => `<li>${escape(t)}</li>`).join("")}</ul></details>`;
+    return `<article class="battle"><div class="fossil-battle-scene">${fighter(b.enemy, false)}${fighter(b.player, true)}</div><p>Turno ${b.turn}</p>${b.result ? `<h2>${b.result === "win" ? "Vittoria!" : "Sconfitta"}</h2><p>+${b.settlement?.coins || 0} \u20BD \xB7 +${b.settlement?.xp || 0} XP</p>${button("close", "Scegli un altro avversario")}` : `<div class="moves">${b.player.moves.map((m, i) => button("move", `${m.name}<small>PP ${m.pp}/${m.maxPp} \xB7 ${types[m.type]}</small>`, m.pp === 0 || !arenaAccess().open, `data-slot="${i}"`)).join("")}${b.player.moves.every((m) => m.pp === 0) ? button("move", "Scontro", !arenaAccess().open, 'data-slot="-1"') : ""}</div>${button("abandon", "Abbandona la lotta")}</article>`}${b.result ? "</article>" : ""}<details open><summary>Registro della lotta</summary><ul>${result.state.log.slice(-12).map((t) => `<li>${escape(t)}</li>`).join("")}</ul></details>`;
   }
   function shop(p) {
     const s = p.starter;

@@ -1,8 +1,8 @@
 import {readLeaderboard,readStatus,startFishing,finishFishing,throwFishingBall,closeFishingBattle} from './leaderboard.mjs?v=balls-xp-1';
-import {getTrainerCompanion,SPECIES} from '../starter/starter-ui.js?v=starter-gifs-5';
+import {getTrainerCompanion,SPECIES} from '../starter/starter-ui.js?v=fossil-cave-6';
 import {FISH,RULES} from './config.mjs';
-import {createBattle,turn,catchChance} from './engine.mjs?v=starter-gifs-5';
-import {button,FishingScene,FishingBattle,FishingResult,RecordView,FishingLeaderboard,esc} from './components.mjs?v=starter-gifs-5';
+import {createBattle,turn,catchChance} from './engine.mjs?v=fossil-cave-6';
+import {button,FishingScene,FishingBattle,FishingResult,RecordView,FishingLeaderboard,esc} from './components.mjs?v=fossil-cave-6';
 import {createRecordStore} from './storage.mjs';
 
 export async function mountFishing(host,{client,userId,onBalance=()=>{},isCurrent=()=>true}){
