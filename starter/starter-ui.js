@@ -1,3 +1,10 @@
+function arenaAvailability(now=new Date()) {
+ const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
+ const get=type=>parts.find(p=>p.type===type).value;
+ const day=new Date(get('year')+'-'+get('month')+'-'+get('day')+'T12:00:00Z'),open=day.getUTCDay()===1;
+ day.setUTCDate(day.getUTCDate()+(1-day.getUTCDay()+7)%7);
+ return {open,nextDate:day.toISOString().slice(0,10)};
+}
 // Generato da test/starter-integration/build-ui.mjs. Sorgente: features/starter/view.mjs.
 
 // supabase/functions/starter-game/core/mock-data.mjs
@@ -164,10 +171,10 @@ var FOSSIL_ITEMS = {
 };
 
 // features/starter/art.mjs
-var files = { squirtle: ["squirtle.png", "squirtle-back.png"], kabuto: ["kabuto.png"] };
-function artwork(id, back = false) {
-  const file = files[id]?.[back ? 1 : 0] || files[id]?.[0];
-  return file ? `<img class="pokemon" src="${new URL("./assets/" + file, import.meta.url)}" alt="${id}${back ? " di spalle" : ""}" width="160" height="160">` : '<svg class="pokemon placeholder" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32"/><path d="M18 50h64"/><circle cx="50" cy="50" r="10"/></svg>';
+var files = { bulbasaur: ["bulbasaur.png"], ivysaur: ["ivysaur.png"], venusaur: ["venusaur.png"], charmander: ["charmander.png"], charmeleon: ["charmeleon.png"], charizard: ["charizard.png"], squirtle: ["squirtle.png", "squirtle-back.png"], wartortle: ["wartortle.png"], blastoise: ["blastoise.png"], kabuto: ["kabuto.png"] };
+function artwork(id, back = false, assetBase = new URL("./assets/", import.meta.url)) {
+  const backFile = back && files[id]?.[1], file = backFile || files[id]?.[0];
+  return file ? `<img class="pokemon" src="${new URL(file, assetBase)}" alt="${id}${backFile ? " di spalle" : ""}" width="160" height="160">` : '<svg class="pokemon placeholder" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32"/><path d="M18 50h64"/><circle cx="50" cy="50" r="10"/></svg>';
 }
 
 // features/starter/api.mjs
@@ -203,9 +210,12 @@ function createStarterAPI(client) {
         payload = await error.context?.json();
       } catch {
       }
-      throw Error(payload?.error || "Il mio Starter non \xE8 raggiungibile. Riprova tra poco.");
+      throw Error(payload?.error?.includes("ARENA_CLOSED_MONDAY_ONLY") ? "L’Arena Fossili è disponibile solo il lunedì, ora italiana." : payload?.error || "Il mio Starter non \xE8 raggiungibile. Riprova tra poco.");
     }
     if (data?.error) throw Error(data.error);
+    if(typeof client.rpc==='function'){
+      try{const clock=await client.rpc('get_starter_arena_access');if(!clock.error&&clock.data?.serverNow)data.arenaAccess={...clock.data,receivedAt:Date.now()};}catch{}
+    }
     return validateStarterResponse(data);
   }
   return { read: () => request({ type: "read" }), command: (body, revision, operationId) => request({ ...body, revision, operationId }) };
@@ -229,7 +239,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   function render() {
     if (!isCurrent() || !host.isConnected) return;
     const p = result?.state.profile;
-    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Arena Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${["starter", "arena", "shop", "inventory"].map((id, i) => button("page", ["Il mio Starter", "Arena Fossili", "Mosse", "Fossili"][i], busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#fossil-hunt">Caccia ai Fossili classica \u2192</a></p>`;
+    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Arena Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${[["starter", "Il mio Starter"], ["arena", "Arena Fossili"], ["shop", "Mosse"], ["inventory", "Fossili"]].filter(([id]) => id !== "arena" || section !== "starter" && page !== "starter").map(([id, label]) => button("page", label, busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#fossil-hunt">Caccia ai Fossili classica \u2192</a></p>`;
     const body = view.querySelector("#body");
     if (!result) {
       body.innerHTML = button("reload", "Riprova", busy);
@@ -247,20 +257,23 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   }
   function starter(p) {
     const s = p.starter, creature = starterPokemon(p), rule = EVOLUTIONS[s.species], line = LINES[s.origin], stage = line.indexOf(s.species), next = xpRequired(s.level);
-    return `<article class="hero">${artwork(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte 1 contro 1 saranno disponibili in futuro.</p>${button("page", "Entra nell\u2019Arena Fossili", false, 'data-page="arena"')}<p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
+    return `<article class="hero">${artwork(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte 1 contro 1 saranno disponibili in futuro.</p><p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
   }
+  function arenaAccess(){const clock=result?.arenaAccess;return arenaAvailability(clock?.serverNow?new Date(Date.parse(clock.serverNow)+Date.now()-(clock.receivedAt||Date.now())):new Date());}
+  function arenaNotice(){const access=arenaAccess();return access.open?'<p>L’Arena è aperta questo lunedì, fino a mezzanotte (ora italiana).</p>':'<article><h2>L’Arena apre solo il lunedì</h2><p>Prossima apertura: '+access.nextDate.split('-').reverse().join('/')+'. Orario italiano.</p><p>Le lotte in corso restano salvate. Puoi riprenderle il lunedì oppure abbandonarle.</p></article>';}
   function arena(p) {
     const b = result.state.battle;
-    if (b) return battle(b);
+    if (b) return arenaNotice()+battle(b);
+    if(!arenaAccess().open)return arenaNotice();
     const quota = rewardStatus(p);
-    return `<article><h2>Scegli la tua sfida</h2><p>${SPECIES[p.starter.species].name} \xB7 Livello ${p.starter.level}</p><p>${quota.remaining} / 3 sfide premio rimaste oggi. Dalla quarta ottieni solo XP. Anche gli abbandoni consumano un tentativo.</p><div class="difficulty">${Object.entries(DIFFICULTIES).map(([id, d]) => button("difficulty", d.name, false, `data-difficulty="${id}" aria-pressed="${id === difficulty}"`)).join("")}</div></article>${Object.keys(FOSSIL_ITEMS).map((id) => {
+    return `<article><h2>Scegli la tua sfida</h2><p>Disponibile solo il lunedì · Ora italiana</p><p>${SPECIES[p.starter.species].name} \xB7 Livello ${p.starter.level}</p><p>${quota.remaining} / 3 sfide premio rimaste questo lunedì. Dalla quarta ottieni solo XP. Anche gli abbandoni consumano un tentativo.</p><div class="difficulty">${Object.entries(DIFFICULTIES).map(([id, d]) => button("difficulty", d.name, false, `data-difficulty="${id}" aria-pressed="${id === difficulty}"`)).join("")}</div></article>${Object.keys(FOSSIL_ITEMS).map((id) => {
       const preview = encounterPreview(p, id, difficulty);
       return `<article>${artwork(id)}<h2>${SPECIES[id].name} \xB7 Lv. ${preview.level}</h2><p>${typeLabel(id)}</p><p>Vittoria: ${quota.eligible ? preview.winCoins : 0} \u20BD \xB7 ${p.starter.level >= CONFIG.maxLevel ? 0 : preview.winXP} XP${quota.eligible ? " \xB7 " + FOSSIL_ITEMS[id].name : ""}</p>${button("start", "Affronta " + SPECIES[id].name, !!p.pendingFossil, `data-opponent="${id}"`)}</article>`;
     }).join("")}${p.pendingFossil ? "<p>Vai in Fossili e scegli quale conservare prima della prossima sfida.</p>" : ""}`;
   }
   function battle(b) {
     const fighter = (c, back) => `<div class="fighter ${back ? "player" : "enemy"}">${artwork(c.id, back)}<div><strong>${c.name}</strong> \xB7 Lv. ${c.level}<p>PS ${c.hp} / ${c.maxHp}${c.status ? " \xB7 " + escape(c.status) : ""}</p><progress max="${c.maxHp}" value="${c.hp}" aria-label="PS di ${c.name}"></progress></div></div>`;
-    return `<article class="battle">${fighter(b.enemy, false)}${fighter(b.player, true)}<p>Turno ${b.turn}</p>${b.result ? `<h2>${b.result === "win" ? "Vittoria!" : "Sconfitta"}</h2><p>+${b.settlement?.coins || 0} \u20BD \xB7 +${b.settlement?.xp || 0} XP</p>${button("close", "Scegli un altro avversario")}` : `<div class="moves">${b.player.moves.map((m, i) => button("move", `${m.name}<small>PP ${m.pp}/${m.maxPp} \xB7 ${types[m.type]}</small>`, m.pp === 0, `data-slot="${i}"`)).join("")}${b.player.moves.every((m) => m.pp === 0) ? button("move", "Scontro", false, 'data-slot="-1"') : ""}</div>${button("abandon", "Abbandona la lotta")}</article>`}${b.result ? "</article>" : ""}<details open><summary>Registro della lotta</summary><ul>${result.state.log.slice(-12).map((t) => `<li>${escape(t)}</li>`).join("")}</ul></details>`;
+    return `<article class="battle">${fighter(b.enemy, false)}${fighter(b.player, true)}<p>Turno ${b.turn}</p>${b.result ? `<h2>${b.result === "win" ? "Vittoria!" : "Sconfitta"}</h2><p>+${b.settlement?.coins || 0} \u20BD \xB7 +${b.settlement?.xp || 0} XP</p>${button("close", "Scegli un altro avversario")}` : `<div class="moves">${b.player.moves.map((m, i) => button("move", `${m.name}<small>PP ${m.pp}/${m.maxPp} \xB7 ${types[m.type]}</small>`, m.pp === 0 || !arenaAccess().open, `data-slot="${i}"`)).join("")}${b.player.moves.every((m) => m.pp === 0) ? button("move", "Scontro", !arenaAccess().open, 'data-slot="-1"') : ""}</div>${button("abandon", "Abbandona la lotta")}</article>`}${b.result ? "</article>" : ""}<details open><summary>Registro della lotta</summary><ul>${result.state.log.slice(-12).map((t) => `<li>${escape(t)}</li>`).join("")}</ul></details>`;
   }
   function shop(p) {
     const s = p.starter;
@@ -286,6 +299,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   }
   async function send(command) {
     if (busy || !result) return;
+    if(["start","move"].includes(command.type)&&!arenaAccess().open){message="L’Arena Fossili è disponibile solo il lunedì, ora italiana.";render();return;}
     busy = true;
     message = "Salvataggio in corso\u2026";
     render();
@@ -383,7 +397,9 @@ async function mountCompanion(host, { client, isCurrent = () => true }) {
     if (host.isConnected) host.innerHTML = '<a href="#my-starter">Il mio Starter \u2192</a>';
   }
 }
+// Read-only building blocks shared by the isolated fishing test.
 export {
+  getTrainerCompanion, createPokemon, MOVES, SPECIES, types, artwork,
   mountCompanion,
   mountStarter
 };

@@ -397,7 +397,9 @@ async function mountCompanion(host, { client, isCurrent = () => true }) {
     if (host.isConnected) host.innerHTML = '<a href="#my-starter">Il mio Starter \u2192</a>';
   }
 }
+// Read-only building blocks shared by the isolated fishing test.
 export {
+  getTrainerCompanion, createPokemon, MOVES, SPECIES, types, artwork,
   mountCompanion,
   mountStarter
 };
