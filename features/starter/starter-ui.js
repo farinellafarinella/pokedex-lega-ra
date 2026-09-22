@@ -172,11 +172,12 @@ var FOSSIL_ITEMS = {
 
 // features/starter/art.mjs
 var files = { bulbasaur: ["bulbasaur.png"], ivysaur: ["ivysaur.png"], venusaur: ["venusaur.png"], charmander: ["charmander.png"], charmeleon: ["charmeleon.png"], charizard: ["charizard.png"], squirtle: ["squirtle.png", "squirtle-back.png"], wartortle: ["wartortle.png"], blastoise: ["blastoise.png"], kabuto: ["kabuto.png"] };
+const starterGifFiles = { bulbasaur: "Bulbasaur.gif", ivysaur: "Ivysaur.gif", venusaur: "Venusaur.gif", charmander: "Charmander.gif", charmeleon: "Charmeleon.gif", charizard: "Charizard.gif", squirtle: "Squirtle.gif", wartortle: "Wartortle.gif", blastoise: "Blastoise.gif" };
 function artwork(id, back = false, assetBase = new URL("./assets/", import.meta.url)) {
   const isStarter = Object.values(LINES).some(line => line.includes(id));
-  const animation = isStarter ? new URL(back ? `../../starter back gif/${id} b.gif` : `../../starter gif/${id}.gif`, import.meta.url)
+  const animation = isStarter ? new URL(back ? `../../starter back gif/${id} b.gif` : `../../starter gif/${starterGifFiles[id]}`, import.meta.url)
     : Object.hasOwn(FOSSIL_ITEMS, id) ? new URL(`../../fossil gif/${id}.gif`, import.meta.url) : null;
-  if (animation) animation.searchParams.set('v', 'arena-gifs-4');
+  if (animation) animation.searchParams.set('v', 'starter-gifs-5');
   const backFile = back && files[id]?.[1], file = backFile || files[id]?.[0];
   const source = animation || (file ? new URL(file, assetBase) : null);
   return source ? `<img class="pokemon" src="${source}" alt="${SPECIES[id]?.name || id}${back ? ' di spalle' : ''}" width="160" height="160">` : '<svg class="pokemon placeholder" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32"/><path d="M18 50h64"/><circle cx="50" cy="50" r="10"/></svg>';
