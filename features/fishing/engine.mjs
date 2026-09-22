@@ -1,4 +1,4 @@
-import {createPokemon} from '../starter/starter-ui.js';
+import {createPokemon} from '../starter/starter-ui.js?v=arena-gifs-4';
 import {FISH,RARITIES,RULES} from './config.mjs';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function createBattle(starter,encounter){
