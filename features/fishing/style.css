@@ -2,3 +2,14 @@
 
 :host{display:block;width:100%}.layout{grid-template-columns:minmax(0,1fr)}header{text-align:center}aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}aside article{margin:0}.fishing-scene{position:relative;width:100%;max-width:960px;margin:0 auto;overflow:hidden;border-radius:14px}.fishing-background{display:block;width:100%;height:auto}.bite-target{position:absolute;left:71%;top:14%;width:12%;padding:0;margin:0;transform:translateX(-50%);background:transparent;border:0;cursor:pointer;min-width:44px;min-height:44px}.bite-target img{display:block;width:100%;height:auto}.bite-target:hover{background:transparent;filter:brightness(1.08)}.bite-target:focus-visible{outline:3px solid #f2c94c;outline-offset:4px}#countdown{min-height:1.5em}@media(max-width:400px){aside{grid-template-columns:1fr}}
 .fishing-ranking{list-style:none;padding:0}.fishing-ranking li{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;padding:14px 8px;border-bottom:1px solid #ffffff18}.fishing-ranking span{overflow-wrap:anywhere}.fishing-ranking small{display:block;margin-top:5px}.my-ranking{background:#f2c94c12;border-radius:8px}.fishing-ranking strong{color:#f2c94c}
+
+/* Keep the asset's capital W: GitHub Pages paths are case-sensitive. */
+.battle-scene{position:relative;isolation:isolate;aspect-ratio:512/286;margin:0 auto 16px;overflow:hidden;border-radius:14px;background:#2285b5 url('../../Watersurface.png') center bottom/cover no-repeat}
+.battle-scene .fighter{position:absolute;inset:0;display:block;margin:0;padding:0;background:none;border-radius:0}
+.battle-scene .fighter .pokemon{position:absolute;width:25%;height:46%;max-width:180px;object-fit:contain;margin:0;filter:drop-shadow(0 5px 3px #092d4355)}
+.battle-scene .enemy .pokemon{left:75%;bottom:39%;transform:translateX(-50%)}
+.battle-scene .player .pokemon{left:19%;bottom:0;transform:translateX(-50%)}
+.battle-scene .fighter>div{position:absolute;width:46%;padding:clamp(8px,1.5vw,16px);border:1px solid #bfeaff65;border-radius:12px;background:#102638ed;box-shadow:0 3px 12px #001b3033;color:#fff}
+.battle-scene .enemy>div{left:3%;top:6%}.battle-scene .player>div{right:3%;bottom:6%}
+.battle-scene .fighter strong{font-size:clamp(11px,1.6vw,15px)}.battle-scene .fighter p,.battle-scene .fighter small{color:#e0edf5}.battle-scene progress{margin:8px 0}
+@media(max-width:600px){.battle{padding:0}.battle-scene{aspect-ratio:4/3}.battle-scene .fighter>div{width:48%;padding:8px}.battle-scene .enemy>div{left:2%;top:4%}.battle-scene .player>div{right:2%;bottom:4%}.battle-scene .fighter p{font-size:10px;margin:4px 0}.battle-scene .fighter .pokemon{width:30%;height:43%}.battle-scene .player .pokemon{left:20%}.battle-scene .enemy .pokemon{left:77%}}
