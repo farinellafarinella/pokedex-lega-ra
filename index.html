@@ -357,7 +357,7 @@
       const userId=authSession.user.id;
       starterModule().then(module=>module.mountCompanion(host,{client:supabaseClient,isCurrent:()=>authSession?.user.id===userId&&location.hash.slice(1).split('/')[0]===page})).catch(()=>{});
     }).observe(document.querySelector('#app'),{childList:true});
-    const starterModule=()=>import('./features/starter/starter-ui.js?v=starter-gifs-2');
+    const starterModule=()=>import('./features/starter/starter-ui.js?v=arena-gifs-4');
     const safariModule=()=>window.ChampionSafari?Promise.resolve(window.ChampionSafari):Promise.reject(Error('File features/safari/safari-runtime.js non caricato. Pubblica tutta la cartella features/safari accanto a index.html.'));
     const casinoModule=()=>window.ChampionCasino?Promise.resolve(window.ChampionCasino):Promise.reject(Error('File features/casino/casino-runtime.js non caricato. Verifica che la cartella features sia accanto a index.html.'));
     function render(){
@@ -381,7 +381,7 @@
         const host=document.createElement('div'),userId=authSession.user.id;
         document.querySelector('#app').replaceChildren(host);
         host.textContent='Caricamento della Gara di Pesca…';
-        import('./features/fishing/game.mjs?v=pesca-gifs-3').then(module=>{
+        import('./features/fishing/game.mjs?v=pesca-gifs-4').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountFishing(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la pesca: '+error.message;});return;
