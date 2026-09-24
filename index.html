@@ -375,7 +375,7 @@
       if(page==='bug-contest'){
         const host=document.createElement('div'),userId=authSession.user.id;
         host.id='bug-contest-feature';host.textContent='Caricamento Gara Pigliamosche…';document.querySelector('#app').replaceChildren(host);
-        import('./features/bug-contest/game.mjs?v=official-1').then(module=>{
+        import('./features/bug-contest/game.mjs?v=official-2').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountBugContest(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la Gara Pigliamosche: '+error.message;});return;

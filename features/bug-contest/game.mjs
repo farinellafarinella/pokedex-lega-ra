@@ -1,6 +1,6 @@
 import {artwork,SPECIES,types} from '../starter/starter-ui.js?v=johto-7';
 import {RULES} from './config.mjs?v=official-1';
-import {readStatus,readRanking,sendCommand,errorMessage,isRejected} from './api.mjs?v=official-1';
+import {readStatus,readRanking,sendCommand,errorMessage,isRejected} from './api.mjs?v=official-2';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const kg=value=>Number(value).toLocaleString('it-IT',{minimumFractionDigits:1,maximumFractionDigits:1})+' kg';
 const btn=(action,label,disabled=false,extra='')=>`<button type="button" data-action="${action}" ${disabled?'disabled':''} ${extra}>${label}</button>`;

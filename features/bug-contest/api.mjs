@@ -1,7 +1,7 @@
 export async function readStatus(client){const {data,error}=await client.rpc('get_bug_game_status');if(error)throw error;return data;}
 export async function readRanking(client,day=null){const {data,error}=await client.rpc('get_bug_game_ranking',{p_day:day});if(error)throw error;return data;}
 export async function sendCommand(client,body){
- const {data,error}=await client.functions.invoke('bug-contest',{body});
+ const {data,error}=await client.functions.invoke('swift-endpoint',{body});
  if(error){let payload;try{payload=await error.context?.json();}catch{}throw Error(payload?.error||error.message||'REQUEST_FAILED');}
  if(data?.error)throw Error(data.error);return data;
 }
