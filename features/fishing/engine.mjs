@@ -1,4 +1,4 @@
-import {createPokemon} from '../starter/starter-ui.js?v=fossil-cave-6';
+import {createPokemon} from '../starter/starter-ui.js?v=johto-7';
 import {FISH,RARITIES,RULES} from './config.mjs';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function createBattle(starter,encounter){

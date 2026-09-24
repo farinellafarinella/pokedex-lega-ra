@@ -1,0 +1,2 @@
+[functions.bug-contest]
+verify_jwt = false

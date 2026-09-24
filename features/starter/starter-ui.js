@@ -1,3 +1,4 @@
+import {installJohto, JOHTO_STARTERS, JOHTO_FOSSILS} from './johto.mjs?v=johto-1';
 function arenaAvailability(now=new Date()) {
  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
  const get=type=>parts.find(p=>p.type===type).value;
@@ -159,7 +160,7 @@ function encounterPreview(profile, fossil, difficulty = "balanced") {
   const encounter = ENCOUNTERS[fossil], mode = DIFFICULTIES[difficulty];
   if (!encounter || !mode) throw new Error("Avversario o difficolt\xE0 non disponibili");
   const level = Math.max(1, Math.min(100, profile.starter.level + mode.offset));
-  const xp = Math.round({ kabuto: 28, omanyte: 34, aerodactyl: 40 }[fossil] * mode.xp);
+  const xp = Math.round({ kabuto: 28, omanyte: 34, aerodactyl: 40, unown: 28, kabutops: 34, omastar: 40 }[fossil] * mode.xp);
   return { level, moves: [...ENCOUNTER_SETS[fossil][difficulty]], aiStyle: mode.ai, winCoins: Math.round(encounter.reward * mode.coins), lossCoins: Math.round(50 * mode.coins), winXP: xp, lossXP: Math.max(1, Math.floor(xp * 0.25)) };
 }
 
@@ -170,14 +171,17 @@ var FOSSIL_ITEMS = {
   aerodactyl: { name: "Ambra Antica", pokemon: "Aerodactyl", basePrice: 360, holders: 150, sellers: 25, buyers: 40 }
 };
 
+installJohto({SPECIES,MOVES,STARTERS,LINES,EVOLUTIONS,DESCRIPTION,MOVE_SHOP,ENCOUNTERS,ENCOUNTER_SETS,FOSSIL_ITEMS});
+
 // features/starter/art.mjs
 var files = { bulbasaur: ["bulbasaur.png"], ivysaur: ["ivysaur.png"], venusaur: ["venusaur.png"], charmander: ["charmander.png"], charmeleon: ["charmeleon.png"], charizard: ["charizard.png"], squirtle: ["squirtle.png", "squirtle-back.png"], wartortle: ["wartortle.png"], blastoise: ["blastoise.png"], kabuto: ["kabuto.png"] };
 const starterGifFiles = { bulbasaur: "Bulbasaur.gif", ivysaur: "Ivysaur.gif", venusaur: "Venusaur.gif", charmander: "Charmander.gif", charmeleon: "Charmeleon.gif", charizard: "Charizard.gif", squirtle: "Squirtle.gif", wartortle: "Wartortle.gif", blastoise: "Blastoise.gif" };
 function artwork(id, back = false, assetBase = new URL("./assets/", import.meta.url)) {
   const isStarter = Object.values(LINES).some(line => line.includes(id));
+  if ((isStarter && !starterGifFiles[id]) || JOHTO_FOSSILS.includes(id)) return '<svg class="pokemon placeholder" viewBox="0 0 160 160" role="img" aria-label="'+SPECIES[id].name+'"><circle cx="80" cy="65" r="38"/><path d="M42 65h76"/><circle cx="80" cy="65" r="12"/><text x="80" y="130" text-anchor="middle" fill="currentColor" stroke="none" font-size="14">'+SPECIES[id].name+'</text></svg>';
   const animation = isStarter ? new URL(back ? `../../starter back gif/${id} b.gif` : `../../starter gif/${starterGifFiles[id]}`, import.meta.url)
     : Object.hasOwn(FOSSIL_ITEMS, id) ? new URL(`../../fossil gif/${id}.gif`, import.meta.url) : null;
-  if (animation) animation.searchParams.set('v', 'fossil-cave-6');
+  if (animation) animation.searchParams.set('v', 'johto-7');
   const backFile = back && files[id]?.[1], file = backFile || files[id]?.[0];
   const source = animation || (file ? new URL(file, assetBase) : null);
   return source ? `<img class="pokemon" src="${source}" alt="${SPECIES[id]?.name || id}${back ? ' di spalle' : ''}" width="160" height="160">` : '<svg class="pokemon placeholder" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="32"/><path d="M18 50h64"/><circle cx="50" cy="50" r="10"/></svg>';
@@ -201,7 +205,7 @@ function validateStarterResponse(data) {
     if (!record(profile) || !record(profile.starter)) return invalid();
     const s = profile.starter;
     if (!Object.hasOwn(LINES, s.origin) || !LINES[s.origin].includes(s.species) || !integer(s.level, 1) || s.level > 50 || !integer(s.xp) || !integer(profile.totalXP) || !integer(profile.encounters) || !record(profile.challenges) || !record(profile.inventory) || !moveList(s.equipped) || s.equipped.length !== 4 || !moveList(s.knownMoves)) return invalid();
-    for (const f of [profile.inventory.fossil, profile.pendingFossil]) if (f !== null && (!record(f) || !["kabuto", "omanyte", "aerodactyl"].includes(f.species) || typeof f.id !== "string")) return invalid();
+    for (const f of [profile.inventory.fossil, profile.pendingFossil]) if (f !== null && (!record(f) || !Object.hasOwn(FOSSIL_ITEMS, f.species) || typeof f.id !== "string")) return invalid();
   }
   if (battle !== null) {
     if (!profile || !record(battle) || !integer(battle.turn) || ![null, "win", "loss"].includes(battle.result)) return invalid();
@@ -212,9 +216,14 @@ function validateStarterResponse(data) {
 var STARTER_FUNCTION = "bright-processor";
 function createStarterAPI(client) {
   async function request(body) {
-    const { data, error } = await client.functions.invoke(STARTER_FUNCTION, { body });
+    const { data, error } = body.type === 'replaceJohto'
+      ? await client.rpc('replace_johto_starter',{p_starter:body.starter,p_revision:body.revision,p_operation_id:body.operationId})
+      : await client.functions.invoke(STARTER_FUNCTION, { body });
     if (error) {
       let payload;
+      const johtoErrors={JOHTO_LOCKED:"Acquista il biglietto per Johto prima di cambiare starter.",REGION_NOT_READY:"I contenuti di Johto sono ancora in preparazione.",STARTER_REQUIRED:"Scegli prima il tuo starter iniziale.",STALE_REVISION:"I progressi sono cambiati: controlla lo starter e conferma nuovamente.",BATTLE_ACTIVE:"Concludi o abbandona la lotta prima di cambiare starter.",FISHING_ACTIVE:"Concludi la pescata prima di cambiare starter."};
+      const known=Object.entries(johtoErrors).find(([code])=>error.message?.includes(code));
+      if(known)throw Error(known[1]);
       try {
         payload = await error.context?.json();
       } catch {
@@ -223,6 +232,7 @@ function createStarterAPI(client) {
     }
     if (data?.error) throw Error(data.error);
     if(typeof client.rpc==='function'){
+      try{const travel=await client.rpc('get_region_travel');if(!travel.error)data.regionTravel=travel.data;}catch{}
       try{const clock=await client.rpc('get_starter_arena_access');if(!clock.error&&clock.data?.serverNow)data.arenaAccess={...clock.data,receivedAt:Date.now()};}catch{}
     }
     return validateStarterResponse(data);
@@ -243,7 +253,8 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   const root = host.attachShadow({ mode: "open" }), api = createStarterAPI(client);
   root.innerHTML = `<link rel="stylesheet" href="${new URL("./style.css?v=fossil-cave-1", import.meta.url)}"><div id="view">Caricamento del tuo starter\u2026</div>`;
   const view = root.querySelector("#view");
-  let result = null, page = section, busy = false, message = "", selectedMove = null, difficulty = "balanced", confirmSale = false, pending = null;
+  let result = null, page = section, busy = false, message = "", selectedMove = null, difficulty = "balanced", confirmSale = false, pending = null, replacement = null;
+  const johtoUnlocked = () => result?.regionTravel?.regions?.some(r=>r.id==='johto'&&r.unlocked&&r.available);
   const active = () => result?.state.battle && !result.state.battle.result;
   function render() {
     if (!isCurrent() || !host.isConnected) return;
@@ -255,10 +266,10 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       return;
     }
     if (!p) {
-      body.innerHTML = `<p>Scegli il compagno che ti accompagner\xE0 nei minigiochi. La scelta \xE8 legata al tuo account.</p><div class="choices">${Object.keys(LINES).map((id) => `<article>${artwork(id)}<h2>${SPECIES[id].name}</h2><small>${typeLabel(id)}</small><p>${DESCRIPTION[id]}</p>${button("choose", "Scegli questo Pok\xE9mon", busy, `data-starter="${id}" aria-label="Scegli ${SPECIES[id].name}"`)}</article>`).join("")}</div>`;
+      body.innerHTML = `<p>Scegli il compagno che ti accompagner\xE0 nei minigiochi. La scelta \xE8 legata al tuo account.</p><div class="choices">${Object.keys(LINES).filter(id=>!JOHTO_STARTERS.includes(id)).map((id) => `<article>${artwork(id)}<h2>${SPECIES[id].name}</h2><small>${typeLabel(id)}</small><p>${DESCRIPTION[id]}</p>${button("choose", "Scegli questo Pok\xE9mon", busy, `data-starter="${id}" aria-label="Scegli ${SPECIES[id].name}"`)}</article>`).join("")}</div>`;
       return;
     }
-    if (page === "starter") body.innerHTML = starter(p);
+    if (page === "starter") body.innerHTML = starter(p) + johtoStarter(p);
     if (page === "arena") body.innerHTML = arena(p);
     if (page === "shop") body.innerHTML = shop(p);
     if (page === "inventory") body.innerHTML = inventory(p);
@@ -268,6 +279,11 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
     const s = p.starter, creature = starterPokemon(p), rule = EVOLUTIONS[s.species], line = LINES[s.origin], stage = line.indexOf(s.species), next = xpRequired(s.level);
     return `<article class="hero">${starterPortrait(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte 1 contro 1 saranno disponibili in futuro.</p><p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
   }
+  function johtoStarter(p) {
+    if (!johtoUnlocked()) return '<article><h2>Starter di Johto</h2><p>Chikorita, Cyndaquil e Totodile si sbloccano con il biglietto per Johto.</p><a href="#regions">Visita una regione →</a></article>';
+    if (replacement) return `<article><h2>Sostituisci lo starter con ${SPECIES[replacement].name}</h2><p>${SPECIES[p.starter.species].name} (Lv. ${p.starter.level}) verrà rimosso definitivamente. Perderai il suo livello, la sua esperienza e tutte le mosse apprese. ${SPECIES[replacement].name} inizierà dal livello 5 con 0 XP e le mosse iniziali.</p><p>Saldo, fossili e tentativi premio già consumati restano invariati.</p>${button('confirmJohto','Sostituisci definitivamente',!!active())}${button('cancelJohto','Annulla')}</article>`;
+    return `<article><h2>Scegli uno starter di Johto</h2><p>Il nuovo starter sostituirà completamente quello attuale e ripartirà dal livello 5.</p>${active()?'<p>Concludi la lotta prima di cambiare starter.</p>':''}${JOHTO_STARTERS.map(id=>button('selectJohto',SPECIES[id].name,!!active(),`data-starter="${id}"`)).join('')}</article>`;
+  }
   function arenaAccess(){const clock=result?.arenaAccess;return arenaAvailability(clock?.serverNow?new Date(Date.parse(clock.serverNow)+Date.now()-(clock.receivedAt||Date.now())):new Date());}
   function arenaNotice(){const access=arenaAccess();return access.open?'<p>L’Arena è aperta questo lunedì, fino a mezzanotte (ora italiana).</p>':'<article><h2>L’Arena apre solo il lunedì</h2><p>Prossima apertura: '+access.nextDate.split('-').reverse().join('/')+'. Orario italiano.</p><p>Le lotte in corso restano salvate. Puoi riprenderle il lunedì oppure abbandonarle.</p></article>';}
   function arena(p) {
@@ -275,7 +291,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
     if (b) return arenaNotice()+battle(b);
     if(!arenaAccess().open)return arenaNotice();
     const quota = rewardStatus(p);
-    return `<article><h2>Scegli la tua sfida</h2><p>Disponibile solo il lunedì · Ora italiana</p><p>${SPECIES[p.starter.species].name} \xB7 Livello ${p.starter.level}</p><p>${quota.remaining} / 3 sfide premio rimaste questo lunedì. Dalla quarta ottieni solo XP. Anche gli abbandoni consumano un tentativo.</p><div class="difficulty">${Object.entries(DIFFICULTIES).map(([id, d]) => button("difficulty", d.name, false, `data-difficulty="${id}" aria-pressed="${id === difficulty}"`)).join("")}</div></article>${Object.keys(FOSSIL_ITEMS).map((id) => {
+    return `<article><h2>Scegli la tua sfida</h2><p>Disponibile solo il lunedì · Ora italiana</p><p>${SPECIES[p.starter.species].name} \xB7 Livello ${p.starter.level}</p><p>${quota.remaining} / 3 sfide premio rimaste questo lunedì. Dalla quarta ottieni solo XP. Anche gli abbandoni consumano un tentativo.</p><div class="difficulty">${Object.entries(DIFFICULTIES).map(([id, d]) => button("difficulty", d.name, false, `data-difficulty="${id}" aria-pressed="${id === difficulty}"`)).join("")}</div></article>${Object.keys(FOSSIL_ITEMS).filter(id=>!JOHTO_FOSSILS.includes(id)||johtoUnlocked()).map((id) => {
       const preview = encounterPreview(p, id, difficulty);
       return `<article>${artwork(id)}<h2>${SPECIES[id].name} \xB7 Lv. ${preview.level}</h2><p>${typeLabel(id)}</p><p>Vittoria: ${quota.eligible ? preview.winCoins : 0} \u20BD \xB7 ${p.starter.level >= CONFIG.maxLevel ? 0 : preview.winXP} XP${quota.eligible ? " \xB7 " + FOSSIL_ITEMS[id].name : ""}</p>${button("start", "Affronta " + SPECIES[id].name, !!p.pendingFossil, `data-opponent="${id}"`)}</article>`;
     }).join("")}${p.pendingFossil ? "<p>Vai in Fossili e scegli quale conservare prima della prossima sfida.</p>" : ""}`;
@@ -319,6 +335,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       if (!isCurrent()) return;
       result = data;
       pending = null;
+      if(command.type==='replaceJohto'){replacement=null;selectedMove=null;}
       message = "Progressi salvati.";
       onBalance(data.balance);
     } catch (error) {
@@ -341,12 +358,16 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
     const b = event.target.closest("button");
     if (!b || b.disabled || busy) return;
     const a = b.dataset.action;
+    if(a==='selectJohto'){replacement=b.dataset.starter;render();return;}
+    if(a==='cancelJohto'){replacement=null;render();return;}
+    if(a==='confirmJohto'&&replacement){await send({type:'replaceJohto',starter:replacement});return;}
     if (a === "reload") {
       await load();
       return;
     }
     if (a === "page") {
       page = b.dataset.page;
+      replacement=null;
       confirmSale = false;
       render();
       return;
