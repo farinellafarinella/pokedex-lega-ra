@@ -1,0 +1,27 @@
+.pokemon-nav { align-items: center; }
+.game-quick-controls { display: flex; align-items: center; gap: 6px; }
+.game-quick-controls label { font-size: 12px; }
+.game-quick-controls select,
+.game-quick-controls button {
+  min-height: 36px;
+  border: 1px solid #ffffff45;
+  border-radius: 8px;
+  background: #292b36;
+  color: #fff;
+  padding: 4px 8px;
+  font: 700 13px Arial, sans-serif;
+  touch-action: manipulation;
+}
+.game-quick-controls select { width: 100px; }
+.game-quick-controls button { min-width: 46px; cursor: pointer; }
+.game-quick-controls button[aria-pressed="true"] { background: #a71922; border-color: #ef7d85; }
+.game-quick-controls :disabled { opacity: .5; cursor: default; }
+.game-quick-controls :focus-visible { outline: 2px solid #f2c94c; outline-offset: 2px; }
+@media (max-height: 500px) and (orientation: landscape) {
+  .game-quick-controls select, .game-quick-controls button { min-height: 28px; }
+}
+@media (max-width: 360px) {
+  .game-quick-controls label { display: none; }
+  .game-quick-controls select { width: 86px; }
+  .pokemon-nav { gap: 6px; }
+}
