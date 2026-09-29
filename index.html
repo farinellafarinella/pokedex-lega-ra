@@ -382,7 +382,7 @@
       }
       if(page==='gameboy'){
         const host=document.createElement('div');host.textContent='Caricamento Game Boy…';document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy/gameboy.mjs?v=2').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host);}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
+        import('./features/gameboy/gameboy.mjs?v=mgba-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host);}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
       }
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
