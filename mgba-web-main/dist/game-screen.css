@@ -1,0 +1,45 @@
+/* Preserve the Game Boy's 160:144 display and hide only the SGB decoration. */
+.canvas-wrapper.gameboy-screen {
+  aspect-ratio: 10 / 9;
+  height: auto !important;
+  overflow: hidden;
+}
+.gameboy-screen > canvas {
+  aspect-ratio: 10 / 9;
+  height: auto;
+}
+.gameboy-screen.sgb-cropped > canvas {
+  position: absolute;
+  left: -30%;
+  top: -27.77777778%;
+  width: 160% !important;
+  max-width: none !important;
+  height: 155.55555556% !important;
+  aspect-ratio: auto;
+  object-fit: fill;
+}
+@media (max-width: 768px) and (orientation: portrait) {
+  .emulator-layout.with-touch {
+    width: 100%;
+    border: 0;
+    padding: 0 6px 12px;
+    margin-top: 0;
+    gap: 8px;
+  }
+  .screen-bezel {
+    border: 0;
+    padding: 0;
+    margin-bottom: 8px;
+    background: #000;
+    box-shadow: none;
+  }
+  .canvas-wrapper.gameboy-screen { max-width: 100%; }
+  .console-wing { padding: 8px 4px; }
+}
+@media (max-height: 500px) and (orientation: landscape), (max-width: 932px) and (orientation: landscape) {
+  .emulator-container { transform: none; }
+  .canvas-wrapper.gameboy-screen { max-width: calc((100dvh - 64px) * 10 / 9); }
+}
+.emulator-layout.fullscreen-mode .canvas-wrapper.gameboy-screen {
+  max-width: min(100vw, calc(100dvh * 10 / 9));
+}
