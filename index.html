@@ -351,7 +351,7 @@
       const userId=authSession.user.id;
       starterModule().then(module=>module.mountCompanion(host,{client:supabaseClient,isCurrent:()=>authSession?.user.id===userId&&location.hash.slice(1).split('/')[0]===page})).catch(()=>{});
     }).observe(document.querySelector('#app'),{childList:true});
-    const starterModule=()=>import('./features/starter/starter-ui.js?v=johto-7');
+    const starterModule=()=>import('./features/starter/starter-ui.js?v=johto-9');
     const safariModule=()=>window.ChampionSafari?Promise.resolve(window.ChampionSafari):Promise.reject(Error('File features/safari/safari-runtime.js non caricato. Pubblica tutta la cartella features/safari accanto a index.html.'));
     const casinoModule=()=>window.ChampionCasino?Promise.resolve(window.ChampionCasino):Promise.reject(Error('File features/casino/casino-runtime.js non caricato. Verifica che la cartella features sia accanto a index.html.'));
     function render(){
@@ -362,7 +362,7 @@
       if(page==='test-gara-pesca'){location.replace('#fishing');return;}
       if(page==='pokeathlon'){location.replace('#casino');return;}
       const requiresAdmin=page==='admin'||page.startsWith('admin-')||page==='ticket'||page==='gift-ticket';
-      const requiresAuth=['dashboard','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts'].includes(page)||requiresAdmin;
+      const requiresAuth=['dashboard','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts'].includes(page)||requiresAdmin;
       document.querySelector('#nav').innerHTML=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('');
       if(!authReady){document.querySelector('#app').innerHTML='<section class="panel form success"><h2>Connessione sicura…</h2></section>';return}
       if(page==='forgot-password'){document.querySelector('#app').innerHTML=forgotPasswordPage();return}
@@ -380,10 +380,18 @@
           return module.mountBugContest(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la Gara Pigliamosche: '+error.message;});return;
       }
+      if(page==='inventory'){
+        const host=document.createElement('div'),userId=authSession.user.id;
+        host.textContent='Caricamento dello Zaino…';document.querySelector('#app').replaceChildren(host);
+        import('./features/inventory/inventory.mjs?v=1').then(module=>{
+          if(starterRenderVersion!==starterVersion)return;
+          return module.mountInventory(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
+        }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare lo Zaino. Riprova.';console.error(error);});return;
+      }
       if(page==='regions'){
         const host=document.createElement('div'),userId=authSession.user.id;
         host.id='regions-feature';host.textContent='Caricamento delle destinazioni…';document.querySelector('#app').replaceChildren(host);
-        import('./features/regions/regions.mjs?v=johto-2').then(module=>{
+        import('./features/regions/regions.mjs?v=johto-4').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountRegions(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}}});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare le destinazioni. Riprova.';console.error(error);});return;
@@ -413,10 +421,10 @@
         const host=document.querySelector('#safari-feature'),userId=authSession.user.id;
         safariModule().then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountSafari(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}}})}).catch(error=>{if(host.isConnected){const target=host.shadowRoot||host;target.innerHTML='<section role="alert"><h2>Zona Safari non disponibile</h2><p>Il caricamento della sezione non è riuscito.</p><button type="button">Ricarica</button><details open><summary>Dettagli dell’errore</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details></section>';target.querySelector('pre').textContent=error?.message||String(error);target.querySelector('button').addEventListener('click',()=>location.reload());console.error(error);}});return;
       }
-      if(['my-starter','fossil-arena'].includes(page)){
+      if(['my-starter','fossil-arena','starter-inventory'].includes(page)){
         document.querySelector('#app').innerHTML='<div id="starter-feature">Caricamento del tuo starter…</div>';
         const host=document.querySelector('#starter-feature'),userId=authSession.user.id;
-        starterModule().then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountStarter(host,{client:supabaseClient,section:page==='fossil-arena'?'arena':'starter',isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed)loadRemoteTransactions();}}})}).catch(error=>{console.error('Avvio Il mio Starter non riuscito:',error);if(host.isConnected){const target=host.shadowRoot||host;target.innerHTML='<section role="alert"><h2>Il mio Starter non è disponibile</h2><p>Non è stato possibile avviare la sezione. Riprova caricando la versione aggiornata.</p><button type="button" class="btn primary">Ricarica</button><details><summary>Dettaglio errore</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details></section>';target.querySelector('pre').textContent=error instanceof Error?error.name+': '+error.message:String(error);target.querySelector('button').addEventListener('click',()=>location.reload());}});return;
+        starterModule().then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountStarter(host,{client:supabaseClient,section:page==='starter-inventory'?'inventory':page==='fossil-arena'?'arena':'starter',isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed)loadRemoteTransactions();}}})}).catch(error=>{console.error('Avvio Il mio Starter non riuscito:',error);if(host.isConnected){const target=host.shadowRoot||host;target.innerHTML='<section role="alert"><h2>Il mio Starter non è disponibile</h2><p>Non è stato possibile avviare la sezione. Riprova caricando la versione aggiornata.</p><button type="button" class="btn primary">Ricarica</button><details><summary>Dettaglio errore</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details></section>';target.querySelector('pre').textContent=error instanceof Error?error.name+': '+error.message:String(error);target.querySelector('button').addEventListener('click',()=>location.reload());}});return;
       }
       let views={dashboard,gifts:giftsPage,ranking:rankingPage,transfer:transferPage,transactions:transactionsPage,'my-tickets':myTickets,qr:qrPage,scan:scanPage,gym:gymPage,'rocket-list':rocketPage,'fossil-hunt':fossilHuntPage,admin,'admin-gifts':adminGifts,'admin-gyms':adminGyms,'admin-tickets':adminTickets,'admin-badges':adminBadgeManagement,'admin-pokedex':adminPokedex,'admin-rewards':adminRewards,'admin-badge-qrs':adminBadgeQrs,'admin-rocket-events':adminRocketEvents};
       if(page==='activate'){document.querySelector('#app').innerHTML=activationPage(param);return}
@@ -427,7 +435,7 @@
       document.querySelector('#app').innerHTML=page==='trainer'?publicTrainer(param):page==='transfer'?transferPage(param):(views[page]||dashboard)();
       if(page==='dashboard'&&authSession){
         let actions=document.querySelector('#app .actions');
-        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary" type="button" onclick="go('regions')">✈ Visita una regione</button>`);
+        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary" type="button" onclick="go('inventory')">🎒 Zaino</button><button class="btn secondary" type="button" onclick="go('regions')">✈ Visita una regione</button>`);
         if(actions)actions.insertAdjacentHTML('afterbegin','<button class="btn primary with-icon" onclick="go(\'my-starter\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">Il mio Starter</button><button class="btn secondary with-icon" type="button" onclick="go(\'events\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">Eventi</button><button class="btn secondary with-icon" onclick="go(\'fossil-arena\')"><img class="btn-icon" src="./roccia%20icon.png" alt="">Arena Fossili · solo lunedì</button>');
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'bug-contest\')"><img class="btn-icon" src="./net%20ball%20icon.png" alt=""><span>Gara Pigliamosche</span><span id="bug-contest-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'fossil-hunt\')"><img class="btn-icon" src="./roccia%20icon.png" alt=""><span>Caccia ai Fossili</span><span id="fossil-hunt-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'casino\')"><img class="btn-icon" src="./pokeball%20icon.png" alt=""><span>Casinò di Zafferanopoli</span><span id="casino-quick-status" class="quick-event-status">Verifica…</span></button>');updateBugContestQuickStatus();updateFossilQuickStatus();updateCasinoQuickStatus()}
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'fishing\')"><img class="btn-icon" src="./pesca%20icon.png" alt=""><span>Gara di Pesca</span><span id="fishing-quick-status" class="quick-event-status">Verifica…</span></button>');updateFishingQuickStatus()}

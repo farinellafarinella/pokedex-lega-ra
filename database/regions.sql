@@ -8,7 +8,8 @@ create table if not exists public.travel_regions (
  available boolean not null default false
 );
 insert into public.travel_regions(id,name,ticket_price,available)
- values('johto','Johto',2000,false) on conflict(id) do nothing;
+ values('johto','Johto',5000,false)
+ on conflict(id) do update set ticket_price=excluded.ticket_price;
 create table if not exists public.trainer_regions (
  user_id uuid not null references auth.users(id) on delete cascade,
  region_id text not null references public.travel_regions(id),
@@ -20,6 +21,16 @@ alter table public.travel_regions enable row level security;
 alter table public.trainer_regions enable row level security;
 revoke all on public.travel_regions,public.trainer_regions from public,anon,authenticated;
 
+-- Johto: destructive starter replacement, guarded by unlock and content readiness.
+create table if not exists public.region_starter_changes (
+ operation_id uuid primary key,
+ user_id uuid not null references auth.users(id) on delete cascade,
+ starter text not null check(starter in ('chikorita','cyndaquil','totodile')),
+ created_at timestamptz not null default now()
+);
+alter table public.region_starter_changes enable row level security;
+revoke all on public.region_starter_changes from public,anon,authenticated;
+
 create or replace function public.get_region_travel()
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare uid uuid:=auth.uid(); current_balance numeric;
@@ -29,7 +40,10 @@ begin
  return jsonb_build_object('balance',current_balance,'regions',(
   select coalesce(jsonb_agg(jsonb_build_object(
    'id',r.id,'name',r.name,'price',r.ticket_price,'available',r.available,
-   'unlocked',t.user_id is not null,'unlockedAt',t.unlocked_at
+   'unlocked',t.user_id is not null,'unlockedAt',t.unlocked_at,
+   'starterChangeUsed',r.id='johto' and exists(
+    select 1 from public.region_starter_changes c where c.user_id=uid
+   )
   ) order by r.id),'[]'::jsonb)
   from public.travel_regions r left join public.trainer_regions t on t.region_id=r.id and t.user_id=uid
  ));
@@ -72,18 +86,8 @@ revoke all on function public.get_region_travel() from public,anon,authenticated
 revoke all on function public.buy_region_ticket(text) from public,anon,authenticated;
 revoke all on function public.get_region_travel_payments() from public,anon,authenticated;
 grant execute on function public.get_region_travel(),public.buy_region_ticket(text),public.get_region_travel_payments() to authenticated;
--- Johto: destructive starter replacement, guarded by unlock and content readiness.
-create table if not exists public.region_starter_changes (
- operation_id uuid primary key,
- user_id uuid not null references auth.users(id) on delete cascade,
- starter text not null check(starter in ('chikorita','cyndaquil','totodile')),
- created_at timestamptz not null default now()
-);
-alter table public.region_starter_changes enable row level security;
-revoke all on public.region_starter_changes from public,anon,authenticated;
-
 create or replace function public.replace_johto_starter(p_starter text,p_revision bigint,p_operation_id uuid)
-returns jsonb language plpgsql security definer set search_path='' as $
+returns jsonb language plpgsql security definer set search_path='' as $$
 declare
  uid uuid:=auth.uid(); current_balance numeric; game public.starter_games%rowtype;
  previous public.region_starter_changes%rowtype; starting_moves jsonb; next_state jsonb;
@@ -99,6 +103,11 @@ begin
  if found then
   if previous.user_id<>uid or previous.starter<>p_starter then raise exception 'OPERATION_CONFLICT';end if;
   return jsonb_build_object('state',game.state,'revision',game.revision,'balance',current_balance);
+ end if;
+ -- The profile lock serializes changes, including requests from other devices.
+ -- Check after the operation receipt so a retry of the same change still succeeds.
+ if exists(select 1 from public.region_starter_changes where user_id=uid) then
+  raise exception 'JOHTO_STARTER_ALREADY_CHANGED';
  end if;
  if not exists(select 1 from public.travel_regions where id='johto' and available) then raise exception 'REGION_NOT_READY';end if;
  if game.revision<>p_revision then raise exception 'STALE_REVISION';end if;
@@ -121,7 +130,7 @@ begin
  insert into public.region_starter_changes(operation_id,user_id,starter) values(p_operation_id,uid,p_starter);
  return jsonb_build_object('state',game.state,'revision',game.revision,'balance',current_balance);
 end;
-$;
+$$;
 revoke all on function public.replace_johto_starter(text,bigint,uuid) from public,anon,authenticated;
 grant execute on function public.replace_johto_starter(text,bigint,uuid) to authenticated;
 

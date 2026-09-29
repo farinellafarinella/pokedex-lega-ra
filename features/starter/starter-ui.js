@@ -221,7 +221,7 @@ function createStarterAPI(client) {
       : await client.functions.invoke(STARTER_FUNCTION, { body });
     if (error) {
       let payload;
-      const johtoErrors={JOHTO_LOCKED:"Acquista il biglietto per Johto prima di cambiare starter.",REGION_NOT_READY:"I contenuti di Johto sono ancora in preparazione.",STARTER_REQUIRED:"Scegli prima il tuo starter iniziale.",STALE_REVISION:"I progressi sono cambiati: controlla lo starter e conferma nuovamente.",BATTLE_ACTIVE:"Concludi o abbandona la lotta prima di cambiare starter.",FISHING_ACTIVE:"Concludi la pescata prima di cambiare starter."};
+      const johtoErrors={JOHTO_STARTER_ALREADY_CHANGED:"Hai già scelto il tuo starter di Johto. Il cambio è disponibile una sola volta per account.",JOHTO_LOCKED:"Acquista il biglietto per Johto prima di cambiare starter.",REGION_NOT_READY:"I contenuti di Johto sono ancora in preparazione.",STARTER_REQUIRED:"Scegli prima il tuo starter iniziale.",STALE_REVISION:"I progressi sono cambiati: controlla lo starter e conferma nuovamente.",BATTLE_ACTIVE:"Concludi o abbandona la lotta prima di cambiare starter.",FISHING_ACTIVE:"Concludi la pescata prima di cambiare starter."};
       const known=Object.entries(johtoErrors).find(([code])=>error.message?.includes(code));
       if(known)throw Error(known[1]);
       try {
@@ -255,11 +255,12 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   const view = root.querySelector("#view");
   let result = null, page = section, busy = false, message = "", selectedMove = null, difficulty = "balanced", confirmSale = false, pending = null, replacement = null;
   const johtoUnlocked = () => result?.regionTravel?.regions?.some(r=>r.id==='johto'&&r.unlocked&&r.available);
+  const johtoChangeUsed = () => result?.regionTravel?.regions?.some(r=>r.id==='johto'&&r.starterChangeUsed);
   const active = () => result?.state.battle && !result.state.battle.result;
   function render() {
     if (!isCurrent() || !host.isConnected) return;
     const p = result?.state.profile;
-    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Arena Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${[["starter", "Il mio Starter"], ["arena", "Arena Fossili"], ["shop", "Mosse"], ["inventory", "Fossili"]].filter(([id]) => id !== "arena" || section !== "starter" && page !== "starter").map(([id, label]) => button("page", label, busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#fossil-hunt">Caccia ai Fossili classica \u2192</a></p>`;
+    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Arena Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${[["starter", "Il mio Starter"], ["arena", "Arena Fossili"], ["shop", "Mosse"], ["inventory", "Fossili"]].filter(([id]) => id !== "arena" || section !== "starter" && page !== "starter").map(([id, label]) => button("page", label, busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#inventory">🎒 Apri lo Zaino →</a></p><p class="back"><a href="#fossil-hunt">Caccia ai Fossili classica \u2192</a></p>`;
     const body = view.querySelector("#body");
     if (!result) {
       body.innerHTML = button("reload", "Riprova", busy);
@@ -281,8 +282,9 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   }
   function johtoStarter(p) {
     if (!johtoUnlocked()) return '<article><h2>Starter di Johto</h2><p>Chikorita, Cyndaquil e Totodile si sbloccano con il biglietto per Johto.</p><a href="#regions">Visita una regione →</a></article>';
-    if (replacement) return `<article><h2>Sostituisci lo starter con ${SPECIES[replacement].name}</h2><p>${SPECIES[p.starter.species].name} (Lv. ${p.starter.level}) verrà rimosso definitivamente. Perderai il suo livello, la sua esperienza e tutte le mosse apprese. ${SPECIES[replacement].name} inizierà dal livello 5 con 0 XP e le mosse iniziali.</p><p>Saldo, fossili e tentativi premio già consumati restano invariati.</p>${button('confirmJohto','Sostituisci definitivamente',!!active())}${button('cancelJohto','Annulla')}</article>`;
-    return `<article><h2>Scegli uno starter di Johto</h2><p>Il nuovo starter sostituirà completamente quello attuale e ripartirà dal livello 5.</p>${active()?'<p>Concludi la lotta prima di cambiare starter.</p>':''}${JOHTO_STARTERS.map(id=>button('selectJohto',SPECIES[id].name,!!active(),`data-starter="${id}"`)).join('')}</article>`;
+    if (johtoChangeUsed()) return '<article><h2>Starter di Johto</h2><p>Hai già utilizzato il cambio starter di Johto. La scelta è possibile una sola volta per account.</p></article>';
+    if (replacement) return `<article><h2>Sostituisci lo starter con ${SPECIES[replacement].name}</h2><p>${SPECIES[p.starter.species].name} (Lv. ${p.starter.level}) verrà rimosso definitivamente. Perderai il suo livello, la sua esperienza e tutte le mosse apprese. ${SPECIES[replacement].name} inizierà dal livello 5 con 0 XP e le mosse iniziali.</p><p>La scelta è definitiva e disponibile una sola volta per account. Dopo la conferma non potrai scegliere un altro starter di Johto.</p><p>Saldo, fossili e tentativi premio già consumati restano invariati.</p>${button('confirmJohto','Sostituisci definitivamente',!!active())}${button('cancelJohto','Annulla')}</article>`;
+    return `<article><h2>Scegli uno starter di Johto</h2><p>Puoi scegliere Chikorita, Cyndaquil o Totodile una sola volta per account. Il nuovo starter sostituirà completamente quello attuale e ripartirà dal livello 5.</p>${active()?'<p>Concludi la lotta prima di cambiare starter.</p>':''}${JOHTO_STARTERS.map(id=>button('selectJohto',SPECIES[id].name,!!active(),`data-starter="${id}"`)).join('')}</article>`;
   }
   function arenaAccess(){const clock=result?.arenaAccess;return arenaAvailability(clock?.serverNow?new Date(Date.parse(clock.serverNow)+Date.now()-(clock.receivedAt||Date.now())):new Date());}
   function arenaNotice(){const access=arenaAccess();return access.open?'<p>L’Arena è aperta questo lunedì, fino a mezzanotte (ora italiana).</p>':'<article><h2>L’Arena apre solo il lunedì</h2><p>Prossima apertura: '+access.nextDate.split('-').reverse().join('/')+'. Orario italiano.</p><p>Le lotte in corso restano salvate. Puoi riprenderle il lunedì oppure abbandonarle.</p></article>';}
@@ -358,9 +360,9 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
     const b = event.target.closest("button");
     if (!b || b.disabled || busy) return;
     const a = b.dataset.action;
-    if(a==='selectJohto'){replacement=b.dataset.starter;render();return;}
+    if(a==='selectJohto'&&johtoUnlocked()&&!johtoChangeUsed()&&JOHTO_STARTERS.includes(b.dataset.starter)){replacement=b.dataset.starter;render();return;}
     if(a==='cancelJohto'){replacement=null;render();return;}
-    if(a==='confirmJohto'&&replacement){await send({type:'replaceJohto',starter:replacement});return;}
+    if(a==='confirmJohto'&&replacement&&johtoUnlocked()&&!johtoChangeUsed()){await send({type:'replaceJohto',starter:replacement});return;}
     if (a === "reload") {
       await load();
       return;
