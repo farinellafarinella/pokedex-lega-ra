@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game Boy</title><link rel="stylesheet" href="./style.css"></head>
+<body>
+ <main>
+  <section id="chooser">
+   <h1>La tua cartuccia</h1>
+   <p>Scegli il file .gb o .gbc dal dispositivo.</p>
+   <label for="rom">Carica ROM</label><input id="rom" type="file" accept=".gb,.gbc">
+   <button id="local-rom" hidden>Apri Pokémon Rosso dalla cartella locale</button>
+  </section>
+  <p id="status" role="status" aria-live="polite"></p>
+  <div id="screen" hidden><div id="game"></div></div>
+  <button id="retry" hidden>Riprova</button>
+  <details><summary>Comandi e salvataggi</summary><p>Tastiera: frecce per muoverti, Z = A, X = B, Invio = Start, V = Select. Su telefono usa i pulsanti sullo schermo. I comandi si possono modificare nel menu dell’emulatore.</p><p>Salva dal menu di Pokémon e attendi almeno 10 secondi prima di uscire. Per riprendere, carica la stessa ROM nello stesso browser e scegli Continua nel gioco. Dal menu dell’emulatore puoi anche esportare e importare i salvataggi. Cancellare i dati del browser elimina i salvataggi locali.</p></details>
+  <p class="credit">Emulazione: <a href="https://emulatorjs.org/" target="_blank" rel="noopener noreferrer">EmulatorJS</a> · Richiede una connessione Internet.</p>
+ </main>
+ <script type="module" src="./player.mjs"></script>
+</body>
+</html>

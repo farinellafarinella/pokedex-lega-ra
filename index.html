@@ -362,7 +362,7 @@
       if(page==='test-gara-pesca'){location.replace('#fishing');return;}
       if(page==='pokeathlon'){location.replace('#casino');return;}
       const requiresAdmin=page==='admin'||page.startsWith('admin-')||page==='ticket'||page==='gift-ticket';
-      const requiresAuth=['dashboard','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts'].includes(page)||requiresAdmin;
+      const requiresAuth=['dashboard','gameboy','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts'].includes(page)||requiresAdmin;
       document.querySelector('#nav').innerHTML=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('');
       if(!authReady){document.querySelector('#app').innerHTML='<section class="panel form success"><h2>Connessione sicura…</h2></section>';return}
       if(page==='forgot-password'){document.querySelector('#app').innerHTML=forgotPasswordPage();return}
@@ -379,6 +379,10 @@
           if(starterRenderVersion!==starterVersion)return;
           return module.mountBugContest(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la Gara Pigliamosche: '+error.message;});return;
+      }
+      if(page==='gameboy'){
+        const host=document.createElement('div');host.textContent='Caricamento Game Boy…';document.querySelector('#app').replaceChildren(host);
+        import('./features/gameboy/gameboy.mjs?v=1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host);}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
       }
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
@@ -435,7 +439,7 @@
       document.querySelector('#app').innerHTML=page==='trainer'?publicTrainer(param):page==='transfer'?transferPage(param):(views[page]||dashboard)();
       if(page==='dashboard'&&authSession){
         let actions=document.querySelector('#app .actions');
-        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary" type="button" onclick="go('inventory')">🎒 Zaino</button><button class="btn secondary" type="button" onclick="go('regions')">✈ Visita una regione</button>`);
+        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary" type="button" onclick="go('inventory')">🎒 Zaino</button><button class="btn secondary" type="button" onclick="go('gameboy')">🎮 Game Boy · Pokémon Rosso</button><button class="btn secondary" type="button" onclick="go('regions')">✈ Visita una regione</button>`);
         if(actions)actions.insertAdjacentHTML('afterbegin','<button class="btn primary with-icon" onclick="go(\'my-starter\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">Il mio Starter</button><button class="btn secondary with-icon" type="button" onclick="go(\'events\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">Eventi</button><button class="btn secondary with-icon" onclick="go(\'fossil-arena\')"><img class="btn-icon" src="./roccia%20icon.png" alt="">Arena Fossili · solo lunedì</button>');
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'bug-contest\')"><img class="btn-icon" src="./net%20ball%20icon.png" alt=""><span>Gara Pigliamosche</span><span id="bug-contest-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'fossil-hunt\')"><img class="btn-icon" src="./roccia%20icon.png" alt=""><span>Caccia ai Fossili</span><span id="fossil-hunt-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'casino\')"><img class="btn-icon" src="./pokeball%20icon.png" alt=""><span>Casinò di Zafferanopoli</span><span id="casino-quick-status" class="quick-event-status">Verifica…</span></button>');updateBugContestQuickStatus();updateFossilQuickStatus();updateCasinoQuickStatus()}
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'fishing\')"><img class="btn-icon" src="./pesca%20icon.png" alt=""><span>Gara di Pesca</span><span id="fishing-quick-status" class="quick-event-status">Verifica…</span></button>');updateFishingQuickStatus()}
