@@ -1,0 +1,20 @@
+{
+  "medium_fast": {
+    "formula": "n^3"
+  },
+  "slightly_fast": {
+    "formula": "(3/4)n^3 + 10n^2 - 30"
+  },
+  "slightly_slow": {
+    "formula": "(3/4)n^3 + 20n^2 - 70"
+  },
+  "medium_slow": {
+    "formula": "(6/5)n^3 - 15n^2 + 100n - 140"
+  },
+  "fast": {
+    "formula": "(4/5)n^3"
+  },
+  "slow": {
+    "formula": "(5/4)n^3"
+  }
+}

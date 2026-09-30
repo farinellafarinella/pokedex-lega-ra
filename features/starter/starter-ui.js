@@ -216,6 +216,7 @@ function validateStarterResponse(data) {
 var STARTER_FUNCTION = "bright-processor";
 function createStarterAPI(client) {
   async function request(body) {
+    if(body.type==='replaceJohto')throw Error("Lo starter non può essere sostituito definitivamente.");
     const { data, error } = body.type === 'replaceJohto'
       ? await client.rpc('replace_johto_starter',{p_starter:body.starter,p_revision:body.revision,p_operation_id:body.operationId})
       : await client.functions.invoke(STARTER_FUNCTION, { body });
@@ -249,7 +250,7 @@ var escape = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "
 var typeLabel = (id) => SPECIES[id].types.map((t) => types[t]).join(" / ");
 var button = (action, label, disabled = false, extra = "") => `<button data-action="${action}" ${disabled ? "disabled" : ""} ${extra}>${label}</button>`;
 async function mountStarter(host, { client, section = "starter", onBalance = () => {
-}, isCurrent = () => true }) {
+}, isCurrent = () => true, onStateChanged = () => {} }) {
   const root = host.attachShadow({ mode: "open" }), api = createStarterAPI(client);
   root.innerHTML = `<link rel="stylesheet" href="${new URL("./style.css?v=fossil-cave-1", import.meta.url)}"><div id="view">Caricamento del tuo starter\u2026</div>`;
   const view = root.querySelector("#view");
@@ -270,7 +271,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       body.innerHTML = `<p>Scegli il compagno che ti accompagner\xE0 nei minigiochi. La scelta \xE8 legata al tuo account.</p><div class="choices">${Object.keys(LINES).filter(id=>!JOHTO_STARTERS.includes(id)).map((id) => `<article>${artwork(id)}<h2>${SPECIES[id].name}</h2><small>${typeLabel(id)}</small><p>${DESCRIPTION[id]}</p>${button("choose", "Scegli questo Pok\xE9mon", busy, `data-starter="${id}" aria-label="Scegli ${SPECIES[id].name}"`)}</article>`).join("")}</div>`;
       return;
     }
-    if (page === "starter") body.innerHTML = starter(p) + johtoStarter(p);
+    if (page === "starter") body.innerHTML = starter(p);
     if (page === "arena") body.innerHTML = arena(p);
     if (page === "shop") body.innerHTML = shop(p);
     if (page === "inventory") body.innerHTML = inventory(p);
@@ -279,12 +280,6 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   function starter(p) {
     const s = p.starter, creature = starterPokemon(p), rule = EVOLUTIONS[s.species], line = LINES[s.origin], stage = line.indexOf(s.species), next = xpRequired(s.level);
     return `<article class="hero">${starterPortrait(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte 1 contro 1 saranno disponibili in futuro.</p><p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
-  }
-  function johtoStarter(p) {
-    if (!johtoUnlocked()) return '<article><h2>Starter di Johto</h2><p>Chikorita, Cyndaquil e Totodile si sbloccano con il biglietto per Johto.</p><a href="#regions">Visita una regione →</a></article>';
-    if (johtoChangeUsed()) return '<article><h2>Starter di Johto</h2><p>Hai già utilizzato il cambio starter di Johto. La scelta è possibile una sola volta per account.</p></article>';
-    if (replacement) return `<article><h2>Sostituisci lo starter con ${SPECIES[replacement].name}</h2><p>${SPECIES[p.starter.species].name} (Lv. ${p.starter.level}) verrà rimosso definitivamente. Perderai il suo livello, la sua esperienza e tutte le mosse apprese. ${SPECIES[replacement].name} inizierà dal livello 5 con 0 XP e le mosse iniziali.</p><p>La scelta è definitiva e disponibile una sola volta per account. Dopo la conferma non potrai scegliere un altro starter di Johto.</p><p>Saldo, fossili e tentativi premio già consumati restano invariati.</p>${button('confirmJohto','Sostituisci definitivamente',!!active())}${button('cancelJohto','Annulla')}</article>`;
-    return `<article><h2>Scegli uno starter di Johto</h2><p>Puoi scegliere Chikorita, Cyndaquil o Totodile una sola volta per account. Il nuovo starter sostituirà completamente quello attuale e ripartirà dal livello 5.</p>${active()?'<p>Concludi la lotta prima di cambiare starter.</p>':''}${JOHTO_STARTERS.map(id=>button('selectJohto',SPECIES[id].name,!!active(),`data-starter="${id}"`)).join('')}</article>`;
   }
   function arenaAccess(){const clock=result?.arenaAccess;return arenaAvailability(clock?.serverNow?new Date(Date.parse(clock.serverNow)+Date.now()-(clock.receivedAt||Date.now())):new Date());}
   function arenaNotice(){const access=arenaAccess();return access.open?'<p>L’Arena è aperta questo lunedì, fino a mezzanotte (ora italiana).</p>':'<article><h2>L’Arena apre solo il lunedì</h2><p>Prossima apertura: '+access.nextDate.split('-').reverse().join('/')+'. Orario italiano.</p><p>Le lotte in corso restano salvate. Puoi riprenderle il lunedì oppure abbandonarle.</p></article>';}
@@ -339,6 +334,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       pending = null;
       if(command.type==='replaceJohto'){replacement=null;selectedMove=null;}
       message = "Progressi salvati.";
+      await onStateChanged();
       onBalance(data.balance);
     } catch (error) {
       message = error.message;

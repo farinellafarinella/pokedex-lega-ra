@@ -1,0 +1,12 @@
+{
+  "provider": "Project Pokémon",
+  "frontTemplate": "https://projectpokemon.org/images/normal-sprite/{slug}.gif",
+  "backTemplate": "https://projectpokemon.org/images/sprites-models/normal-back/{slug}.gif",
+  "battleBox": {
+    "width": 132,
+    "height": 132,
+    "maxSpriteWidth": 112,
+    "maxSpriteHeight": 112,
+    "objectFit": "contain"
+  }
+}
