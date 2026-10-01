@@ -2,7 +2,7 @@
   "POUND": {
     "id": 1,
     "key": "POUND",
-    "name": "Pound",
+    "name": "Botta",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -14,7 +14,7 @@
   "KARATE_CHOP": {
     "id": 2,
     "key": "KARATE_CHOP",
-    "name": "Karate Chop",
+    "name": "Colpokarate",
     "type": "fighting",
     "category": "physical",
     "power": 50,
@@ -26,7 +26,7 @@
   "DOUBLESLAP": {
     "id": 3,
     "key": "DOUBLESLAP",
-    "name": "DoubleSlap",
+    "name": "Doppiasberla",
     "type": "normal",
     "category": "physical",
     "power": 15,
@@ -38,7 +38,7 @@
   "COMET_PUNCH": {
     "id": 4,
     "key": "COMET_PUNCH",
-    "name": "Comet Punch",
+    "name": "Cometapugno",
     "type": "normal",
     "category": "physical",
     "power": 18,
@@ -50,7 +50,7 @@
   "MEGA_PUNCH": {
     "id": 5,
     "key": "MEGA_PUNCH",
-    "name": "Mega Punch",
+    "name": "Megapugno",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -62,7 +62,7 @@
   "PAY_DAY": {
     "id": 6,
     "key": "PAY_DAY",
-    "name": "Pay Day",
+    "name": "Giornopaga",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -74,7 +74,7 @@
   "FIRE_PUNCH": {
     "id": 7,
     "key": "FIRE_PUNCH",
-    "name": "Fire Punch",
+    "name": "Fuocopugno",
     "type": "fire",
     "category": "special",
     "power": 75,
@@ -86,7 +86,7 @@
   "ICE_PUNCH": {
     "id": 8,
     "key": "ICE_PUNCH",
-    "name": "Ice Punch",
+    "name": "Gelopugno",
     "type": "ice",
     "category": "special",
     "power": 75,
@@ -98,7 +98,7 @@
   "THUNDERPUNCH": {
     "id": 9,
     "key": "THUNDERPUNCH",
-    "name": "ThunderPunch",
+    "name": "Tuonopugno",
     "type": "electric",
     "category": "special",
     "power": 75,
@@ -110,7 +110,7 @@
   "SCRATCH": {
     "id": 10,
     "key": "SCRATCH",
-    "name": "Scratch",
+    "name": "Graffio",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -122,7 +122,7 @@
   "VICEGRIP": {
     "id": 11,
     "key": "VICEGRIP",
-    "name": "ViceGrip",
+    "name": "Presa",
     "type": "normal",
     "category": "physical",
     "power": 55,
@@ -134,7 +134,7 @@
   "GUILLOTINE": {
     "id": 12,
     "key": "GUILLOTINE",
-    "name": "Guillotine",
+    "name": "Ghigliottina",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -146,7 +146,7 @@
   "RAZOR_WIND": {
     "id": 13,
     "key": "RAZOR_WIND",
-    "name": "Razor Wind",
+    "name": "Ventagliente",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -158,7 +158,7 @@
   "SWORDS_DANCE": {
     "id": 14,
     "key": "SWORDS_DANCE",
-    "name": "Swords Dance",
+    "name": "Danzaspada",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -170,7 +170,7 @@
   "CUT": {
     "id": 15,
     "key": "CUT",
-    "name": "Cut",
+    "name": "Taglio",
     "type": "normal",
     "category": "physical",
     "power": 50,
@@ -182,7 +182,7 @@
   "GUST": {
     "id": 16,
     "key": "GUST",
-    "name": "Gust",
+    "name": "Raffica",
     "type": "flying",
     "category": "physical",
     "power": 40,
@@ -194,7 +194,7 @@
   "WING_ATTACK": {
     "id": 17,
     "key": "WING_ATTACK",
-    "name": "Wing Attack",
+    "name": "Attacco d’Ala",
     "type": "flying",
     "category": "physical",
     "power": 60,
@@ -206,7 +206,7 @@
   "WHIRLWIND": {
     "id": 18,
     "key": "WHIRLWIND",
-    "name": "Whirlwind",
+    "name": "Turbine",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -218,7 +218,7 @@
   "FLY": {
     "id": 19,
     "key": "FLY",
-    "name": "Fly",
+    "name": "Volo",
     "type": "flying",
     "category": "physical",
     "power": 70,
@@ -230,7 +230,7 @@
   "BIND": {
     "id": 20,
     "key": "BIND",
-    "name": "Bind",
+    "name": "Legatutto",
     "type": "normal",
     "category": "physical",
     "power": 15,
@@ -242,7 +242,7 @@
   "SLAM": {
     "id": 21,
     "key": "SLAM",
-    "name": "Slam",
+    "name": "Schianto",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -254,7 +254,7 @@
   "VINE_WHIP": {
     "id": 22,
     "key": "VINE_WHIP",
-    "name": "Vine Whip",
+    "name": "Frustata",
     "type": "grass",
     "category": "special",
     "power": 35,
@@ -266,7 +266,7 @@
   "STOMP": {
     "id": 23,
     "key": "STOMP",
-    "name": "Stomp",
+    "name": "Pestone",
     "type": "normal",
     "category": "physical",
     "power": 65,
@@ -278,7 +278,7 @@
   "DOUBLE_KICK": {
     "id": 24,
     "key": "DOUBLE_KICK",
-    "name": "Double Kick",
+    "name": "Doppiocalcio",
     "type": "fighting",
     "category": "physical",
     "power": 30,
@@ -290,7 +290,7 @@
   "MEGA_KICK": {
     "id": 25,
     "key": "MEGA_KICK",
-    "name": "Mega Kick",
+    "name": "Megacalcio",
     "type": "normal",
     "category": "physical",
     "power": 120,
@@ -302,7 +302,7 @@
   "JUMP_KICK": {
     "id": 26,
     "key": "JUMP_KICK",
-    "name": "Jump Kick",
+    "name": "Calciosalto",
     "type": "fighting",
     "category": "physical",
     "power": 70,
@@ -314,7 +314,7 @@
   "ROLLING_KICK": {
     "id": 27,
     "key": "ROLLING_KICK",
-    "name": "Rolling Kick",
+    "name": "Calciorullo",
     "type": "fighting",
     "category": "physical",
     "power": 60,
@@ -326,7 +326,7 @@
   "SAND_ATTACK": {
     "id": 28,
     "key": "SAND_ATTACK",
-    "name": "Sand Attack",
+    "name": "Turbosabbia",
     "type": "ground",
     "category": "status",
     "power": 0,
@@ -338,7 +338,7 @@
   "HEADBUTT": {
     "id": 29,
     "key": "HEADBUTT",
-    "name": "Headbutt",
+    "name": "Bottintesta",
     "type": "normal",
     "category": "physical",
     "power": 70,
@@ -350,7 +350,7 @@
   "HORN_ATTACK": {
     "id": 30,
     "key": "HORN_ATTACK",
-    "name": "Horn Attack",
+    "name": "Incornata",
     "type": "normal",
     "category": "physical",
     "power": 65,
@@ -362,7 +362,7 @@
   "FURY_ATTACK": {
     "id": 31,
     "key": "FURY_ATTACK",
-    "name": "Fury Attack",
+    "name": "Furia",
     "type": "normal",
     "category": "physical",
     "power": 15,
@@ -374,7 +374,7 @@
   "HORN_DRILL": {
     "id": 32,
     "key": "HORN_DRILL",
-    "name": "Horn Drill",
+    "name": "Perforcorno",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -386,7 +386,7 @@
   "TACKLE": {
     "id": 33,
     "key": "TACKLE",
-    "name": "Tackle",
+    "name": "Azione",
     "type": "normal",
     "category": "physical",
     "power": 35,
@@ -398,7 +398,7 @@
   "BODY_SLAM": {
     "id": 34,
     "key": "BODY_SLAM",
-    "name": "Body Slam",
+    "name": "Corposcontro",
     "type": "normal",
     "category": "physical",
     "power": 85,
@@ -410,7 +410,7 @@
   "WRAP": {
     "id": 35,
     "key": "WRAP",
-    "name": "Wrap",
+    "name": "Avvolgibotta",
     "type": "normal",
     "category": "physical",
     "power": 15,
@@ -422,7 +422,7 @@
   "TAKE_DOWN": {
     "id": 36,
     "key": "TAKE_DOWN",
-    "name": "Take Down",
+    "name": "Riduttore",
     "type": "normal",
     "category": "physical",
     "power": 90,
@@ -434,7 +434,7 @@
   "THRASH": {
     "id": 37,
     "key": "THRASH",
-    "name": "Thrash",
+    "name": "Colpo",
     "type": "normal",
     "category": "physical",
     "power": 90,
@@ -446,7 +446,7 @@
   "DOUBLE_EDGE": {
     "id": 38,
     "key": "DOUBLE_EDGE",
-    "name": "Double Edge",
+    "name": "Sdoppiatore",
     "type": "normal",
     "category": "physical",
     "power": 120,
@@ -458,7 +458,7 @@
   "TAIL_WHIP": {
     "id": 39,
     "key": "TAIL_WHIP",
-    "name": "Tail Whip",
+    "name": "Colpocoda",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -470,7 +470,7 @@
   "POISON_STING": {
     "id": 40,
     "key": "POISON_STING",
-    "name": "Poison Sting",
+    "name": "Velenospina",
     "type": "poison",
     "category": "physical",
     "power": 15,
@@ -482,7 +482,7 @@
   "TWINEEDLE": {
     "id": 41,
     "key": "TWINEEDLE",
-    "name": "Twineedle",
+    "name": "Doppio Ago",
     "type": "bug",
     "category": "physical",
     "power": 25,
@@ -494,7 +494,7 @@
   "PIN_MISSILE": {
     "id": 42,
     "key": "PIN_MISSILE",
-    "name": "Pin Missile",
+    "name": "Missilspillo",
     "type": "bug",
     "category": "physical",
     "power": 14,
@@ -506,7 +506,7 @@
   "LEER": {
     "id": 43,
     "key": "LEER",
-    "name": "Leer",
+    "name": "Fulmisguardo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -518,7 +518,7 @@
   "BITE": {
     "id": 44,
     "key": "BITE",
-    "name": "Bite",
+    "name": "Morso",
     "type": "dark",
     "category": "special",
     "power": 60,
@@ -530,7 +530,7 @@
   "GROWL": {
     "id": 45,
     "key": "GROWL",
-    "name": "Growl",
+    "name": "Ruggito",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -542,7 +542,7 @@
   "ROAR": {
     "id": 46,
     "key": "ROAR",
-    "name": "Roar",
+    "name": "Boato",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -554,7 +554,7 @@
   "SING": {
     "id": 47,
     "key": "SING",
-    "name": "Sing",
+    "name": "Canto",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -566,7 +566,7 @@
   "SUPERSONIC": {
     "id": 48,
     "key": "SUPERSONIC",
-    "name": "Supersonic",
+    "name": "Supersuono",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -590,7 +590,7 @@
   "DISABLE": {
     "id": 50,
     "key": "DISABLE",
-    "name": "Disable",
+    "name": "Inibitore",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -602,7 +602,7 @@
   "ACID": {
     "id": 51,
     "key": "ACID",
-    "name": "Acid",
+    "name": "Acido",
     "type": "poison",
     "category": "physical",
     "power": 40,
@@ -614,7 +614,7 @@
   "EMBER": {
     "id": 52,
     "key": "EMBER",
-    "name": "Ember",
+    "name": "Braciere",
     "type": "fire",
     "category": "special",
     "power": 40,
@@ -626,7 +626,7 @@
   "FLAMETHROWER": {
     "id": 53,
     "key": "FLAMETHROWER",
-    "name": "Flamethrower",
+    "name": "Lanciafiamme",
     "type": "fire",
     "category": "special",
     "power": 95,
@@ -638,7 +638,7 @@
   "MIST": {
     "id": 54,
     "key": "MIST",
-    "name": "Mist",
+    "name": "Nebbia",
     "type": "ice",
     "category": "status",
     "power": 0,
@@ -650,7 +650,7 @@
   "WATER_GUN": {
     "id": 55,
     "key": "WATER_GUN",
-    "name": "Water Gun",
+    "name": "Pistolacqua",
     "type": "water",
     "category": "special",
     "power": 40,
@@ -662,7 +662,7 @@
   "HYDRO_PUMP": {
     "id": 56,
     "key": "HYDRO_PUMP",
-    "name": "Hydro Pump",
+    "name": "Idropompa",
     "type": "water",
     "category": "special",
     "power": 120,
@@ -686,7 +686,7 @@
   "ICE_BEAM": {
     "id": 58,
     "key": "ICE_BEAM",
-    "name": "Ice Beam",
+    "name": "Geloraggio",
     "type": "ice",
     "category": "special",
     "power": 95,
@@ -698,7 +698,7 @@
   "BLIZZARD": {
     "id": 59,
     "key": "BLIZZARD",
-    "name": "Blizzard",
+    "name": "Bora",
     "type": "ice",
     "category": "special",
     "power": 120,
@@ -710,7 +710,7 @@
   "PSYBEAM": {
     "id": 60,
     "key": "PSYBEAM",
-    "name": "Psybeam",
+    "name": "Psicoraggio",
     "type": "psychic",
     "category": "special",
     "power": 65,
@@ -722,7 +722,7 @@
   "BUBBLEBEAM": {
     "id": 61,
     "key": "BUBBLEBEAM",
-    "name": "Bubblebeam",
+    "name": "Bollaraggio",
     "type": "water",
     "category": "special",
     "power": 65,
@@ -734,7 +734,7 @@
   "AURORA_BEAM": {
     "id": 62,
     "key": "AURORA_BEAM",
-    "name": "Aurora Beam",
+    "name": "Raggiaurora",
     "type": "ice",
     "category": "special",
     "power": 65,
@@ -746,7 +746,7 @@
   "HYPER_BEAM": {
     "id": 63,
     "key": "HYPER_BEAM",
-    "name": "Hyper Beam",
+    "name": "Iper Raggio",
     "type": "normal",
     "category": "physical",
     "power": 150,
@@ -758,7 +758,7 @@
   "PECK": {
     "id": 64,
     "key": "PECK",
-    "name": "Peck",
+    "name": "Beccata",
     "type": "flying",
     "category": "physical",
     "power": 35,
@@ -770,7 +770,7 @@
   "DRILL_PECK": {
     "id": 65,
     "key": "DRILL_PECK",
-    "name": "Drill Peck",
+    "name": "Perforbecco",
     "type": "flying",
     "category": "physical",
     "power": 80,
@@ -782,7 +782,7 @@
   "SUBMISSION": {
     "id": 66,
     "key": "SUBMISSION",
-    "name": "Submission",
+    "name": "Sottomissione",
     "type": "fighting",
     "category": "physical",
     "power": 80,
@@ -794,7 +794,7 @@
   "LOW_KICK": {
     "id": 67,
     "key": "LOW_KICK",
-    "name": "Low Kick",
+    "name": "Colpo Basso",
     "type": "fighting",
     "category": "physical",
     "power": 50,
@@ -806,7 +806,7 @@
   "COUNTER": {
     "id": 68,
     "key": "COUNTER",
-    "name": "Counter",
+    "name": "Contrattacco",
     "type": "fighting",
     "category": "physical",
     "power": 1,
@@ -818,7 +818,7 @@
   "SEISMIC_TOSS": {
     "id": 69,
     "key": "SEISMIC_TOSS",
-    "name": "Seismic Toss",
+    "name": "Movim. Sismico",
     "type": "fighting",
     "category": "physical",
     "power": 1,
@@ -830,7 +830,7 @@
   "STRENGTH": {
     "id": 70,
     "key": "STRENGTH",
-    "name": "Strength",
+    "name": "Forza",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -842,7 +842,7 @@
   "ABSORB": {
     "id": 71,
     "key": "ABSORB",
-    "name": "Absorb",
+    "name": "Assorbimento",
     "type": "grass",
     "category": "special",
     "power": 20,
@@ -854,7 +854,7 @@
   "MEGA_DRAIN": {
     "id": 72,
     "key": "MEGA_DRAIN",
-    "name": "Mega Drain",
+    "name": "Megassorbimento",
     "type": "grass",
     "category": "special",
     "power": 40,
@@ -866,7 +866,7 @@
   "LEECH_SEED": {
     "id": 73,
     "key": "LEECH_SEED",
-    "name": "Leech Seed",
+    "name": "Parassiseme",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -878,7 +878,7 @@
   "GROWTH": {
     "id": 74,
     "key": "GROWTH",
-    "name": "Growth",
+    "name": "Crescita",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -890,7 +890,7 @@
   "RAZOR_LEAF": {
     "id": 75,
     "key": "RAZOR_LEAF",
-    "name": "Razor Leaf",
+    "name": "Foglielama",
     "type": "grass",
     "category": "special",
     "power": 55,
@@ -902,7 +902,7 @@
   "SOLARBEAM": {
     "id": 76,
     "key": "SOLARBEAM",
-    "name": "SolarBeam",
+    "name": "Solarraggio",
     "type": "grass",
     "category": "special",
     "power": 120,
@@ -914,7 +914,7 @@
   "POISONPOWDER": {
     "id": 77,
     "key": "POISONPOWDER",
-    "name": "Poisonpowder",
+    "name": "Velenpolvere",
     "type": "poison",
     "category": "status",
     "power": 0,
@@ -926,7 +926,7 @@
   "STUN_SPORE": {
     "id": 78,
     "key": "STUN_SPORE",
-    "name": "Stun Spore",
+    "name": "Paralizzante",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -938,7 +938,7 @@
   "SLEEP_POWDER": {
     "id": 79,
     "key": "SLEEP_POWDER",
-    "name": "Sleep Powder",
+    "name": "Sonnifero",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -950,7 +950,7 @@
   "PETAL_DANCE": {
     "id": 80,
     "key": "PETAL_DANCE",
-    "name": "Petal Dance",
+    "name": "Petalodanza",
     "type": "grass",
     "category": "special",
     "power": 70,
@@ -962,7 +962,7 @@
   "STRING_SHOT": {
     "id": 81,
     "key": "STRING_SHOT",
-    "name": "String Shot",
+    "name": "Millebave",
     "type": "bug",
     "category": "status",
     "power": 0,
@@ -974,7 +974,7 @@
   "DRAGON_RAGE": {
     "id": 82,
     "key": "DRAGON_RAGE",
-    "name": "Dragon Rage",
+    "name": "Ira di Drago",
     "type": "dragon",
     "category": "special",
     "power": 40,
@@ -986,7 +986,7 @@
   "FIRE_SPIN": {
     "id": 83,
     "key": "FIRE_SPIN",
-    "name": "Fire Spin",
+    "name": "Turbofuoco",
     "type": "fire",
     "category": "special",
     "power": 15,
@@ -998,7 +998,7 @@
   "THUNDERSHOCK": {
     "id": 84,
     "key": "THUNDERSHOCK",
-    "name": "ThunderShock",
+    "name": "Tuonoshock",
     "type": "electric",
     "category": "special",
     "power": 40,
@@ -1010,7 +1010,7 @@
   "THUNDERBOLT": {
     "id": 85,
     "key": "THUNDERBOLT",
-    "name": "Thunderbolt",
+    "name": "Fulmine",
     "type": "electric",
     "category": "special",
     "power": 95,
@@ -1022,7 +1022,7 @@
   "THUNDER_WAVE": {
     "id": 86,
     "key": "THUNDER_WAVE",
-    "name": "Thunder Wave",
+    "name": "Tuononda",
     "type": "electric",
     "category": "status",
     "power": 0,
@@ -1034,7 +1034,7 @@
   "THUNDER": {
     "id": 87,
     "key": "THUNDER",
-    "name": "Thunder",
+    "name": "Tuono",
     "type": "electric",
     "category": "special",
     "power": 120,
@@ -1046,7 +1046,7 @@
   "ROCK_THROW": {
     "id": 88,
     "key": "ROCK_THROW",
-    "name": "Rock Throw",
+    "name": "Sassata",
     "type": "rock",
     "category": "physical",
     "power": 50,
@@ -1058,7 +1058,7 @@
   "EARTHQUAKE": {
     "id": 89,
     "key": "EARTHQUAKE",
-    "name": "Earthquake",
+    "name": "Terremoto",
     "type": "ground",
     "category": "physical",
     "power": 100,
@@ -1070,7 +1070,7 @@
   "FISSURE": {
     "id": 90,
     "key": "FISSURE",
-    "name": "Fissure",
+    "name": "Abisso",
     "type": "ground",
     "category": "physical",
     "power": 1,
@@ -1082,7 +1082,7 @@
   "DIG": {
     "id": 91,
     "key": "DIG",
-    "name": "Dig",
+    "name": "Fossa",
     "type": "ground",
     "category": "physical",
     "power": 60,
@@ -1094,7 +1094,7 @@
   "TOXIC": {
     "id": 92,
     "key": "TOXIC",
-    "name": "Toxic",
+    "name": "Tossina",
     "type": "poison",
     "category": "status",
     "power": 0,
@@ -1106,7 +1106,7 @@
   "CONFUSION": {
     "id": 93,
     "key": "CONFUSION",
-    "name": "Confusion",
+    "name": "Confusione",
     "type": "psychic",
     "category": "special",
     "power": 50,
@@ -1118,7 +1118,7 @@
   "PSYCHIC_M": {
     "id": 94,
     "key": "PSYCHIC_M",
-    "name": "Psychic",
+    "name": "Psichico",
     "type": "psychic",
     "category": "special",
     "power": 90,
@@ -1130,7 +1130,7 @@
   "HYPNOSIS": {
     "id": 95,
     "key": "HYPNOSIS",
-    "name": "Hypnosis",
+    "name": "Ipnosi",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1142,7 +1142,7 @@
   "MEDITATE": {
     "id": 96,
     "key": "MEDITATE",
-    "name": "Meditate",
+    "name": "Meditazione",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1154,7 +1154,7 @@
   "AGILITY": {
     "id": 97,
     "key": "AGILITY",
-    "name": "Agility",
+    "name": "Agilità",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1166,7 +1166,7 @@
   "QUICK_ATTACK": {
     "id": 98,
     "key": "QUICK_ATTACK",
-    "name": "Quick Attack",
+    "name": "Attacco Rapido",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -1178,7 +1178,7 @@
   "RAGE": {
     "id": 99,
     "key": "RAGE",
-    "name": "Rage",
+    "name": "Ira",
     "type": "normal",
     "category": "physical",
     "power": 20,
@@ -1190,7 +1190,7 @@
   "TELEPORT": {
     "id": 100,
     "key": "TELEPORT",
-    "name": "Teleport",
+    "name": "Teletrasporto",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1202,7 +1202,7 @@
   "NIGHT_SHADE": {
     "id": 101,
     "key": "NIGHT_SHADE",
-    "name": "Night Shade",
+    "name": "Ombra Notturna",
     "type": "ghost",
     "category": "physical",
     "power": 1,
@@ -1214,7 +1214,7 @@
   "MIMIC": {
     "id": 102,
     "key": "MIMIC",
-    "name": "Mimic",
+    "name": "Mimica",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1226,7 +1226,7 @@
   "SCREECH": {
     "id": 103,
     "key": "SCREECH",
-    "name": "Screech",
+    "name": "Stridio",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1238,7 +1238,7 @@
   "DOUBLE_TEAM": {
     "id": 104,
     "key": "DOUBLE_TEAM",
-    "name": "Double Team",
+    "name": "Doppioteam",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1250,7 +1250,7 @@
   "RECOVER": {
     "id": 105,
     "key": "RECOVER",
-    "name": "Recover",
+    "name": "Ripresa",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1262,7 +1262,7 @@
   "HARDEN": {
     "id": 106,
     "key": "HARDEN",
-    "name": "Harden",
+    "name": "Rafforzatore",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1274,7 +1274,7 @@
   "MINIMIZE": {
     "id": 107,
     "key": "MINIMIZE",
-    "name": "Minimize",
+    "name": "Minimizzato",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1286,7 +1286,7 @@
   "SMOKESCREEN": {
     "id": 108,
     "key": "SMOKESCREEN",
-    "name": "Smokescreen",
+    "name": "Muro di Fumo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1298,7 +1298,7 @@
   "CONFUSE_RAY": {
     "id": 109,
     "key": "CONFUSE_RAY",
-    "name": "Confuse Ray",
+    "name": "Stordiraggio",
     "type": "ghost",
     "category": "status",
     "power": 0,
@@ -1310,7 +1310,7 @@
   "WITHDRAW": {
     "id": 110,
     "key": "WITHDRAW",
-    "name": "Withdraw",
+    "name": "Ritirata",
     "type": "water",
     "category": "status",
     "power": 0,
@@ -1322,7 +1322,7 @@
   "DEFENSE_CURL": {
     "id": 111,
     "key": "DEFENSE_CURL",
-    "name": "Defense Curl",
+    "name": "Ricciolscudo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1334,7 +1334,7 @@
   "BARRIER": {
     "id": 112,
     "key": "BARRIER",
-    "name": "Barrier",
+    "name": "Barriera",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1346,7 +1346,7 @@
   "LIGHT_SCREEN": {
     "id": 113,
     "key": "LIGHT_SCREEN",
-    "name": "Light Screen",
+    "name": "Schermoluce",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1358,7 +1358,7 @@
   "HAZE": {
     "id": 114,
     "key": "HAZE",
-    "name": "Haze",
+    "name": "Nube",
     "type": "ice",
     "category": "status",
     "power": 0,
@@ -1370,7 +1370,7 @@
   "REFLECT": {
     "id": 115,
     "key": "REFLECT",
-    "name": "Reflect",
+    "name": "Riflesso",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1382,7 +1382,7 @@
   "FOCUS_ENERGY": {
     "id": 116,
     "key": "FOCUS_ENERGY",
-    "name": "Focus Energy",
+    "name": "Focalenergia",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1394,7 +1394,7 @@
   "BIDE": {
     "id": 117,
     "key": "BIDE",
-    "name": "Bide",
+    "name": "Pazienza",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1406,7 +1406,7 @@
   "METRONOME": {
     "id": 118,
     "key": "METRONOME",
-    "name": "Metronome",
+    "name": "Metronomo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1418,7 +1418,7 @@
   "MIRROR_MOVE": {
     "id": 119,
     "key": "MIRROR_MOVE",
-    "name": "Mirror Move",
+    "name": "Speculmossa",
     "type": "flying",
     "category": "status",
     "power": 0,
@@ -1430,7 +1430,7 @@
   "SELFDESTRUCT": {
     "id": 120,
     "key": "SELFDESTRUCT",
-    "name": "Selfdestruct",
+    "name": "Autodistruzione",
     "type": "normal",
     "category": "physical",
     "power": 200,
@@ -1442,7 +1442,7 @@
   "EGG_BOMB": {
     "id": 121,
     "key": "EGG_BOMB",
-    "name": "Egg Bomb",
+    "name": "Uovobomba",
     "type": "normal",
     "category": "physical",
     "power": 100,
@@ -1454,7 +1454,7 @@
   "LICK": {
     "id": 122,
     "key": "LICK",
-    "name": "Lick",
+    "name": "Leccata",
     "type": "ghost",
     "category": "physical",
     "power": 20,
@@ -1478,7 +1478,7 @@
   "SLUDGE": {
     "id": 124,
     "key": "SLUDGE",
-    "name": "Sludge",
+    "name": "Fango",
     "type": "poison",
     "category": "physical",
     "power": 65,
@@ -1490,7 +1490,7 @@
   "BONE_CLUB": {
     "id": 125,
     "key": "BONE_CLUB",
-    "name": "Bone Club",
+    "name": "Ossoclava",
     "type": "ground",
     "category": "physical",
     "power": 65,
@@ -1502,7 +1502,7 @@
   "FIRE_BLAST": {
     "id": 126,
     "key": "FIRE_BLAST",
-    "name": "Fire Blast",
+    "name": "Fuocobomba",
     "type": "fire",
     "category": "special",
     "power": 120,
@@ -1514,7 +1514,7 @@
   "WATERFALL": {
     "id": 127,
     "key": "WATERFALL",
-    "name": "Waterfall",
+    "name": "Cascata",
     "type": "water",
     "category": "special",
     "power": 80,
@@ -1526,7 +1526,7 @@
   "CLAMP": {
     "id": 128,
     "key": "CLAMP",
-    "name": "Clamp",
+    "name": "Tenaglia",
     "type": "water",
     "category": "special",
     "power": 35,
@@ -1538,7 +1538,7 @@
   "SWIFT": {
     "id": 129,
     "key": "SWIFT",
-    "name": "Swift",
+    "name": "Comete",
     "type": "normal",
     "category": "physical",
     "power": 60,
@@ -1550,7 +1550,7 @@
   "SKULL_BASH": {
     "id": 130,
     "key": "SKULL_BASH",
-    "name": "Skull Bash",
+    "name": "Capocciata",
     "type": "normal",
     "category": "physical",
     "power": 100,
@@ -1562,7 +1562,7 @@
   "SPIKE_CANNON": {
     "id": 131,
     "key": "SPIKE_CANNON",
-    "name": "Spike Cannon",
+    "name": "Sparalance",
     "type": "normal",
     "category": "physical",
     "power": 20,
@@ -1574,7 +1574,7 @@
   "CONSTRICT": {
     "id": 132,
     "key": "CONSTRICT",
-    "name": "Constrict",
+    "name": "Limitazione",
     "type": "normal",
     "category": "physical",
     "power": 10,
@@ -1598,7 +1598,7 @@
   "KINESIS": {
     "id": 134,
     "key": "KINESIS",
-    "name": "Kinesis",
+    "name": "Cinèsi",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1610,7 +1610,7 @@
   "SOFTBOILED": {
     "id": 135,
     "key": "SOFTBOILED",
-    "name": "Softboiled",
+    "name": "Covauova",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1622,7 +1622,7 @@
   "HI_JUMP_KICK": {
     "id": 136,
     "key": "HI_JUMP_KICK",
-    "name": "Hi Jump Kick",
+    "name": "Calcinvolo",
     "type": "fighting",
     "category": "physical",
     "power": 85,
@@ -1634,7 +1634,7 @@
   "GLARE": {
     "id": 137,
     "key": "GLARE",
-    "name": "Glare",
+    "name": "Sguardo Feroce",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1646,7 +1646,7 @@
   "DREAM_EATER": {
     "id": 138,
     "key": "DREAM_EATER",
-    "name": "Dream Eater",
+    "name": "Mangiasogni",
     "type": "psychic",
     "category": "special",
     "power": 100,
@@ -1658,7 +1658,7 @@
   "POISON_GAS": {
     "id": 139,
     "key": "POISON_GAS",
-    "name": "Poison Gas",
+    "name": "Velenogas",
     "type": "poison",
     "category": "status",
     "power": 0,
@@ -1670,7 +1670,7 @@
   "BARRAGE": {
     "id": 140,
     "key": "BARRAGE",
-    "name": "Barrage",
+    "name": "Attacco Pioggia",
     "type": "normal",
     "category": "physical",
     "power": 15,
@@ -1682,7 +1682,7 @@
   "LEECH_LIFE": {
     "id": 141,
     "key": "LEECH_LIFE",
-    "name": "Leech Life",
+    "name": "Sanguisuga",
     "type": "bug",
     "category": "physical",
     "power": 20,
@@ -1694,7 +1694,7 @@
   "LOVELY_KISS": {
     "id": 142,
     "key": "LOVELY_KISS",
-    "name": "Lovely Kiss",
+    "name": "Demonbacio",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1706,7 +1706,7 @@
   "SKY_ATTACK": {
     "id": 143,
     "key": "SKY_ATTACK",
-    "name": "Sky Attack",
+    "name": "Aeroattacco",
     "type": "flying",
     "category": "physical",
     "power": 140,
@@ -1718,7 +1718,7 @@
   "TRANSFORM": {
     "id": 144,
     "key": "TRANSFORM",
-    "name": "Transform",
+    "name": "Trasformazione",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1730,7 +1730,7 @@
   "BUBBLE": {
     "id": 145,
     "key": "BUBBLE",
-    "name": "Bubble",
+    "name": "Bolla",
     "type": "water",
     "category": "special",
     "power": 20,
@@ -1742,7 +1742,7 @@
   "DIZZY_PUNCH": {
     "id": 146,
     "key": "DIZZY_PUNCH",
-    "name": "Dizzy Punch",
+    "name": "Stordipugno",
     "type": "normal",
     "category": "physical",
     "power": 70,
@@ -1754,7 +1754,7 @@
   "SPORE": {
     "id": 147,
     "key": "SPORE",
-    "name": "Spore",
+    "name": "Spora",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -1778,7 +1778,7 @@
   "PSYWAVE": {
     "id": 149,
     "key": "PSYWAVE",
-    "name": "Psywave",
+    "name": "Psiconda",
     "type": "psychic",
     "category": "special",
     "power": 1,
@@ -1802,7 +1802,7 @@
   "ACID_ARMOR": {
     "id": 151,
     "key": "ACID_ARMOR",
-    "name": "Acid Armor",
+    "name": "Scudo Acido",
     "type": "poison",
     "category": "status",
     "power": 0,
@@ -1814,7 +1814,7 @@
   "CRABHAMMER": {
     "id": 152,
     "key": "CRABHAMMER",
-    "name": "Crabhammer",
+    "name": "Martellata",
     "type": "water",
     "category": "special",
     "power": 90,
@@ -1826,7 +1826,7 @@
   "EXPLOSION": {
     "id": 153,
     "key": "EXPLOSION",
-    "name": "Explosion",
+    "name": "Esplosione",
     "type": "normal",
     "category": "physical",
     "power": 250,
@@ -1838,7 +1838,7 @@
   "FURY_SWIPES": {
     "id": 154,
     "key": "FURY_SWIPES",
-    "name": "Fury Swipes",
+    "name": "Sfuriate",
     "type": "normal",
     "category": "physical",
     "power": 18,
@@ -1850,7 +1850,7 @@
   "BONEMERANG": {
     "id": 155,
     "key": "BONEMERANG",
-    "name": "Bonemerang",
+    "name": "Ossomerang",
     "type": "ground",
     "category": "physical",
     "power": 50,
@@ -1862,7 +1862,7 @@
   "REST": {
     "id": 156,
     "key": "REST",
-    "name": "Rest",
+    "name": "Riposo",
     "type": "psychic",
     "category": "status",
     "power": 0,
@@ -1874,7 +1874,7 @@
   "ROCK_SLIDE": {
     "id": 157,
     "key": "ROCK_SLIDE",
-    "name": "Rock Slide",
+    "name": "Frana",
     "type": "rock",
     "category": "physical",
     "power": 75,
@@ -1886,7 +1886,7 @@
   "HYPER_FANG": {
     "id": 158,
     "key": "HYPER_FANG",
-    "name": "Hyper Fang",
+    "name": "Iperzanna",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -1898,7 +1898,7 @@
   "SHARPEN": {
     "id": 159,
     "key": "SHARPEN",
-    "name": "Sharpen",
+    "name": "Affilatore",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1910,7 +1910,7 @@
   "CONVERSION": {
     "id": 160,
     "key": "CONVERSION",
-    "name": "Conversion",
+    "name": "Conversione",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1922,7 +1922,7 @@
   "TRI_ATTACK": {
     "id": 161,
     "key": "TRI_ATTACK",
-    "name": "Tri Attack",
+    "name": "Tripletta",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -1934,7 +1934,7 @@
   "SUPER_FANG": {
     "id": 162,
     "key": "SUPER_FANG",
-    "name": "Super Fang",
+    "name": "Superzanna",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -1946,7 +1946,7 @@
   "SLASH": {
     "id": 163,
     "key": "SLASH",
-    "name": "Slash",
+    "name": "Lacerazione",
     "type": "normal",
     "category": "physical",
     "power": 70,
@@ -1958,7 +1958,7 @@
   "SUBSTITUTE": {
     "id": 164,
     "key": "SUBSTITUTE",
-    "name": "Substitute",
+    "name": "Sostituto",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1970,7 +1970,7 @@
   "STRUGGLE": {
     "id": 165,
     "key": "STRUGGLE",
-    "name": "Struggle",
+    "name": "Scontro",
     "type": "normal",
     "category": "physical",
     "power": 50,
@@ -1982,7 +1982,7 @@
   "SKETCH": {
     "id": 166,
     "key": "SKETCH",
-    "name": "Sketch",
+    "name": "Schizzo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -1994,7 +1994,7 @@
   "TRIPLE_KICK": {
     "id": 167,
     "key": "TRIPLE_KICK",
-    "name": "Triple Kick",
+    "name": "Triplocalcio",
     "type": "fighting",
     "category": "physical",
     "power": 10,
@@ -2006,7 +2006,7 @@
   "THIEF": {
     "id": 168,
     "key": "THIEF",
-    "name": "Thief",
+    "name": "Furto",
     "type": "dark",
     "category": "special",
     "power": 40,
@@ -2018,7 +2018,7 @@
   "SPIDER_WEB": {
     "id": 169,
     "key": "SPIDER_WEB",
-    "name": "Spider Web",
+    "name": "Ragnatela",
     "type": "bug",
     "category": "status",
     "power": 0,
@@ -2030,7 +2030,7 @@
   "MIND_READER": {
     "id": 170,
     "key": "MIND_READER",
-    "name": "Mind Reader",
+    "name": "Leggimente",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2042,7 +2042,7 @@
   "NIGHTMARE": {
     "id": 171,
     "key": "NIGHTMARE",
-    "name": "Nightmare",
+    "name": "Incubo",
     "type": "ghost",
     "category": "status",
     "power": 0,
@@ -2054,7 +2054,7 @@
   "FLAME_WHEEL": {
     "id": 172,
     "key": "FLAME_WHEEL",
-    "name": "Flame Wheel",
+    "name": "Ruotafuoco",
     "type": "fire",
     "category": "special",
     "power": 60,
@@ -2066,7 +2066,7 @@
   "SNORE": {
     "id": 173,
     "key": "SNORE",
-    "name": "Snore",
+    "name": "Russare",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -2078,7 +2078,7 @@
   "CURSE": {
     "id": 174,
     "key": "CURSE",
-    "name": "Curse",
+    "name": "Maledizione",
     "type": "???",
     "category": "status",
     "power": 0,
@@ -2090,7 +2090,7 @@
   "FLAIL": {
     "id": 175,
     "key": "FLAIL",
-    "name": "Flail",
+    "name": "Flagello",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -2102,7 +2102,7 @@
   "CONVERSION2": {
     "id": 176,
     "key": "CONVERSION2",
-    "name": "Conversion 2",
+    "name": "Conversione2",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2114,7 +2114,7 @@
   "AEROBLAST": {
     "id": 177,
     "key": "AEROBLAST",
-    "name": "Aeroblast",
+    "name": "Aerocolpo",
     "type": "flying",
     "category": "physical",
     "power": 100,
@@ -2126,7 +2126,7 @@
   "COTTON_SPORE": {
     "id": 178,
     "key": "COTTON_SPORE",
-    "name": "Cotton Spore",
+    "name": "Cottonspora",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -2138,7 +2138,7 @@
   "REVERSAL": {
     "id": 179,
     "key": "REVERSAL",
-    "name": "Reversal",
+    "name": "Contropiede",
     "type": "fighting",
     "category": "physical",
     "power": 1,
@@ -2150,7 +2150,7 @@
   "SPITE": {
     "id": 180,
     "key": "SPITE",
-    "name": "Spite",
+    "name": "Dispetto",
     "type": "ghost",
     "category": "status",
     "power": 0,
@@ -2162,7 +2162,7 @@
   "POWDER_SNOW": {
     "id": 181,
     "key": "POWDER_SNOW",
-    "name": "Powder Snow",
+    "name": "Polneve",
     "type": "ice",
     "category": "special",
     "power": 40,
@@ -2174,7 +2174,7 @@
   "PROTECT": {
     "id": 182,
     "key": "PROTECT",
-    "name": "Protect",
+    "name": "Protezione",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2186,7 +2186,7 @@
   "MACH_PUNCH": {
     "id": 183,
     "key": "MACH_PUNCH",
-    "name": "Mach Punch",
+    "name": "Pugnorapido",
     "type": "fighting",
     "category": "physical",
     "power": 40,
@@ -2198,7 +2198,7 @@
   "SCARY_FACE": {
     "id": 184,
     "key": "SCARY_FACE",
-    "name": "Scary Face",
+    "name": "Visotruce",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2210,7 +2210,7 @@
   "FAINT_ATTACK": {
     "id": 185,
     "key": "FAINT_ATTACK",
-    "name": "Faint Attack",
+    "name": "Finta",
     "type": "dark",
     "category": "special",
     "power": 60,
@@ -2222,7 +2222,7 @@
   "SWEET_KISS": {
     "id": 186,
     "key": "SWEET_KISS",
-    "name": "Sweet Kiss",
+    "name": "Dolcebacio",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2234,7 +2234,7 @@
   "BELLY_DRUM": {
     "id": 187,
     "key": "BELLY_DRUM",
-    "name": "Belly Drum",
+    "name": "Panciamburo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2246,7 +2246,7 @@
   "SLUDGE_BOMB": {
     "id": 188,
     "key": "SLUDGE_BOMB",
-    "name": "Sludge Bomb",
+    "name": "Fangobomba",
     "type": "poison",
     "category": "physical",
     "power": 90,
@@ -2258,7 +2258,7 @@
   "MUD_SLAP": {
     "id": 189,
     "key": "MUD_SLAP",
-    "name": "Mud Slap",
+    "name": "Fangosberla",
     "type": "ground",
     "category": "physical",
     "power": 20,
@@ -2282,7 +2282,7 @@
   "SPIKES": {
     "id": 191,
     "key": "SPIKES",
-    "name": "Spikes",
+    "name": "Punte",
     "type": "ground",
     "category": "status",
     "power": 0,
@@ -2294,7 +2294,7 @@
   "ZAP_CANNON": {
     "id": 192,
     "key": "ZAP_CANNON",
-    "name": "Zap Cannon",
+    "name": "Falcecannone",
     "type": "electric",
     "category": "special",
     "power": 100,
@@ -2306,7 +2306,7 @@
   "FORESIGHT": {
     "id": 193,
     "key": "FORESIGHT",
-    "name": "Foresight",
+    "name": "Preveggenza",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2318,7 +2318,7 @@
   "DESTINY_BOND": {
     "id": 194,
     "key": "DESTINY_BOND",
-    "name": "Destiny Bond",
+    "name": "Destinobbligato",
     "type": "ghost",
     "category": "status",
     "power": 0,
@@ -2330,7 +2330,7 @@
   "PERISH_SONG": {
     "id": 195,
     "key": "PERISH_SONG",
-    "name": "Perish Song",
+    "name": "Ultimocanto",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2342,7 +2342,7 @@
   "ICY_WIND": {
     "id": 196,
     "key": "ICY_WIND",
-    "name": "Icy Wind",
+    "name": "Ventogelato",
     "type": "ice",
     "category": "special",
     "power": 55,
@@ -2354,7 +2354,7 @@
   "DETECT": {
     "id": 197,
     "key": "DETECT",
-    "name": "Detect",
+    "name": "Individua",
     "type": "fighting",
     "category": "status",
     "power": 0,
@@ -2366,7 +2366,7 @@
   "BONE_RUSH": {
     "id": 198,
     "key": "BONE_RUSH",
-    "name": "Bone Rush",
+    "name": "Ossoraffica",
     "type": "ground",
     "category": "physical",
     "power": 25,
@@ -2378,7 +2378,7 @@
   "LOCK_ON": {
     "id": 199,
     "key": "LOCK_ON",
-    "name": "Lock On",
+    "name": "Localizza",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2390,7 +2390,7 @@
   "OUTRAGE": {
     "id": 200,
     "key": "OUTRAGE",
-    "name": "Outrage",
+    "name": "Oltraggio",
     "type": "dragon",
     "category": "special",
     "power": 90,
@@ -2402,7 +2402,7 @@
   "SANDSTORM": {
     "id": 201,
     "key": "SANDSTORM",
-    "name": "Sandstorm",
+    "name": "Terrempesta",
     "type": "rock",
     "category": "status",
     "power": 0,
@@ -2414,7 +2414,7 @@
   "GIGA_DRAIN": {
     "id": 202,
     "key": "GIGA_DRAIN",
-    "name": "Giga Drain",
+    "name": "Gigassorbimento",
     "type": "grass",
     "category": "special",
     "power": 60,
@@ -2426,7 +2426,7 @@
   "ENDURE": {
     "id": 203,
     "key": "ENDURE",
-    "name": "Endure",
+    "name": "Resistenza",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2438,7 +2438,7 @@
   "CHARM": {
     "id": 204,
     "key": "CHARM",
-    "name": "Charm",
+    "name": "Fascino",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2450,7 +2450,7 @@
   "ROLLOUT": {
     "id": 205,
     "key": "ROLLOUT",
-    "name": "Rollout",
+    "name": "Rotolamento",
     "type": "rock",
     "category": "physical",
     "power": 30,
@@ -2462,7 +2462,7 @@
   "FALSE_SWIPE": {
     "id": 206,
     "key": "FALSE_SWIPE",
-    "name": "False Swipe",
+    "name": "Falsofinale",
     "type": "normal",
     "category": "physical",
     "power": 40,
@@ -2474,7 +2474,7 @@
   "SWAGGER": {
     "id": 207,
     "key": "SWAGGER",
-    "name": "Swagger",
+    "name": "Bullo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2486,7 +2486,7 @@
   "MILK_DRINK": {
     "id": 208,
     "key": "MILK_DRINK",
-    "name": "Milk Drink",
+    "name": "Buonlatte",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2498,7 +2498,7 @@
   "SPARK": {
     "id": 209,
     "key": "SPARK",
-    "name": "Spark",
+    "name": "Scintilla",
     "type": "electric",
     "category": "special",
     "power": 65,
@@ -2510,7 +2510,7 @@
   "FURY_CUTTER": {
     "id": 210,
     "key": "FURY_CUTTER",
-    "name": "Fury Cutter",
+    "name": "Tagliofuria",
     "type": "bug",
     "category": "physical",
     "power": 10,
@@ -2522,7 +2522,7 @@
   "STEEL_WING": {
     "id": 211,
     "key": "STEEL_WING",
-    "name": "Steel Wing",
+    "name": "Alacciaio",
     "type": "steel",
     "category": "physical",
     "power": 70,
@@ -2534,7 +2534,7 @@
   "MEAN_LOOK": {
     "id": 212,
     "key": "MEAN_LOOK",
-    "name": "Mean Look",
+    "name": "Malosguardo",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2546,7 +2546,7 @@
   "ATTRACT": {
     "id": 213,
     "key": "ATTRACT",
-    "name": "Attract",
+    "name": "Attrazione",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2558,7 +2558,7 @@
   "SLEEP_TALK": {
     "id": 214,
     "key": "SLEEP_TALK",
-    "name": "Sleep Talk",
+    "name": "Sonnolalia",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2570,7 +2570,7 @@
   "HEAL_BELL": {
     "id": 215,
     "key": "HEAL_BELL",
-    "name": "Heal Bell",
+    "name": "Rintoccasana",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2582,7 +2582,7 @@
   "RETURN": {
     "id": 216,
     "key": "RETURN",
-    "name": "Return",
+    "name": "Ritorno",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -2594,7 +2594,7 @@
   "PRESENT": {
     "id": 217,
     "key": "PRESENT",
-    "name": "Present",
+    "name": "Regalino",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -2606,7 +2606,7 @@
   "FRUSTRATION": {
     "id": 218,
     "key": "FRUSTRATION",
-    "name": "Frustration",
+    "name": "Frustrazione",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -2618,7 +2618,7 @@
   "SAFEGUARD": {
     "id": 219,
     "key": "SAFEGUARD",
-    "name": "Safeguard",
+    "name": "Salvaguardia",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2630,7 +2630,7 @@
   "PAIN_SPLIT": {
     "id": 220,
     "key": "PAIN_SPLIT",
-    "name": "Pain Split",
+    "name": "Malcomune",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2642,7 +2642,7 @@
   "SACRED_FIRE": {
     "id": 221,
     "key": "SACRED_FIRE",
-    "name": "Sacred Fire",
+    "name": "Magifuoco",
     "type": "fire",
     "category": "special",
     "power": 100,
@@ -2654,7 +2654,7 @@
   "MAGNITUDE": {
     "id": 222,
     "key": "MAGNITUDE",
-    "name": "Magnitude",
+    "name": "Magnitudo",
     "type": "ground",
     "category": "physical",
     "power": 1,
@@ -2666,7 +2666,7 @@
   "DYNAMICPUNCH": {
     "id": 223,
     "key": "DYNAMICPUNCH",
-    "name": "DynamicPunch",
+    "name": "Dinamipugno",
     "type": "fighting",
     "category": "physical",
     "power": 100,
@@ -2678,7 +2678,7 @@
   "MEGAHORN": {
     "id": 224,
     "key": "MEGAHORN",
-    "name": "Megahorn",
+    "name": "Megacorno",
     "type": "bug",
     "category": "physical",
     "power": 120,
@@ -2690,7 +2690,7 @@
   "DRAGONBREATH": {
     "id": 225,
     "key": "DRAGONBREATH",
-    "name": "Dragonbreath",
+    "name": "Dragospiro",
     "type": "dragon",
     "category": "special",
     "power": 60,
@@ -2702,7 +2702,7 @@
   "BATON_PASS": {
     "id": 226,
     "key": "BATON_PASS",
-    "name": "Baton Pass",
+    "name": "Staffetta",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2714,7 +2714,7 @@
   "ENCORE": {
     "id": 227,
     "key": "ENCORE",
-    "name": "Encore",
+    "name": "Ripeti",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2726,7 +2726,7 @@
   "PURSUIT": {
     "id": 228,
     "key": "PURSUIT",
-    "name": "Pursuit",
+    "name": "Inseguimento",
     "type": "dark",
     "category": "special",
     "power": 40,
@@ -2738,7 +2738,7 @@
   "RAPID_SPIN": {
     "id": 229,
     "key": "RAPID_SPIN",
-    "name": "Rapid Spin",
+    "name": "Rapigiro",
     "type": "normal",
     "category": "physical",
     "power": 20,
@@ -2750,7 +2750,7 @@
   "SWEET_SCENT": {
     "id": 230,
     "key": "SWEET_SCENT",
-    "name": "Sweet Scent",
+    "name": "Profumino",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2762,7 +2762,7 @@
   "IRON_TAIL": {
     "id": 231,
     "key": "IRON_TAIL",
-    "name": "Iron Tail",
+    "name": "Codacciaio",
     "type": "steel",
     "category": "physical",
     "power": 100,
@@ -2774,7 +2774,7 @@
   "METAL_CLAW": {
     "id": 232,
     "key": "METAL_CLAW",
-    "name": "Metal Claw",
+    "name": "Ferrartigli",
     "type": "steel",
     "category": "physical",
     "power": 50,
@@ -2786,7 +2786,7 @@
   "VITAL_THROW": {
     "id": 233,
     "key": "VITAL_THROW",
-    "name": "Vital Throw",
+    "name": "Vitaltiro",
     "type": "fighting",
     "category": "physical",
     "power": 70,
@@ -2798,7 +2798,7 @@
   "MORNING_SUN": {
     "id": 234,
     "key": "MORNING_SUN",
-    "name": "Morning Sun",
+    "name": "Mattindoro",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2810,7 +2810,7 @@
   "SYNTHESIS": {
     "id": 235,
     "key": "SYNTHESIS",
-    "name": "Synthesis",
+    "name": "Sintesi",
     "type": "grass",
     "category": "status",
     "power": 0,
@@ -2822,7 +2822,7 @@
   "MOONLIGHT": {
     "id": 236,
     "key": "MOONLIGHT",
-    "name": "Moonlight",
+    "name": "Lucelunare",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2834,7 +2834,7 @@
   "HIDDEN_POWER": {
     "id": 237,
     "key": "HIDDEN_POWER",
-    "name": "Hidden Power",
+    "name": "Introforza",
     "type": "normal",
     "category": "physical",
     "power": 1,
@@ -2846,7 +2846,7 @@
   "CROSS_CHOP": {
     "id": 238,
     "key": "CROSS_CHOP",
-    "name": "Cross Chop",
+    "name": "Incrocolpo",
     "type": "fighting",
     "category": "physical",
     "power": 100,
@@ -2858,7 +2858,7 @@
   "TWISTER": {
     "id": 239,
     "key": "TWISTER",
-    "name": "Twister",
+    "name": "Tornado",
     "type": "dragon",
     "category": "special",
     "power": 40,
@@ -2870,7 +2870,7 @@
   "RAIN_DANCE": {
     "id": 240,
     "key": "RAIN_DANCE",
-    "name": "Rain Dance",
+    "name": "Pioggiadanza",
     "type": "water",
     "category": "status",
     "power": 0,
@@ -2882,7 +2882,7 @@
   "SUNNY_DAY": {
     "id": 241,
     "key": "SUNNY_DAY",
-    "name": "Sunny Day",
+    "name": "Giornodisole",
     "type": "fire",
     "category": "status",
     "power": 0,
@@ -2894,7 +2894,7 @@
   "CRUNCH": {
     "id": 242,
     "key": "CRUNCH",
-    "name": "Crunch",
+    "name": "Sgranocchio",
     "type": "dark",
     "category": "special",
     "power": 80,
@@ -2906,7 +2906,7 @@
   "MIRROR_COAT": {
     "id": 243,
     "key": "MIRROR_COAT",
-    "name": "Mirror Coat",
+    "name": "Specchiovelo",
     "type": "psychic",
     "category": "special",
     "power": 1,
@@ -2918,7 +2918,7 @@
   "PSYCH_UP": {
     "id": 244,
     "key": "PSYCH_UP",
-    "name": "Psych Up",
+    "name": "Psicamisù",
     "type": "normal",
     "category": "status",
     "power": 0,
@@ -2930,7 +2930,7 @@
   "EXTREMESPEED": {
     "id": 245,
     "key": "EXTREMESPEED",
-    "name": "ExtremeSpeed",
+    "name": "Extrarapido",
     "type": "normal",
     "category": "physical",
     "power": 80,
@@ -2942,7 +2942,7 @@
   "ANCIENTPOWER": {
     "id": 246,
     "key": "ANCIENTPOWER",
-    "name": "AncientPower",
+    "name": "Forzantica",
     "type": "rock",
     "category": "physical",
     "power": 60,
@@ -2954,7 +2954,7 @@
   "SHADOW_BALL": {
     "id": 247,
     "key": "SHADOW_BALL",
-    "name": "Shadow Ball",
+    "name": "Palla Ombra",
     "type": "ghost",
     "category": "physical",
     "power": 80,
@@ -2966,7 +2966,7 @@
   "FUTURE_SIGHT": {
     "id": 248,
     "key": "FUTURE_SIGHT",
-    "name": "Future Sight",
+    "name": "Divinazione",
     "type": "psychic",
     "category": "special",
     "power": 80,
@@ -2978,7 +2978,7 @@
   "ROCK_SMASH": {
     "id": 249,
     "key": "ROCK_SMASH",
-    "name": "Rock Smash",
+    "name": "Spaccaroccia",
     "type": "fighting",
     "category": "physical",
     "power": 20,
@@ -2990,7 +2990,7 @@
   "WHIRLPOOL": {
     "id": 250,
     "key": "WHIRLPOOL",
-    "name": "Whirlpool",
+    "name": "Mulinello",
     "type": "water",
     "category": "special",
     "power": 15,
@@ -3002,7 +3002,7 @@
   "BEAT_UP": {
     "id": 251,
     "key": "BEAT_UP",
-    "name": "Beat Up",
+    "name": "Picchiaduro",
     "type": "dark",
     "category": "special",
     "power": 10,
