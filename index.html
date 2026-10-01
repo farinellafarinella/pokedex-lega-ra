@@ -391,7 +391,7 @@
       }
       if(['my-team','my-starter','pokemon-claim'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento squadra…';document.querySelector('#app').replaceChildren(host);
-        import('./features/team/team.mjs?v=gifts-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
+        import('./features/team/team.mjs?v=evolutions-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
       }
       if(page==='pokedex'){
         const host=document.createElement('div');host.textContent='Caricamento Pokédex…';document.querySelector('#app').replaceChildren(host);
