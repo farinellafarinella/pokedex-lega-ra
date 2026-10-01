@@ -1,4 +1,4 @@
-import {artwork,SPECIES,types} from '../starter/starter-ui.js?v=johto-7';
+import {artwork,SPECIES} from '../starter/starter-ui.js?v=johto-7';
 import {RULES} from './config.mjs?v=official-1';
 import {readStatus,readRanking,sendCommand,errorMessage,isRejected} from './api.mjs?v=official-2';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -9,7 +9,7 @@ export async function mountBugContest(host,{client,userId,onBalance=()=>{},isCur
  const root=host.attachShadow({mode:'open'});
  root.innerHTML=`<link rel="stylesheet" href="${new URL('../starter/style.css?v=fossil-cave-1',import.meta.url)}"><link rel="stylesheet" href="${new URL('./style.css?v=official-1',import.meta.url)}"><div id="view"></div>`;
  const view=root.querySelector('#view'),key='champion:bug-game:pending:v1:'+userId;
- let status=null,contest=null,starter=null,loading=true,busy=false,showMoves=false,throwing=false,message='',error='',pending=null;
+ let status=null,contest=null,starter=null,loading=true,busy=false,throwing=false,message='',error='',pending=null;
  let ranking=null,rankingLoading=false,rankingError='',rankingPeriod='today',timer=null,receivedAt=0;
  const active=()=>host.isConnected&&isCurrent();
  const dateLabel=day=>day.split('-').reverse().join('/');
@@ -17,20 +17,20 @@ export async function mountBugContest(host,{client,userId,onBalance=()=>{},isCur
  try{pending=JSON.parse(localStorage.getItem(key)||'null');}catch{}
  function remember(value){pending=value;try{if(value)localStorage.setItem(key,JSON.stringify(value));else localStorage.removeItem(key);}catch{}}
  function accept(data){if(!active())return;status=data;contest=data.state;starter=data.starter;receivedAt=Date.now();onBalance(data.balance);}
-  function fighter(p,wild=false) {
-    const status={poison:'Avvelenato',burn:'Scottato',sleep:'Addormentato',paralysis:'Paralizzato'};
-    return `<section class="fighter ${wild?'enemy':'player'}">${wild?bugArt(contest.encounter):artwork(p.id,true)}<div><strong>${esc(p.name)} · Lv. ${p.level}</strong><p>${p.types.map(t=>types[t]).join(' / ')}${p.status?' · '+esc(status[p.status]||p.status):''}</p><progress max="${p.maxHp}" value="${p.hp}" aria-label="PS di ${esc(p.name)}"></progress><small>PS ${p.hp} / ${p.maxHp}</small></div></section>`;
-  }
-
-  function battleView() {
-    const b=contest.battle;
-    return `<h2>Incontro ${contest.encounters}: ${esc(contest.encounter.name)}</h2><p>${kg(contest.encounter.weight)} · ${esc(contest.encounter.rarity)}</p>
-      <div class="bug-field">${fighter(b.wild,true)}${fighter(b.player)}</div>
-      <p>Turno ${b.turn}</p><div class="battle-actions">${btn('moves','ATTACCA',busy,'class="primary"')}${btn('catch','CATTURA',busy||contest.pokeballs<=0)}${btn('flee','FUGGI',busy)}</div>
-      ${showMoves?`<div class="moves">${b.player.moves.map(m=>btn('move',`${esc(m.name)}<small>${types[m.type]} · PP ${m.pp}/${m.maxPp}</small>`,busy||m.pp<=0,`data-move="${m.id}"`)).join('')}${b.player.moves.every(m=>m.pp<=0)?btn('move','Scontro',busy,'data-move="struggle"'):''}</div>`:''}
-      <p>Indebolisci il selvatico per facilitare la cattura. Se va KO, non puoi più catturarlo.</p>
-      <ol class="battle-log" aria-label="Registro della lotta">${b.log.map(line=>`<li>${esc(line)}</li>`).join('')}</ol>`;
-  }
+  function battleView(){return '<h2>Incontro '+contest.encounters+'</h2>'+btn('route-battle','Affronta '+esc(contest.encounter.name),busy);}
+ async function openEncounter(){
+  if(busy||!contest?.encounter)return;
+  busy=true;render();
+  try{
+   if(!contest.encounter.encounterToken)accept(await sendCommand(client,{type:'resume',operationId:crypto.randomUUID(),revision:status.revision,day:status.day}));
+   await window.startPokemonEncounter({
+   speciesId:window.RouteEncounters.speciesId(contest.encounter.species),
+   level:contest.encounter.level??contest.battle?.wild.level,
+   token:contest.encounter.encounterToken||status.encounterToken,
+   source:'BUG_CONTEST',canCapture:true,canEscape:true,
+   onComplete:async()=>{accept(await readStatus(client));}
+  });}catch(e){message=e.message;}finally{busy=false;render();}
+ }
 
   function selectionView() {
     const reason=contest.endReason==='balls'?'Le Poké Ball sono terminate.':`Hai completato i ${RULES.maxEncounters} incontri.`;
@@ -66,10 +66,10 @@ export async function mountBugContest(host,{client,userId,onBalance=()=>{},isCur
   else if(!starter)body='<h2>Scegli prima il tuo Starter</h2><a href="#my-starter">Vai a Il mio Starter →</a>';
   else if(contest?.phase==='judged')body=judgmentView();
   else if(!open())body='<h2>La gara si svolge il giovedì</h2><p>Iscrizioni, incontri e presentazione alla giuria terminano a mezzanotte italiana. Consulta “Ultima gara” per il vincitore.</p>';
-  else if(!contest)body=`${artwork(starter.species)}<h2>${esc(SPECIES[starter.species]?.name||starter.species)} · Lv. ${starter.level}</h2><p>Una gara per allenatore oggi: ${RULES.pokeballs} Poké Ball e massimo ${RULES.maxEncounters} incontri. Presenta un solo Pokémon alla giuria entro mezzanotte.</p><p>Il tuo Starter recupera PS e PP prima di ogni incontro.</p>${btn('start','ISCRIVITI · 50 POKÉDOLLARI',busy||status.balance<50,'class="primary"')}${status.balance<50?'<p>Saldo insufficiente.</p>':''}`;
+  else if(!contest)body=`${artwork(starter.species)}<h2>${esc(SPECIES[starter.species]?.name||starter.species)} · Lv. ${starter.level}</h2><p>Una gara per allenatore oggi: ${RULES.pokeballs} Poké Ball e massimo ${RULES.maxEncounters} incontri. Presenta un solo Pokémon alla giuria entro mezzanotte.</p><p>La lotta usa la squadra reale e conserva i PS rimasti.</p>${btn('start','ISCRIVITI · 50 POKÉDOLLARI',busy||status.balance<50,'class="primary"')}${status.balance<50?'<p>Saldo insufficiente.</p>':''}`;
   else if(contest.phase==='ready')body=`<h2>Pronto per la gara</h2>${btn('next','CERCA UN POKÉMON',busy,'class="primary"')}`;
   else if(contest.phase==='battle')body=battleView();
-  else if(contest.phase==='between')body=`<h2>Incontro terminato</h2><p>Il tuo Starter recupererà PS e PP prima del prossimo incontro.</p>${btn('next','CONTINUA LA GARA',busy,'class="primary"')}`;
+  else if(contest.phase==='between')body=`<h2>Incontro terminato</h2><p>I progressi e i PS della squadra sono salvati.</p>${btn('next','CONTINUA LA GARA',busy,'class="primary"')}`;
   else if(contest.phase==='selection')body=selectionView();
   const balls=pending?.type==='catch'&&contest?.phase==='battle'&&status?.revision===pending.revision?Math.max(0,contest.pokeballs-1):(contest?.pokeballs??RULES.pokeballs);
   view.innerHTML=`<header><span class="eyebrow">EVENTO DEL GIOVEDÌ</span><h1>Gara Pigliamosche</h1><p>Indebolisci, cattura e scegli il tuo campione.</p><a href="#dashboard">← Torna al Pokédex</a>${status?`<p>Saldo: ${status.balance} Pokédollari</p>`:''}</header>
@@ -97,11 +97,15 @@ export async function mountBugContest(host,{client,userId,onBalance=()=>{},isCur
  }
  async function sendPending(){
   if(busy||!pending||!active())return;
+  if(['move','catch','flee'].includes(pending.type)){
+   try{accept(await readStatus(client));remember(null);message='Progressi precedenti recuperati.';render();if(contest?.phase==='battle')await openEncounter();}catch(e){message=errorMessage(e);render();}return;
+  }
+  if(['start','next'].includes(pending.type)){try{await window.RouteEncounters.ensureSource('BUG_CONTEST');}catch(e){message=e.message;render();return;}}
   busy=true;message='';throwing=pending.type==='catch';render();
   try{
    const data=await sendCommand(client,pending);
    if(!active())return;
-   remember(null);accept(data);showMoves=false;render();
+   remember(null);accept(data);render();
    if(throwing)await new Promise(resolve=>setTimeout(resolve,RULES.throwAnimationMs));
   }catch(e){
    message=errorMessage(e);
@@ -115,11 +119,14 @@ export async function mountBugContest(host,{client,userId,onBalance=()=>{},isCur
   if(busy)return;
   if(action==='retry'){await load();return;}
   if(action==='retry-command'){await sendPending();return;}
-  if(pending||!open())return;
-  if(action==='moves'){showMoves=!showMoves;render();return;}
-  if(!['start','next','move','catch','flee','present'].includes(action))return;
+  if(pending)return;
+  if(action==='route-battle'){await openEncounter();return;}
+  if(!open())return;
+  if(['start','next'].includes(action)){try{await window.RouteEncounters.ensureSource('BUG_CONTEST');}catch(e){message=e.message;render();return;}}
+  if(!['start','next','present'].includes(action))return;
   remember({type:action,move:b.dataset.move,pokemonId:b.dataset.id,day:status.day,revision:status.revision,operationId:crypto.randomUUID()});
   await sendPending();
+  if(contest?.phase==='battle'&&!pending)await openEncounter();
  });
  await Promise.all([load(),refreshRanking()]);
  return ()=>clearTimeout(timer);

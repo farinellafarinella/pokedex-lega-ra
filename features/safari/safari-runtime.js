@@ -2,143 +2,103 @@
 'use strict';
 const scriptURL=document.currentScript.src;
 // supabase/functions/safari-game/core/config.mjs
-var RULES = { balls: 5, steps: 10, bait: 3, help: 1, topCaptures: 3, coinsPerPoint: 1.25, openWeekday: 5, timeZone: "Europe/Rome", maxApproaches: 2, baitBonus: 0.12, approachBonus: 0.15, riskIncrease: 0.1, helpBonus: 0.2, maxCatch: 0.95, maxFlee: 0.8 };
+var RULES = { balls: 5, steps: 10, bait: 3, help: 1, topCaptures: 3, coinsPerPoint: 1.25, openWeekday: 5, timeZone: "Europe/Rome" };
 var RARITIES = { common: { label: "Comune", points: 10 }, uncommon: { label: "Non comune", points: 25 }, rare: { label: "Raro", points: 50 }, veryRare: { label: "Molto raro", points: 100 } };
 var SPECIES = {
   "nidoran-f": {
     "name": "Nidoran\u2640",
-    "rarity": "common",
-    "catch": 0.72,
-    "flee": 0.15
+    "rarity": "common"
   },
   "nidoran-m": {
     "name": "Nidoran\u2642",
-    "rarity": "common",
-    "catch": 0.72,
-    "flee": 0.15
+    "rarity": "common"
   },
   "nidorina": {
     "name": "Nidorina",
-    "rarity": "uncommon",
-    "catch": 0.56,
-    "flee": 0.22
+    "rarity": "uncommon"
   },
   "nidorino": {
     "name": "Nidorino",
-    "rarity": "uncommon",
-    "catch": 0.56,
-    "flee": 0.22
+    "rarity": "uncommon"
   },
   "paras": {
     "name": "Paras",
-    "rarity": "common",
-    "catch": 0.7,
-    "flee": 0.15
+    "rarity": "common"
   },
   "parasect": {
     "name": "Parasect",
-    "rarity": "uncommon",
-    "catch": 0.55,
-    "flee": 0.22
+    "rarity": "uncommon"
   },
   "venonat": {
     "name": "Venonat",
-    "rarity": "uncommon",
-    "catch": 0.55,
-    "flee": 0.2
+    "rarity": "uncommon"
   },
   "exeggcute": {
     "name": "Exeggcute",
-    "rarity": "uncommon",
-    "catch": 0.58,
-    "flee": 0.2
+    "rarity": "uncommon"
   },
   "rhyhorn": {
     "name": "Rhyhorn",
-    "rarity": "rare",
-    "catch": 0.4,
-    "flee": 0.28
+    "rarity": "rare"
   },
   "chansey": {
     "name": "Chansey",
-    "rarity": "veryRare",
-    "catch": 0.22,
-    "flee": 0.38
+    "rarity": "veryRare"
   },
   "tangela": {
     "name": "Tangela",
-    "rarity": "uncommon",
-    "catch": 0.55,
-    "flee": 0.23
+    "rarity": "uncommon"
   },
   "scyther": {
     "name": "Scyther",
-    "rarity": "rare",
-    "catch": 0.38,
-    "flee": 0.3
+    "rarity": "rare"
   },
   "pinsir": {
     "name": "Pinsir",
-    "rarity": "rare",
-    "catch": 0.38,
-    "flee": 0.28
+    "rarity": "rare"
   },
   "tauros": {
     "name": "Tauros",
-    "rarity": "rare",
-    "catch": 0.35,
-    "flee": 0.32
+    "rarity": "rare"
   },
   "kangaskhan": {
     "name": "Kangaskhan",
-    "rarity": "veryRare",
-    "catch": 0.25,
-    "flee": 0.35
+    "rarity": "veryRare"
   },
   "psyduck": {
     "name": "Psyduck",
-    "rarity": "uncommon",
-    "catch": 0.6,
-    "flee": 0.2
+    "rarity": "uncommon"
   },
   "slowpoke": {
     "name": "Slowpoke",
-    "rarity": "uncommon",
-    "catch": 0.62,
-    "flee": 0.15
+    "rarity": "uncommon"
   },
   "krabby": {
     "name": "Krabby",
-    "rarity": "common",
-    "catch": 0.72,
-    "flee": 0.15
+    "rarity": "common"
   },
   "magikarp": {
     "name": "Magikarp",
-    "rarity": "common",
-    "catch": 0.8,
-    "flee": 0.1
+    "rarity": "common"
   },
   "dratini": {
     "name": "Dratini",
-    "rarity": "veryRare",
-    "catch": 0.25,
-    "flee": 0.32
+    "rarity": "veryRare"
   }
 };
 var ARCHIVED_SPECIES = {
-  raticate: { name: "Raticate", rarity: "common", catch: 0.7, flee: 0.18 },
-  paras: { name: "Paras", rarity: "common", catch: 0.7, flee: 0.15 },
-  butterfree: { name: "Butterfree", rarity: "uncommon", catch: 0.58, flee: 0.2 },
-  venonat: { name: "Venonat", rarity: "uncommon", catch: 0.55, flee: 0.2 },
-  pinsir: { name: "Pinsir", rarity: "rare", catch: 0.38, flee: 0.28 },
-  heracross: { name: "Heracross", rarity: "veryRare", catch: 0.25, flee: 0.35 },
-  tauros: { name: "Tauros", rarity: "rare", catch: 0.35, flee: 0.32 },
-  arcanine: { name: "Arcanine", rarity: "veryRare", catch: 0.22, flee: 0.38 },
-  dodrio: { name: "Dodrio", rarity: "uncommon", catch: 0.55, flee: 0.24 },
-  scyther: { name: "Scyther", rarity: "rare", catch: 0.38, flee: 0.3 },
-  rapidash: { name: "Rapidash", rarity: "rare", catch: 0.33, flee: 0.3 },
-  beedrill: { name: "Beedrill", rarity: "uncommon", catch: 0.55, flee: 0.22 }
+  raticate: { name: "Raticate", rarity: "common" },
+  paras: { name: "Paras", rarity: "common" },
+  butterfree: { name: "Butterfree", rarity: "uncommon" },
+  venonat: { name: "Venonat", rarity: "uncommon" },
+  pinsir: { name: "Pinsir", rarity: "rare" },
+  heracross: { name: "Heracross", rarity: "veryRare" },
+  tauros: { name: "Tauros", rarity: "rare" },
+  arcanine: { name: "Arcanine", rarity: "veryRare" },
+  dodrio: { name: "Dodrio", rarity: "uncommon" },
+  scyther: { name: "Scyther", rarity: "rare" },
+  rapidash: { name: "Rapidash", rarity: "rare" },
+  beedrill: { name: "Beedrill", rarity: "uncommon" }
 };
 var POKEMON = { ...ARCHIVED_SPECIES, ...SPECIES };
 var AREAS = {
@@ -154,10 +114,7 @@ var COMPANIONS = {
 };
 
 // supabase/functions/safari-game/core/model.mjs
-function chances(encounter) {
-  const p = POKEMON[encounter.species];
-  return { catch: Math.min(RULES.maxCatch, p.catch + (encounter.baitUsed ? RULES.baitBonus : 0) + encounter.approaches * RULES.approachBonus + (encounter.helpActive ? RULES.helpBonus : 0)), flee: encounter.helpActive ? 0 : Math.min(RULES.maxFlee, p.flee + (encounter.baitUsed ? RULES.riskIncrease : 0) + encounter.approaches * RULES.riskIncrease) };
-}
+
 function bestCaptures(captures) {
   return [...captures].sort((a, b) => b.points - a.points).slice(0, RULES.topCaptures);
 }
@@ -236,14 +193,14 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
       content.innerHTML = summary(s);
       return;
     }
-    content.innerHTML = `<div class="resources"><div><strong>${s.balls}</strong><span>Safari Ball</span></div><div><strong>${s.steps}</strong><span>Passi</span></div><div><strong>${s.bait}</strong><span>Esche</span></div><div><strong>${s.help}</strong><span>Aiuto starter</span></div></div><div class="session-grid"><section><article class="landscape ${s.area}"><div class="eyebrow">${AREAS[s.area].name.toUpperCase()}</div><p class="event-message" role="status">${esc(s.message)}</p>${s.phase === "encounter" ? encounter(s) : s.phase === "fork" ? fork(s) : explore(s)}<div id="animation" aria-live="polite"></div></article><div class="end-session">${btn("end", "Concludi esplorazione")}<span>Conservi le catture e i premi ottenuti finora.</span></div></section><aside><article class="helper ${COMPANIONS[s.companion].family}">${companion(s.starter)}<div><small>IL TUO STARTER</small><h2>${esc(starterName(s.starter))}</h2><p>${s.help ? "Un aiuto per sessione: +" + Math.round(RULES.helpBonus * 100) + " punti percentuali alla cattura e protezione dalla fuga fino al prossimo lancio." : "Aiuto utilizzato. Il tuo compagno continua ad accompagnarti."}</p></div></article><article><h2>Le tue catture <span class="count">${s.captures.length}</span></h2>${captures(s.captures)}<p class="score">Migliori ${RULES.topCaptures}: <strong>${bestCaptures(s.captures).reduce((n, c) => n + c.points, 0)} punti</strong></p></article><article><h3>Oggetti trovati</h3><p>${s.items.length ? s.items.map(esc).join(" \xB7 ") : "La sacca dei ritrovamenti \xE8 ancora vuota."}</p></article></aside></div>`;
+    content.innerHTML = `<div class="resources"><div><strong>${s.balls}</strong><span>Safari Ball</span></div><div><strong>${s.steps}</strong><span>Passi</span></div></div><div class="session-grid"><section><article class="landscape ${s.area}"><div class="eyebrow">${AREAS[s.area].name.toUpperCase()}</div><p class="event-message" role="status">${esc(s.message)}</p>${s.phase === "encounter" ? encounter(s) : s.phase === "fork" ? fork(s) : explore(s)}<div id="animation" aria-live="polite"></div></article><div class="end-session">${btn("end", "Concludi esplorazione")}<span>Conservi le catture e i premi ottenuti finora.</span></div></section><aside><article class="helper ${COMPANIONS[s.companion].family}">${companion(s.starter)}<div><small>IL TUO STARTER</small><h2>${esc(starterName(s.starter))}</h2><p>La tua squadra affronta gli incontri. Le Safari Ball hanno un bonus cattura.</p></div></article><article><h2>Le tue catture <span class="count">${s.captures.length}</span></h2>${captures(s.captures)}<p class="score">Migliori ${RULES.topCaptures}: <strong>${bestCaptures(s.captures).reduce((n, c) => n + c.points, 0)} punti</strong></p></article><article><h3>Oggetti trovati</h3><p>${s.items.length ? s.items.map(esc).join(" \xB7 ") : "La sacca dei ritrovamenti \xE8 ancora vuota."}</p></article></aside></div>`;
   }
   function accessNotice() {
     const a = snapshot.access;
     return '<p class="isolation">' + (mode === "test" ? "Prova libera: nessun limite di calendario e nessun premio reale." : a.allowed ? "Safari aperta \xB7 Una sola partenza. Il tentativo si consuma anche se concludi prima." : esc(a.message) + " Prossima apertura: " + (/* @__PURE__ */ new Date(a.nextDate + "T12:00:00Z")).toLocaleDateString("it-IT", { timeZone: RULES.timeZone }) + ".") + "</p>";
   }
   function selection() {
-    return `<article class="welcome"><h2>Scegli dove comincia il viaggio</h2>${accessNotice()}<p>5 Safari Ball \xB7 10 passi \xB7 3 esche \xB7 1 aiuto starter</p>${snapshot.starter ? "<h3>" + esc(starterName(snapshot.starter)) + "</h3><p>Il tuo starter ti aiuta una volta durante la spedizione.</p>" : '<p>Scegli il tuo compagno per partire.</p><a href="#my-starter">Scegli il mio Starter</a>'}${snapshot.legacyPending ? "<p>Hai una spedizione della Safari precedente da concludere.</p>" + btn("legacy", "Incassa il vecchio bottino: " + snapshot.legacyPending.bounty + " \u20BD") : ""}</article><div class="areas">${Object.entries(AREAS).map(([id, a]) => `<article class="area ${id}"><span class="area-symbol" aria-hidden="true">${a.symbol}</span><h2>${a.name}</h2><p>${a.description}</p><div class="area-pokemon">${Object.entries(a.pokemon).map(([species, weight]) => `<span>${SPECIES[species].name} <small>${weight}%</small></span>`).join("")}</div><p class="chance">Incontro a ogni passo: ${a.events.pokemon}%</p>${btn("start", "Esplora " + a.name, !snapshot.access.allowed || !snapshot.starter || !!snapshot.legacyPending, `data-area="${id}"`)}</article>`).join("")}</div><article><h2>Le regole del Safari</h2><p>Nessuna lotta: scegli se lanciare una Ball, usare un\u2019esca, avvicinarti, chiedere aiuto o fuggire. La spedizione finisce a Ball o passi esauriti; puoi risolvere l\u2019incontro dell\u2019ultimo passo.</p><p>Comune: 10 punti \xB7 Non comune: 25 \xB7 Raro: 50 \xB7 Molto raro: 100. Sommiamo le tre catture migliori e moltiplichiamo per 1,25, arrotondando il totale.</p><p>Tutte le catture restano nel tuo Pok\xE9dex. Puoi riprendere la spedizione anche su un altro dispositivo.</p></article>`;
+    return `<article class="welcome"><h2>Scegli dove comincia il viaggio</h2>${accessNotice()}<p>5 Safari Ball \xB7 10 passi</p>${snapshot.starter ? "<h3>" + esc(starterName(snapshot.starter)) + "</h3><p>La tua squadra affronta gli incontri della spedizione.</p>" : '<p>Scegli il tuo compagno per partire.</p><a href="#my-starter">Scegli il mio Starter</a>'}${snapshot.legacyPending ? "<p>Hai una spedizione della Safari precedente da concludere.</p>" + btn("legacy", "Incassa il vecchio bottino: " + snapshot.legacyPending.bounty + " \u20BD") : ""}</article><div class="areas">${Object.entries(AREAS).map(([id, a]) => `<article class="area ${id}"><span class="area-symbol" aria-hidden="true">${a.symbol}</span><h2>${a.name}</h2><p>${a.description}</p><div class="area-pokemon">${Object.entries(a.pokemon).map(([species, weight]) => `<span>${SPECIES[species].name} <small>${weight}%</small></span>`).join("")}</div><p class="chance">Incontro a ogni passo: ${a.events.pokemon}%</p>${btn("start", "Esplora " + a.name, !snapshot.access.allowed || !snapshot.starter || !!snapshot.legacyPending, `data-area="${id}"`)}</article>`).join("")}</div><article><h2>Le regole del Safari</h2><p>Ogni Pokémon incontrato apre la battaglia comune: lotta, cambia compagno, cattura o fuggi. La spedizione finisce a Ball o passi esauriti; puoi risolvere l\u2019incontro dell\u2019ultimo passo.</p><p>Comune: 10 punti \xB7 Non comune: 25 \xB7 Raro: 50 \xB7 Molto raro: 100. Sommiamo le tre catture migliori e moltiplichiamo per 1,25, arrotondando il totale.</p><p>Tutte le catture restano nel tuo Pok\xE9dex. Puoi riprendere la spedizione anche su un altro dispositivo.</p></article>`;
   }
   function ranking() {
     return `<article><h2>Classifica Safari</h2><p>Le migliori 100 spedizioni personali. Per ogni allenatore conta il suo miglior punteggio.</p><p>Il tuo record${mode === "test" ? " di prova" : ""}: <b>${state.bestScore} punti</b></p>${snapshot.ranking.length ? '<ol class="ranking">' + snapshot.ranking.map((row) => "<li><span>" + esc(row.trainer_name) + "</span><b>" + row.score + " punti</b></li>").join("") + "</ol>" : "<p>Nessuna spedizione a premio conclusa: la classifica aspetta le prime catture.</p>"}</article>`;
@@ -255,8 +212,18 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
     return `<div class="fork-icon" aria-hidden="true">\u2442</div><h2>Quale sentiero scegli?</h2><div class="paths">${s.paths.map((id) => `<button data-action="route" data-area="${id}"><strong>${AREAS[id].symbol} ${AREAS[id].name}</strong><span>${AREAS[id].description}</span></button>`).join("")}</div>`;
   }
   function encounter(s) {
-    const e = s.encounter, p = POKEMON[e.species], chance = chances(e);
-    return `<div class="wild">${pokemon(e.species)}</div><div class="encounter-name"><h2>${p.name}</h2><span class="rarity ${p.rarity}">${RARITIES[p.rarity].label} \xB7 ${RARITIES[p.rarity].points} punti</span></div><div class="odds"><span>Cattura <b>${Math.round(chance.catch * 100)}%</b></span><span>Fuga <b>${Math.round(chance.flee * 100)}%</b></span></div><p class="risk">La fuga pu\xF2 avvenire dopo esca, avvicinamento o un lancio fallito.${e.helpActive ? " Protezione starter attiva fino al prossimo lancio." : ""}</p><div class="encounter-actions">${btn("throw", "\u25D3 Lancia Safari Ball", !s.balls, 'class="primary"')}${btn("bait", e.baitUsed ? "Esca gi\xE0 usata" : "Usa un\u2019esca", !s.bait || e.baitUsed)}${btn("approach", `Avvicinati (${e.approaches}/${RULES.maxApproaches})`, e.approaches >= RULES.maxApproaches)}${btn("help", "Chiedi aiuto allo starter", !s.help)}${btn("run", "Scappa", false, 'class="quiet"')}</div>`;
+    return '<h2>'+esc(POKEMON[s.encounter.species].name)+'</h2>'+btn('route-battle','Affronta il Pokémon');
+  }
+  async function openEncounter(){
+    if(busy||!state.session?.encounter)return;
+    busy=true;lock();
+    try{
+      if(!state.session.encounter.encounterToken)accept(await api.command({type:'resume',sessionId:state.session.id},snapshot.revision,crypto.randomUUID(),mode));
+      const e=state.session.encounter;
+      await window.startPokemonEncounter({speciesId:window.RouteEncounters.speciesId(e.species),level:e.level,
+        token:e.encounterToken||snapshot.encounterToken,source:'SAFARI',canCapture:true,canEscape:true,
+        onComplete:async()=>{accept(await api.read(mode));}});
+    }catch(error){notice.textContent=error.message;}finally{busy=false;render();}
   }
   function captures(list, best = []) {
     return list.length ? `<ul class="captures">${list.map((c) => `<li>${pokemon(c.species)}<span><strong>${POKEMON[c.species].name}</strong><small>${RARITIES[POKEMON[c.species].rarity].label}${best.includes(c.id) ? " \xB7 Tra le migliori 3" : ""}</small></span><b>${c.points}</b></li>`).join("")}</ul>` : "<p>Ancora nessuna cattura. Ogni incontro \xE8 una nuova occasione.</p>";
@@ -266,7 +233,7 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
   }
   function collection() {
     const ids = Object.keys(SPECIES), owned = ids.filter((id) => state.collection[id]);
-    return `<article><h2>Le mie catture Safari</h2><p>${owned.length} / ${ids.length} specie registrate. Le catture non sostituiscono lo starter e non diventano aiutanti nei minigiochi.</p></article><div class="collection">${ids.map((id) => `<article class="${state.collection[id] ? "owned" : "unseen"}">${pokemon(id)}<h3>${SPECIES[id].name}</h3><small>${state.collection[id] ? `Registrato \xB7 ${state.collection[id]} catture` : "Da scoprire"}</small></article>`).join("")}</div>`;
+    return `<article><h2>Le mie catture Safari</h2><p>${owned.length} / ${ids.length} specie registrate. I Pokémon catturati possono entrare nella squadra. Lo starter resta protetto.</p></article><div class="collection">${ids.map((id) => `<article class="${state.collection[id] ? "owned" : "unseen"}">${pokemon(id)}<h3>${SPECIES[id].name}</h3><small>${state.collection[id] ? `Registrato \xB7 ${state.collection[id]} catture` : "Da scoprire"}</small></article>`).join("")}</div>`;
   }
   function lock() {
     root.querySelectorAll("button").forEach((b) => b.disabled = true);
@@ -331,6 +298,9 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
   async function action(button) {
     if (busy || !active()) return;
     const type = button.dataset.action;
+    if(type==='route-battle')return openEncounter();
+    if(['start','step'].includes(type)){try{await window.RouteEncounters.ensureSource('SAFARI');}catch(error){notice.textContent=error.message;return;}}
+    if(['throw','bait','approach','help','run'].includes(type))return;
     if (type === "refresh") return refresh();
     if (type === "retry") return pending && send();
     if (type === "tab") {
@@ -365,7 +335,8 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
       return refresh();
     }
     pending = { body: { type, area: button.dataset.area, sessionId: state.session?.id }, revision: snapshot.revision, id: crypto.randomUUID() };
-    return send();
+    await send();
+    if(state.session?.phase==='encounter')await openEncounter();
   }
   root.addEventListener("click", (event) => {
     const button = event.target.closest("[data-action]");

@@ -1,4 +1,4 @@
-export async function readStatus(client){const {data,error}=await client.rpc('get_bug_game_status');if(error)throw error;return data;}
+export async function readStatus(client){return sendCommand(client,{type:'read'});}
 export async function readRanking(client,day=null){const {data,error}=await client.rpc('get_bug_game_ranking',{p_day:day});if(error)throw error;return data;}
 export async function sendCommand(client,body){
  const {data,error}=await client.functions.invoke('swift-endpoint',{body});

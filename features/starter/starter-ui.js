@@ -1,4 +1,5 @@
 import {installJohto, JOHTO_STARTERS, JOHTO_FOSSILS} from './johto.mjs?v=johto-1';
+import {routeStarterView,routeShopView} from './route-view.mjs';
 function arenaAvailability(now=new Date()) {
  const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/Rome',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(now);
  const get=type=>parts.find(p=>p.type===type).value;
@@ -242,7 +243,8 @@ function createStarterAPI(client) {
 }
 async function getTrainerCompanion(client) {
   const result = await createStarterAPI(client).read();
-  return result.state.profile?.starter || null;
+  const p=result.routeStarter,legacy=result.state.profile?.starter;
+  return p?{...legacy,species:window.ROUTE_POKEMON_DB[p.speciesId].slug,level:p.level,xp:p.exp,equipped:p.moves}:legacy||null;
 }
 
 // features/starter/view.mjs
@@ -257,7 +259,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   let result = null, page = section, busy = false, message = "", selectedMove = null, difficulty = "balanced", confirmSale = false, pending = null, replacement = null;
   const johtoUnlocked = () => result?.regionTravel?.regions?.some(r=>r.id==='johto'&&r.unlocked&&r.available);
   const johtoChangeUsed = () => result?.regionTravel?.regions?.some(r=>r.id==='johto'&&r.starterChangeUsed);
-  const active = () => result?.state.battle && !result.state.battle.result;
+  const active = () => result?.state.routeEncounter || result?.state.battle && !result.state.battle.result;
   function render() {
     if (!isCurrent() || !host.isConnected) return;
     const p = result?.state.profile;
@@ -278,26 +280,25 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
     if (busy) body.querySelectorAll("button").forEach((b) => b.disabled = true);
   }
   function starter(p) {
+    if(result.routeStarter)return routeStarterView(result.routeStarter);
     const s = p.starter, creature = starterPokemon(p), rule = EVOLUTIONS[s.species], line = LINES[s.origin], stage = line.indexOf(s.species), next = xpRequired(s.level);
-    return `<article class="hero">${starterPortrait(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte 1 contro 1 saranno disponibili in futuro.</p><p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
+    return `<article class="hero">${starterPortrait(s.species)}<h2>${SPECIES[s.species].name} <small>Lv. ${s.level}</small></h2><p>${typeLabel(s.species)}</p><label for="xp">Esperienza: ${s.xp} / ${next || "MAX"} XP \xB7 ${p.totalXP} XP totali</label><progress id="xp" max="${next || 1}" value="${next ? s.xp : 1}"></progress><div class="stats">${Object.entries({ PS: creature.maxHp, Attacco: creature.stats.atk, Difesa: creature.stats.def, "Att. speciale": creature.stats.spa, "Dif. speciale": creature.stats.spd, Velocit\u00E0: creature.stats.spe }).map(([k, v]) => `<div><small>${k}</small><strong>${v}</strong></div>`).join("")}</div></article><article><h2>Mosse disponibili</h2>${s.equipped.map((id) => `<p><strong>${MOVES[id].name}</strong><br><small>${types[MOVES[id].type]} \xB7 Potenza ${MOVES[id].power || "\u2014"} \xB7 PP ${MOVES[id].pp}</small></p>`).join("")}</article><article><h2>Linea evolutiva</h2><ol class="line">${line.map((id, i) => `<li class="${i > stage ? "locked" : ""}" ${i === stage ? 'aria-current="step"' : ""}>${artwork(id)}<b>${SPECIES[id].name}</b><small>${i === stage ? "Attuale" : i > stage ? "Da sbloccare" : "Sbloccato"}</small></li>`).join("")}</ol>${rule ? `<h3>Prossima evoluzione: ${SPECIES[rule.next].name}</h3><p>Livello ${s.level} / ${rule.level}<br>XP totali ${p.totalXP} / ${rule.experience}<br>Incontri completati ${p.encounters} / ${rule.encounters}</p>${button("evolve", "Evolvi", !canEvolve(p) || !!active())}` : "<p>Linea evolutiva completata!</p>"}</article><article><h2>Insieme nei minigiochi</h2><p>Il tuo starter ti accompagna nella Caccia ai Fossili, nella Pesca e negli altri incontri. Le lotte utilizzano la squadra reale e il motore comune.</p><p><a href="#fishing">Gara di Pesca \u2192</a></p></article>`;
   }
   function arenaAccess(){const clock=result?.arenaAccess;return arenaAvailability(clock?.serverNow?new Date(Date.parse(clock.serverNow)+Date.now()-(clock.receivedAt||Date.now())):new Date());}
   function arenaNotice(){const access=arenaAccess();return access.open?'<p>L’Arena è aperta questo lunedì, fino a mezzanotte (ora italiana).</p>':'<article><h2>L’Arena apre solo il lunedì</h2><p>Prossima apertura: '+access.nextDate.split('-').reverse().join('/')+'. Orario italiano.</p><p>Le lotte in corso restano salvate. Puoi riprenderle il lunedì oppure abbandonarle.</p></article>';}
   function arena(p) {
     const b = result.state.battle;
-    if (b) return arenaNotice()+battle(b);
+    if (result.state.routeEncounter || b && !b.result) return '<article><h2>La tua lotta è salvata</h2>'+button('resumeBattle','Riprendi la battaglia',busy)+'</article>';
+    if(result.routeStarter)p={...p,starter:{...p.starter,level:result.routeStarter.level,species:window.ROUTE_POKEMON_DB[result.routeStarter.speciesId].slug}};
     if(!arenaAccess().open)return arenaNotice();
     const quota = rewardStatus(p);
     return `<article><h2>Scegli la tua sfida</h2><p>Disponibile solo il lunedì · Ora italiana</p><p>${SPECIES[p.starter.species].name} \xB7 Livello ${p.starter.level}</p><p>${quota.remaining} / 3 sfide premio rimaste questo lunedì. Dalla quarta ottieni solo XP. Anche gli abbandoni consumano un tentativo.</p><div class="difficulty">${Object.entries(DIFFICULTIES).map(([id, d]) => button("difficulty", d.name, false, `data-difficulty="${id}" aria-pressed="${id === difficulty}"`)).join("")}</div></article>${Object.keys(FOSSIL_ITEMS).filter(id=>!JOHTO_FOSSILS.includes(id)||johtoUnlocked()).map((id) => {
       const preview = encounterPreview(p, id, difficulty);
-      return `<article>${artwork(id)}<h2>${SPECIES[id].name} \xB7 Lv. ${preview.level}</h2><p>${typeLabel(id)}</p><p>Vittoria: ${quota.eligible ? preview.winCoins : 0} \u20BD \xB7 ${p.starter.level >= CONFIG.maxLevel ? 0 : preview.winXP} XP${quota.eligible ? " \xB7 " + FOSSIL_ITEMS[id].name : ""}</p>${button("start", "Affronta " + SPECIES[id].name, !!p.pendingFossil, `data-opponent="${id}"`)}</article>`;
+      return `<article>${artwork(id)}<h2>${SPECIES[id].name} \xB7 Lv. ${preview.level}</h2><p>${typeLabel(id)}</p><p>Vittoria: ${quota.eligible ? preview.winCoins : 0} \u20BD · EXP calcolata dal motore comune${quota.eligible ? " \xB7 " + FOSSIL_ITEMS[id].name : ""}</p>${button("start", "Affronta " + SPECIES[id].name, !!p.pendingFossil, `data-opponent="${id}"`)}</article>`;
     }).join("")}${p.pendingFossil ? "<p>Vai in Fossili e scegli quale conservare prima della prossima sfida.</p>" : ""}`;
   }
-  function battle(b) {
-    const fighter = (c, back) => `<div class="fighter ${back ? "player" : "enemy"}">${artwork(c.id, back)}<div><strong>${c.name}</strong> \xB7 Lv. ${c.level}<p>PS ${c.hp} / ${c.maxHp}${c.status ? " \xB7 " + escape(c.status) : ""}</p><progress max="${c.maxHp}" value="${c.hp}" aria-label="PS di ${c.name}"></progress></div></div>`;
-    return `<article class="battle"><div class="fossil-battle-scene">${fighter(b.enemy, false)}${fighter(b.player, true)}</div><p>Turno ${b.turn}</p>${b.result ? `<h2>${b.result === "win" ? "Vittoria!" : "Sconfitta"}</h2><p>+${b.settlement?.coins || 0} \u20BD \xB7 +${b.settlement?.xp || 0} XP</p>${button("close", "Scegli un altro avversario")}` : `<div class="moves">${b.player.moves.map((m, i) => button("move", `${m.name}<small>PP ${m.pp}/${m.maxPp} \xB7 ${types[m.type]}</small>`, m.pp === 0 || !arenaAccess().open, `data-slot="${i}"`)).join("")}${b.player.moves.every((m) => m.pp === 0) ? button("move", "Scontro", !arenaAccess().open, 'data-slot="-1"') : ""}</div>${button("abandon", "Abbandona la lotta")}</article>`}${b.result ? "</article>" : ""}<details open><summary>Registro della lotta</summary><ul>${result.state.log.slice(-12).map((t) => `<li>${escape(t)}</li>`).join("")}</ul></details>`;
-  }
   function shop(p) {
+    if(result.routeStarter)return routeShopView(result.routeStarter,p.starter,{balance:result.balance,active:!!active(),selectedMove});
     const s = p.starter;
     return `<p>Acquista una mossa e scegli uno dei quattro slot. Le mosse apprese restano disponibili.</p>${active() ? "<p>Concludi la lotta prima di modificare le mosse.</p>" : ""}<article><h2>Mosse apprese</h2>${s.knownMoves.map((id) => button("selectMove", MOVES[id].name, s.equipped.includes(id) || !!active(), `data-move="${id}"`)).join("")}${selectedMove ? `<h3>Equipaggia ${MOVES[selectedMove].name}</h3>${s.equipped.map((id, i) => button("equip", `Slot ${i + 1}: ${MOVES[id].name}`, !!active(), `data-slot="${i}"`)).join("")}` : ""}</article>${MOVE_SHOP.filter((o) => o.starters.includes(s.origin)).map((o) => `<article><h3>${MOVES[o.id].name}</h3><p>${o.description}</p><p>Livello ${o.level} \xB7 ${o.price} \u20BD</p>${button("buy", s.knownMoves.includes(o.id) ? "Appresa" : "Acquista", s.knownMoves.includes(o.id) || s.level < o.level || result.balance < o.price || !!active(), `data-move="${o.id}"`)}</article>`).join("")}`;
   }
@@ -391,8 +392,20 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       return;
     }
     if (a === "choose") await send({ type: a, starter: b.dataset.starter });
-    if (a === "start") await send({ type: a, opponent: b.dataset.opponent, difficulty });
-    if (a === "move") await send({ type: a, slot: Number(b.dataset.slot) });
+    if (a === "start" || a === 'resumeBattle') {
+      if(a==='start'&&!arenaAccess().open)return;
+      busy=true;render();
+      try{
+        await window.RouteEncounters.ensureSource('FOSSIL_HUNT');
+        result=await api.command({type:a==='resumeBattle'?'resume':'encounter',opponent:b.dataset.opponent,difficulty},result.revision,crypto.randomUUID());
+        const ticket=result.state.routeEncounter;
+        if(!ticket)throw Error('Il servizio non ha restituito l’incontro.');
+        await window.startPokemonEncounter({speciesId:ticket.speciesId,level:ticket.level,
+          token:ticket.token,source:'FOSSIL_HUNT',canCapture:true,canEscape:true,
+          onComplete:async()=>{result=await api.read();onBalance(result.balance);await onStateChanged();}});
+      }catch(error){message=error.message;}finally{busy=false;render();}
+    }
+
     if (a === "evolve" || a === "abandon") await send({ type: a });
     if (a === "buy") {
       selectedMove = b.dataset.move;
