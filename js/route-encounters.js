@@ -75,26 +75,20 @@
     async act(type,value){
       if(this.saved||this.engine.state?.phase!=='battle')return;
       await this.request({type,value});
-      if(this.engine.state.phase==='ended'&&!this.needsReplacement())await this.finish();
+      if(this.engine.state.phase==='ended')await this.finish();
     }
-    needsReplacement(){return this.engine.state?.result==='capture'&&!this.engine.state.testMode&&this.engine.state.party.length>=6&&!this.saved;}
-    async finish(replaceUid=null,discard=false){
+    async finish(){
       if(this.saved)return this.result;
       if(this.engine.state?.phase!=='ended')throw Error('La battaglia è ancora in corso.');
-      if(this.needsReplacement()&&!discard){
-        if(!replaceUid)throw Error('Scegli il Pokémon da sostituire.');
-        const check=this.teamManager.replacePokemon(replaceUid,this.engine.state.capturedPokemon);
-        if(!check.ok)throw Error(check.reason==='STARTER_PROTECTED'?'Lo starter non può essere liberato.':'Sostituzione non valida.');
-      }
       // The server computes syncTeam() and saves the real team atomically with event settlement.
-      await this.request({type:'finish',replaceUid,discard});
+      await this.request({type:'finish'});
       if(!this.saved)throw Error('Il salvataggio non è stato confermato.');
       global.dispatchEvent(new CustomEvent('route:team-saved',{detail:{team:this.teamManager.getTeam()}}));
       return this.result;
     }
     async retry(){
       if(this.pending)await this.request(this.pending);
-      if(this.engine.state?.phase==='ended'&&!this.saved&&!this.needsReplacement())await this.finish();
+      if(this.engine.state?.phase==='ended'&&!this.saved)await this.finish();
     }
   }
   async function startPokemonEncounter(options={}){
@@ -112,7 +106,7 @@
           try{await options.onComplete?.(result);resolve(result);}catch(error){reject(error);}
         }});
         ui.mount();
-        if(controller.engine.state.phase==='ended'&&!controller.saved&&!controller.needsReplacement())controller.finish().catch(error=>ui.error(error));
+        if(controller.engine.state.phase==='ended'&&!controller.saved)controller.finish().catch(error=>ui.error(error));
       });
     }catch(error){active=null;throw error;}
   }

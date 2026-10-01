@@ -233,7 +233,7 @@ async function mountSafari(host, { client, isCurrent = () => true, onBalance = (
   }
   function collection() {
     const ids = Object.keys(SPECIES), owned = ids.filter((id) => state.collection[id]);
-    return `<article><h2>Le mie catture Safari</h2><p>${owned.length} / ${ids.length} specie registrate. I Pokémon catturati possono entrare nella squadra. Lo starter resta protetto.</p></article><div class="collection">${ids.map((id) => `<article class="${state.collection[id] ? "owned" : "unseen"}">${pokemon(id)}<h3>${SPECIES[id].name}</h3><small>${state.collection[id] ? `Registrato \xB7 ${state.collection[id]} catture` : "Da scoprire"}</small></article>`).join("")}</div>`;
+    return `<article><h2>Le mie catture Safari</h2><p>${owned.length} / ${ids.length} specie registrate. Le catture contano per il diario e il punteggio Safari. In squadra entrano solo Pokémon ricevuti tramite QR o regali.</p></article><div class="collection">${ids.map((id) => `<article class="${state.collection[id] ? "owned" : "unseen"}">${pokemon(id)}<h3>${SPECIES[id].name}</h3><small>${state.collection[id] ? `Registrato \xB7 ${state.collection[id]} catture` : "Da scoprire"}</small></article>`).join("")}</div>`;
   }
   function lock() {
     root.querySelectorAll("button").forEach((b) => b.disabled = true);

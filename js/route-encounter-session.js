@@ -19,17 +19,9 @@
     else if(command.type==='finish'){
       if(state.phase!=='ended')throw Error('BATTLE_ACTIVE');
       if(state.testMode)return {state:engine.snapshot(),events,team:structuredClone(state.initialTeam),saved:true,result:{result:state.result,source:state.source,capturedPokemon:null,testMode:true}};
-      const manager=new global.RouteTeam.TeamManager({autoLoad:false,storage:{setItem(){}}});
-      manager.setTeam(engine.syncTeam());
-      let capturedPokemon=null;
-      if(state.result==='capture'&&!command.discard){
-        const caught=structuredClone(state.capturedPokemon);
-        const result=manager.isFull()?manager.replacePokemon(command.replaceUid,caught):manager.addPokemon(caught);
-        if(!result.ok)throw Error(result.reason);
-        capturedPokemon=caught;
-      }
-      return {state:engine.snapshot(),events,team:manager.getTeam(),saved:true,
-        result:{result:state.result,source:state.source,capturedPokemon,discarded:state.result==='capture'&&!capturedPokemon}};
+      // Captures belong to event scoring only. QR/gifts own all roster additions.
+      return {state:engine.snapshot(),events,team:engine.syncTeam(),saved:true,
+        result:{result:state.result,source:state.source,capturedPokemon:state.result==='capture'?structuredClone(state.capturedPokemon):null,addedToTeam:false}};
     }else throw Error('INVALID_COMMAND');
     if(!response.ok)throw Error(response.reason);
     return {state:engine.snapshot(),events,team:engine.syncTeam(),saved:false};

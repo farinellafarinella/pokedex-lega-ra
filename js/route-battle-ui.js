@@ -1,6 +1,6 @@
 (function(global){
   'use strict';
-  const stylesheet=new URL('../css/route-battle.css?v=encounters-1',document.currentScript.src).href;
+  const stylesheet=new URL('../css/route-battle.css?v=event-only-2',document.currentScript.src).href;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const statuses={PSN:'Avvelenato',BRN:'Scottato',PAR:'Paralizzato',SLP:'Addormentato',FRZ:'Congelato'};
   class BattleUI{
@@ -17,8 +17,9 @@
       this.controller.onChange=()=>this.render();this.render();this.dialog.showModal();
     }
     species(mon){return global.ROUTE_POKEMON_DB[String(mon.speciesId)];}
+    experience(mon){const species=this.species(mon),core=global.RoutePokemonCore,base=core.expForLevel(mon.level,species.growth),next=core.expForLevel(mon.level+1,species.growth),max=mon.level>=100?1:Math.max(1,next-base),value=mon.level>=100?1:Math.min(max,Math.max(0,mon.exp-base));return '<label class="rb-exp">EXP '+(mon.level>=100?'MAX':value+' / '+max)+'<progress aria-label="Esperienza di '+esc(species.name)+'" value="'+value+'" max="'+max+'"></progress></label>';}
     fighter(mon,side){const species=this.species(mon),max=global.RoutePokemonCore.maxHp(mon);
-      return `<div class="rb-mon rb-${side}-mon"><img src="${esc(species.sprites[side==='enemy'?'front':'back'])}" alt="${esc(species.name)}" width="112" height="112"></div><section class="rb-panel rb-${side}-panel"><div class="rb-row"><b>${esc(species.name)}</b><span>Lv. ${mon.level}</span></div><div class="rb-hp" role="progressbar" aria-label="PS di ${esc(species.name)}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${mon.currentHp}"><span style="width:${mon.currentHp/max*100}%"></span></div><div>${mon.currentHp} / ${max} PS</div><span>${mon.currentHp===0?'Esausto':statuses[mon.status]||''}</span></section>`;
+      return `<div class="rb-mon rb-${side}-mon"><img src="${esc(species.sprites[side==='enemy'?'front':'back'])}" alt="${esc(species.name)}" width="112" height="112"></div><section class="rb-panel rb-${side}-panel"><div class="rb-row"><b>${esc(species.name)}</b><span>Lv. ${mon.level}</span></div><div class="rb-hp" role="progressbar" aria-label="PS di ${esc(species.name)}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${mon.currentHp}"><span style="width:${mon.currentHp/max*100}%"></span></div><div>${mon.currentHp} / ${max} PS</div><span>${mon.currentHp===0?'Esausto':statuses[mon.status]||''}</span>${side==='player'?this.experience(mon):''}</section>`;
     }
     button(action,label,disabled=false,extra=''){return `<button type="button" data-action="${action}" ${disabled?'disabled':''} ${extra}>${label}</button>`;}
     render(){
@@ -35,9 +36,8 @@
         if(text)this.log.push(text);
       }
       const party=(this.partyOpen||forced)&&!ended?`<section><h2>${forced?'Pokémon esausto: scegli chi entra':'SQUADRA'}</h2><div id="rb-party">${s.party.map((p,i)=>this.button('switch',`${esc(this.species(p).name)}${p.isStarter?' ★':''}<small>Lv. ${p.level} · ${p.currentHp}/${global.RoutePokemonCore.maxHp(p)} PS</small>`,locked||i===s.activeIndex||p.currentHp<=0,`data-index="${i}" class="rb-party-slot"`)).join('')}</div>${!forced?this.button('party','Torna alle mosse',locked):''}</section>`:'';
-      const replacement=c.needsReplacement()?`<section><h2>SQUADRA COMPLETA</h2><p>Per tenere questo Pokémon devi liberarne uno.</p>${s.party.map(p=>this.button('replace',`${esc(this.species(p).name)} · ${p.isStarter?'STARTER · NON LIBERABILE':'LIBERA E SOSTITUISCI'}`,locked||p.isStarter,`data-uid="${esc(p.uid)}"`)).join('')}${this.button('discard','Annulla · lascia andare il catturato',locked)}</section>`:'';
-      const result={win:'VITTORIA',loss:'SCONFITTA',capture:'POKÉMON CATTURATO',flee:'SEI FUGGITO'};
-      this.root.querySelector('[data-content]').innerHTML=`${s.testMode?'<p>Prova Safari · la squadra e il saldo reali restano invariati.</p>':''}<div class="rb-scene"><div class="rb-platform rb-enemy-platform"></div><div class="rb-platform rb-player-platform"></div>${this.fighter(this.engine.enemy(),'enemy')}${this.fighter(this.engine.active(),'player')}</div><p role="status" aria-live="polite">${esc(this.message|| (forced?'Scegli un Pokémon utilizzabile.':ended?result[s.result]:'Scegli la tua azione.'))}</p>${!ended&&!forced&&!this.partyOpen?`<div id="rb-moves">${this.engine.active().moves.map(key=>{const m=global.ROUTE_MOVE_DB[key];return this.button('move',`${esc(m?.name||key)}<small>${esc(m?.type)} · ${m?.power||'Stato'}</small>`,locked||!m,`class="rb-move" data-move="${esc(key)}"`);}).join('')}</div><div class="rb-actions">${this.button('party','SQUADRA',locked)}${s.canCapture?this.button('capture',`CATTURA${s.balls===null?'':' · '+s.balls+' Ball'}`,locked||s.balls===0):''}${s.canEscape?this.button('flee','FUGGI',locked):''}</div>`:''}${party}${replacement}${locked&&!c.busy?this.button('retry','Riprova la stessa azione'):''}${ended&&!c.saved&&!replacement&&!locked?this.button('save','Salva risultato'):''}${c.saved?`<p>${s.testMode?'Prova salvata.':'Squadra salvata.'}</p>${this.button('close','Torna al gioco')}`:''}<details open><summary>Registro della battaglia</summary><ol>${this.log.slice(-15).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></details>`;
+      const result={win:'VITTORIA',loss:'SCONFITTA',capture:'CATTURA REGISTRATA PER L’EVENTO',flee:'SEI FUGGITO'};
+      this.root.querySelector('[data-content]').innerHTML=`${s.testMode?'<p>Prova Safari · la squadra e il saldo reali restano invariati.</p>':''}<div class="rb-scene"><div class="rb-platform rb-enemy-platform"></div><div class="rb-platform rb-player-platform"></div>${this.fighter(this.engine.enemy(),'enemy')}${this.fighter(this.engine.active(),'player')}</div><p role="status" aria-live="polite">${esc(this.message|| (forced?'Scegli un Pokémon utilizzabile.':ended?result[s.result]:'Scegli la tua azione.'))}</p>${!ended&&!forced&&!this.partyOpen?`<div id="rb-moves">${this.engine.active().moves.map(key=>{const m=global.ROUTE_MOVE_DB[key];return this.button('move',`${esc(m?.name||key)}<small>${esc(m?.type)} · ${m?.power||'Stato'}</small>`,locked||!m,`class="rb-move" data-move="${esc(key)}"`);}).join('')}</div><div class="rb-actions">${this.button('party','SQUADRA',locked)}${s.canCapture?this.button('capture',`CATTURA${s.balls===null?'':' · '+s.balls+' Ball'}`,locked||s.balls===0):''}${s.canEscape?this.button('flee','FUGGI',locked):''}</div>`:''}${party}${locked&&!c.busy?this.button('retry','Riprova la stessa azione'):''}${ended&&!c.saved&&!locked?this.button('save','Salva risultato'):''}${c.saved?`<p>${s.testMode?'Prova salvata.':'Squadra salvata.'}</p>${this.button('close','Torna al gioco')}`:''}${ended&&s.result==='capture'?'<p>La cattura conta per l’evento. Il Pokémon non entra nella squadra.</p>':''}<details open><summary>Registro della battaglia</summary><ol>${this.log.slice(-15).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></details>`;
       if(forced)this.root.querySelector('[data-action="switch"]:not(:disabled)')?.focus();
     }
     error(error){this.message=error.message;this.render();}
@@ -49,12 +49,6 @@
         if(action==='close'){await this.onClose();return;}
         if(action==='retry'){await this.controller.retry();return;}
         if(action==='save'){await this.controller.finish();return;}
-        if(action==='discard'){await this.controller.finish(null,true);return;}
-        if(action==='replace'){
-          const p=this.engine.state.party.find(p=>p.uid===b.dataset.uid);if(!p||p.isStarter)return;
-          if(global.confirm(`Liberare definitivamente ${this.species(p).name} e sostituirlo con ${this.species(this.engine.state.capturedPokemon).name}?`))await this.controller.finish(p.uid);
-          return;
-        }
         this.partyOpen=false;
         await this.controller.act(action,action==='move'?b.dataset.move:action==='switch'?Number(b.dataset.index):undefined);
       }catch(error){this.error(error);}
