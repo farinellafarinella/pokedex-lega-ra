@@ -5,7 +5,7 @@ export function createTeamAPI(client){
  async function rpc(name,args={}){const {data,error}=await client.rpc(name,args);if(error){const e=Error(error.code==='PGRST202'?'La squadra deve essere attivata su Supabase. Lo starter e i suoi progressi sono al sicuro.':Object.entries(messages).find(([key])=>error.message?.includes(key))?.[1]||'Impossibile salvare la squadra. Riprova.');e.code=error.code;throw e;}if(!data||!Array.isArray(data.team))throw Error('Risposta squadra non valida.');state=data;return structuredClone(state);}
  const command=(action,extra={})=>rpc('route_team_command',{p_action:action,p_revision:state.revision,...extra});
  return {
- read:()=>rpc('get_route_team'),
+ read:async()=>{let gifts=[];try{const response=await client.rpc('get_my_pokemon_gifts');if(!response.error&&Array.isArray(response.data))gifts=response.data;}catch{}return {...await rpc('get_route_team'),gifts};},
  getTeam:()=>structuredClone(state.team),getTeamPokemonByUid:uid=>structuredClone(state.team.find(p=>p.uid===uid)||null),
  getStarterPokemon:()=>structuredClone(state.team.find(p=>p.isStarter)||null),getActivePokemon:()=>structuredClone(state.team[0]||null),isTeamFull:()=>state.team.length>=TEAM_LIMIT,
  canReleasePokemon:uid=>canReleasePokemon(state.team.find(p=>p.uid===uid)),
