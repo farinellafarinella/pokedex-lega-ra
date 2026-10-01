@@ -95,9 +95,13 @@
     if(active)throw Error('Concludi prima l’incontro in corso.');
     if(!Number.isInteger(options.level)||options.level<1||options.level>100)throw Error('Il generatore deve fornire un livello tra 1 e 100.');
     speciesId(options.speciesId);
-    const controller=new EncounterController(options,remoteTransport());
+    // Visual-only hint: recover the tower scenery even when resuming from My Team.
+    const controller=new EncounterController({...options},remoteTransport());
     active={controller,returnHash:location.hash};
     try{
+      if(options.source==='SPECIAL_EVENT'&&options.token&&!options.background&&client){
+        try{const {data}=await client.rpc('get_halloween_event');if(data?.pending?.token===options.token)controller.options.background='halloween';}catch{}
+      }
       await controller.start();
       return await new Promise((resolve,reject)=>{
         const ui=new global.RouteBattleUI.BattleUI({controller,onClose:async()=>{

@@ -62,8 +62,8 @@
   <script src="./js/route-pokemon-core.js?v=1"></script>
   <script src="./js/route-team.js?v=1"></script>
   <script src="./js/route-battle-engine.js?v=1"></script>
-  <script src="./js/route-battle-ui.js?v=it-1"></script>
-  <script src="./js/route-encounters.js?v=event-only-2"></script>
+  <script src="./js/route-battle-ui.js?v=scenarios-1"></script>
+  <script src="./js/route-encounters.js?v=scenarios-1"></script>
   <style>.route-battle-dialog{width:min(430px,calc(100vw - 20px));max-height:90dvh;overflow:auto;background:#181b20;color:#f1f3f6;border:1px solid #626974;border-radius:16px;padding:14px}.route-battle-dialog::backdrop{background:#000b}</style>
   <script src="./features/casino/casino-runtime.js?v=9"></script>
   <script src="./features/tournaments/tournaments-runtime.js?v=5"></script>
@@ -424,7 +424,7 @@
       }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Torre di Lavandonia…';document.querySelector('#app').replaceChildren(host);
-        import('./features/halloween/tower.mjs?v=quiz-2').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountHalloween(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onGift:()=>checkPokemonGiftPopup()});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare la torre. Ricarica la pagina per riprovare.';});return;
+        import('./features/halloween/tower.mjs?v=scenarios-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountHalloween(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onGift:()=>checkPokemonGiftPopup()});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare la torre. Ricarica la pagina per riprovare.';});return;
       }
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;

@@ -27,7 +27,7 @@ export async function mountHalloween(host,{client,isCurrent=()=>true,battles=glo
  async function fight(){
   if(!state.pending)return;
   const isBoss=state.pending.speciesId===105;
-  const result=await battles.startPokemonEncounter(state.pending);
+  const result=await battles.startPokemonEncounter({...state.pending,background:'halloween'});
   if(!current())return;
   await load();
   message=result?.result==='win'?(isBoss&&state.cubone?'Marowak è stato sconfitto! Hai ricevuto Cubone di livello 5.':state.open?'Piano completato: +10 caramelle!':'Incontro concluso. L’evento è terminato.'):'Incontro concluso. Puoi curare la squadra e riprovare.';
