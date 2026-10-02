@@ -3165,8 +3165,8 @@
       ]
     },
     "sprites": {
-      "front": "https://projectpokemon.org/images/normal-sprite/nidoran-f.gif",
-      "back": "https://projectpokemon.org/images/sprites-models/normal-back/nidoran-f.gif"
+      "front": "https://projectpokemon.org/images/normal-sprite/nidoran_f.gif",
+      "back": "https://projectpokemon.org/images/sprites-models/normal-back/nidoran_f.gif"
     }
   },
   "30": {
@@ -3501,8 +3501,8 @@
       ]
     },
     "sprites": {
-      "front": "https://projectpokemon.org/images/normal-sprite/nidoran-m.gif",
-      "back": "https://projectpokemon.org/images/sprites-models/normal-back/nidoran-m.gif"
+      "front": "https://projectpokemon.org/images/normal-sprite/nidoran_m.gif",
+      "back": "https://projectpokemon.org/images/sprites-models/normal-back/nidoran_m.gif"
     }
   },
   "33": {

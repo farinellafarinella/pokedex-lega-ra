@@ -57,7 +57,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="./supabase-config.js"></script>
-  <script src="./data/pokemon-db.js"></script>
+  <script src="./data/pokemon-db.js?v=nidoran-2"></script>
   <script src="./data/fossil-opponents.js?v=1"></script>
   <script src="./data/moves-db.js?v=it-1"></script>
   <script src="./js/route-pokemon-core.js?v=1"></script>
@@ -378,7 +378,7 @@
       if(requiresAuth&&!remoteProfile){document.querySelector('#app').innerHTML=activationMessage('Pokédex non attivato','Scansiona il QR del tuo Pokédex per creare la Scheda Allenatore.');return}
       if(['rocket-list','admin-rocket-events'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
-        import('./features/rocket-shop/shop.mjs?v=1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountRocketShop(host,{client:supabaseClient,userId,admin:page==='admin-rocket-events',isCurrent:()=>host.isConnected&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il negozio Team Rocket. Riprova.';console.error(error);});return;
+        import('./features/rocket-shop/shop.mjs?v=nidoran-2').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountRocketShop(host,{client:supabaseClient,userId,admin:page==='admin-rocket-events',isCurrent:()=>host.isConnected&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il negozio Team Rocket. Riprova.';console.error(error);});return;
       }
       if(page==='admin-pokemon-gifts'){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
