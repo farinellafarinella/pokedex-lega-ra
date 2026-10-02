@@ -434,19 +434,29 @@
     }
 
     learnLevelMoves(mon,oldLevel,newLevel){
-      const species=this.species(mon);
-      const learned=(species.learnset.levelUp||[]).filter(x=>x.level>oldLevel&&x.level<=newLevel);
+      const learned=(this.species(mon).learnset.levelUp||[]).filter(x=>x.level>oldLevel&&x.level<=newLevel);
+      this.state.pendingMoves=this.state.pendingMoves||[];
       for(const row of learned){
-        mon.knownMoves=[...new Set([...(mon.knownMoves||[]),...mon.moves,row.move])];
-        if(mon.moves.includes(row.move)) continue;
-        if(mon.moves.length<4) mon.moves.push(row.move);
-        else {
-          // Site can replace this policy with its own modal.
-          mon.moves.shift();
+        if(mon.moves.includes(row.move)||this.state.pendingMoves.some(p=>p.uid===mon.uid&&p.moveKey===row.move))continue;
+        if(mon.moves.length<4){
           mon.moves.push(row.move);
-        }
-        this.emit("move_learned",{uid:mon.uid,moveKey:row.move});
+          mon.knownMoves=[...new Set([...(mon.knownMoves||[]),...mon.moves])];
+          this.emit('move_learned',{uid:mon.uid,moveKey:row.move});
+        }else this.state.pendingMoves.push({uid:mon.uid,moveKey:row.move});
       }
+    }
+
+    chooseLearnedMove(value){
+      const next=this.state.pendingMoves?.[0];
+      if(this.state.phase!=='ended'||!next||!value||value.uid!==next.uid||value.moveKey!==next.moveKey)return {ok:false,reason:'INVALID_MOVE_CHOICE'};
+      const mon=this.state.party.find(p=>p.uid===next.uid),slot=value.slot;
+      if(!mon||(slot!==null&&(!Number.isInteger(slot)||slot<0||slot>=mon.moves.length)))return {ok:false,reason:'INVALID_MOVE_CHOICE'};
+      if(slot!==null){
+        mon.knownMoves=[...new Set([...(mon.knownMoves||[]),...mon.moves,next.moveKey])];
+        mon.moves[slot]=next.moveKey;
+        this.emit('move_learned',next);
+      }else this.emit('move_declined',next);
+      this.state.pendingMoves.shift();return {ok:true,state:this.snapshot()};
     }
 
     tryLevelEvolution(mon){

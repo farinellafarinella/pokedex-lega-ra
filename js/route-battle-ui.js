@@ -1,6 +1,6 @@
 (function(global){
   'use strict';
-  const stylesheet=new URL('../css/route-battle.css?v=shared-lab-2',document.currentScript.src).href;
+  const stylesheet=new URL('../css/route-battle.css?v=move-choice-1',document.currentScript.src).href;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const typeNames={normal:'Normale',fire:'Fuoco',water:'Acqua',electric:'Elettro',grass:'Erba',ice:'Ghiaccio',fighting:'Lotta',poison:'Veleno',ground:'Terra',flying:'Volante',psychic:'Psico',bug:'Coleottero',rock:'Roccia',ghost:'Spettro',dragon:'Drago',dark:'Buio',steel:'Acciaio','???':'???'};
   const statuses={PSN:'Avvelenato',BRN:'Scottato',PAR:'Paralizzato',SLP:'Addormentato',FRZ:'Congelato'};
@@ -26,6 +26,12 @@
       return `<section class="rb-panel rb-${side}-panel"><div class="rb-row"><b>${esc(species.name)}</b><span>Lv. ${mon.level}</span></div><div class="rb-hp" role="progressbar" aria-label="PS di ${esc(species.name)}" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${mon.currentHp}"><span style="width:${mon.currentHp/max*100}%"></span></div><div>${mon.currentHp} / ${max} PS</div><span>${mon.currentHp===0?'Esausto':statuses[mon.status]||''}</span>${side==='player'?this.experience(mon):''}</section>`;
     }
     button(action,label,disabled=false,extra=''){return `<button type="button" data-action="${action}" ${disabled?'disabled':''} ${extra}>${label}</button>`;}
+    learning(locked){
+      const next=this.engine.state.pendingMoves?.[0];if(!next)return '';
+      const mon=this.engine.state.party.find(p=>p.uid===next.uid),move=global.ROUTE_MOVE_DB[next.moveKey];
+      const detail=m=>`${esc(typeNames[m?.type]||m?.type)} · Potenza ${m?.power||'—'} · Precisione ${m?.accuracy??'—'}`;
+      return `<section class="rb-learning" aria-label="Apprendimento nuova mossa"><h2 tabindex="-1">Una nuova mossa!</h2><p><b>${esc(this.species(mon).name)}</b> vuole imparare <b>${esc(move?.name||next.moveKey)}</b>.</p><p>${detail(move)}</p><p>Quale mossa vuoi dimenticare?</p><div class="rb-learning-options">${mon.moves.map((key,slot)=>{const m=global.ROUTE_MOVE_DB[key];return this.button('learn',`Dimentica ${esc(m?.name||key)}<small>${detail(m)}</small>`,locked,`data-slot="${slot}"`);}).join('')}</div>${this.button('decline','Non imparare la nuova mossa',locked)}<p>Le altre mosse rimarranno invariate. Completa le scelte per salvare la battaglia.</p></section>`;
+    }
     render(){
       if(!this.root)return;
       const c=this.controller,s=this.engine.state;if(!s)return;
@@ -42,7 +48,10 @@
       }
       const party=(this.partyOpen||forced)&&!ended?`<section><h2>${forced?'Pokémon esausto: scegli chi entra':'SQUADRA'}</h2><div id="rb-party">${s.party.map((p,i)=>this.button('switch',`${esc(this.species(p).name)}${p.isStarter?' ★':''}<small>Lv. ${p.level} · ${p.currentHp}/${global.RoutePokemonCore.maxHp(p)} PS</small>`,locked||i===s.activeIndex||p.currentHp<=0,`data-index="${i}" class="rb-party-slot"`)).join('')}</div>${!forced?this.button('party','Torna alle mosse',locked):''}</section>`:'';
       const result={win:'VITTORIA',loss:'SCONFITTA',capture:'CATTURA REGISTRATA PER L’EVENTO',flee:'SEI FUGGITO'};
-      this.root.querySelector('[data-content]').innerHTML=`${s.testMode?'<p>Prova Safari · la squadra e il saldo reali restano invariati.</p>':''}${this.panel(this.engine.enemy(),'enemy')}<div class="rb-scene" data-background="${background}">${this.fighter(this.engine.enemy(),'enemy')}${this.fighter(this.engine.active(),'player')}</div>${this.panel(this.engine.active(),'player')}<p role="status" aria-live="polite">${esc(this.message|| (forced?'Scegli un Pokémon utilizzabile.':ended?result[s.result]:'Scegli la tua azione.'))}</p>${!ended&&!forced&&!this.partyOpen?`<div id="rb-moves">${this.engine.active().moves.map(key=>{const m=global.ROUTE_MOVE_DB[key];return this.button('move',`${esc(m?.name||key)}<small>${esc(typeNames[m?.type]||m?.type)} · ${m?.power||'Stato'}</small>`,locked||!m,`class="rb-move" data-move="${esc(key)}"`);}).join('')}</div><div class="rb-actions">${this.button('party','SQUADRA',locked)}${s.canCapture?this.button('capture',`CATTURA${s.balls===null?'':' · '+s.balls+' Ball'}`,locked||s.balls===0):''}${s.canEscape?this.button('flee','FUGGI',locked):''}</div>`:''}${party}${locked&&!c.busy?this.button('retry','Riprova la stessa azione'):''}${ended&&!c.saved&&!locked?this.button('save','Salva risultato'):''}${c.saved?`<p>${s.testMode?'Prova salvata.':'Squadra salvata.'}</p>${this.button('close','Torna al gioco')}`:''}${ended&&s.result==='capture'?'<p>La cattura conta per l’evento. Il Pokémon non entra nella squadra.</p>':''}<details><summary>Registro della battaglia</summary><ol>${this.log.slice(-15).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></details>`;
+      this.root.querySelector('[data-content]').innerHTML=`${s.testMode?'<p>Prova Safari · la squadra e il saldo reali restano invariati.</p>':''}${this.panel(this.engine.enemy(),'enemy')}<div class="rb-scene" data-background="${background}">${this.fighter(this.engine.enemy(),'enemy')}${this.fighter(this.engine.active(),'player')}</div>${this.panel(this.engine.active(),'player')}<p role="status" aria-live="polite">${esc(this.message|| (forced?'Scegli un Pokémon utilizzabile.':ended?result[s.result]:'Scegli la tua azione.'))}</p>${!ended&&!forced&&!this.partyOpen?`<div id="rb-moves">${this.engine.active().moves.map(key=>{const m=global.ROUTE_MOVE_DB[key];return this.button('move',`${esc(m?.name||key)}<small>${esc(typeNames[m?.type]||m?.type)} · ${m?.power||'Stato'}</small>`,locked||!m,`class="rb-move" data-move="${esc(key)}"`);}).join('')}</div><div class="rb-actions">${this.button('party','SQUADRA',locked)}${s.canCapture?this.button('capture',`CATTURA${s.balls===null?'':' · '+s.balls+' Ball'}`,locked||s.balls===0):''}${s.canEscape?this.button('flee','FUGGI',locked):''}</div>`:''}${party}${locked&&!c.busy?this.button('retry','Riprova la stessa azione'):''}${this.learning(locked)}${ended&&!s.pendingMoves?.length&&!c.saved&&!locked?this.button('save','Salva risultato'):''}${c.saved?`<p>${s.testMode?'Prova salvata.':'Squadra salvata.'}</p>${this.button('close','Torna al gioco')}`:''}${ended&&s.result==='capture'?'<p>La cattura conta per l’evento. Il Pokémon non entra nella squadra.</p>':''}<details><summary>Registro della battaglia</summary><ol>${this.log.slice(-15).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></details>`;
+      const choiceKey=s.pendingMoves?.[0]?s.pendingMoves[0].uid+':'+s.pendingMoves[0].moveKey:null;
+      if(choiceKey&&choiceKey!==this.lastChoice){const heading=this.root.querySelector('.rb-learning h2');heading?.focus({preventScroll:true});heading?.scrollIntoView({block:'nearest'});}
+      this.lastChoice=choiceKey;
       if(forced)this.root.querySelector('[data-action="switch"]:not(:disabled)')?.focus();
     }
     error(error){this.message=error.message;this.render();}
@@ -54,6 +63,7 @@
         if(action==='close'){await this.onClose();return;}
         if(action==='retry'){await this.controller.retry();return;}
         if(action==='save'){await this.controller.finish();return;}
+        if(action==='learn'||action==='decline'){const next=this.engine.state.pendingMoves?.[0];if(next)await this.controller.act('learn',{...next,slot:action==='decline'?null:Number(b.dataset.slot)});return;}
         this.partyOpen=false;
         await this.controller.act(action,action==='move'?b.dataset.move:action==='switch'?Number(b.dataset.index):undefined);
       }catch(error){this.error(error);}

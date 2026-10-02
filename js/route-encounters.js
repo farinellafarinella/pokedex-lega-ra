@@ -11,10 +11,12 @@
     if(!client)throw Error('Accedi prima di iniziare una battaglia.');
     return {async request(body){
       const {data,error}=await client.functions.invoke('route-encounters',{body});
+      const explain=message=>body.type==='start'&&[345,347,408,410].includes(Number(body.speciesId))&&message==='Incontro non valido.'
+        ? 'Il server delle battaglie non riconosce questo fossile. L’amministratore deve aggiornare la funzione route-encounters. Il tuo incontro resta salvato: non usare un altro fossile.' : message;
       if(error){let detail;try{detail=await error.context?.json();}catch{}
         const messages={STARTER_PROTECTED:'Lo starter non può essere liberato.',STALE_TEAM:'La squadra è cambiata: ricarica il gioco.',ENCOUNTER_EXPIRED:'Questo incontro è scaduto.',NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',BATTLE_ACTIVE:'Riprendi e concludi l’incontro salvato dalla pagina La mia squadra.',TEAM_EXHAUSTED:'Cura la squadra prima di combattere.',STALE_EVENT:'L’evento è cambiato. Riprova il salvataggio.',EVENT_INTEGRATION_REQUIRED:'Il servizio battaglie è in aggiornamento. Il risultato resta in attesa.'};
-        throw Error(messages[detail?.error]||detail?.error||'Le battaglie non sono ancora disponibili. Riprova più tardi.');}
-      if(data?.error)throw Error(data.error);
+        throw Error(messages[detail?.error]||explain(detail?.error)||'Le battaglie non sono ancora disponibili. Riprova più tardi.');}
+      if(data?.error)throw Error(explain(data.error));
       return data;
     }};
   }
@@ -73,13 +75,14 @@
         token:o.token||null,canCapture:o.canCapture!==false,canEscape:o.canEscape!==false});
     }
     async act(type,value){
-      if(this.saved||this.engine.state?.phase!=='battle')return;
+      if(this.saved||(type!=='learn'&&this.engine.state?.phase!=='battle'))return;
       await this.request({type,value});
-      if(this.engine.state.phase==='ended')await this.finish();
+      if(this.engine.state.phase==='ended'&&!this.engine.state.pendingMoves?.length)await this.finish();
     }
     async finish(){
       if(this.saved)return this.result;
       if(this.engine.state?.phase!=='ended')throw Error('La battaglia è ancora in corso.');
+      if(this.engine.state.pendingMoves?.length)throw Error('Scegli prima quali mosse apprendere.');
       // The server computes syncTeam() and saves the real team atomically with event settlement.
       await this.request({type:'finish'});
       if(!this.saved)throw Error('Il salvataggio non è stato confermato.');
@@ -88,7 +91,7 @@
     }
     async retry(){
       if(this.pending)await this.request(this.pending);
-      if(this.engine.state?.phase==='ended'&&!this.saved)await this.finish();
+      if(this.engine.state?.phase==='ended'&&!this.saved&&!this.engine.state.pendingMoves?.length)await this.finish();
     }
   }
   async function startPokemonEncounter(options={}){
@@ -110,7 +113,7 @@
           try{await options.onComplete?.(result);resolve(result);}catch(error){reject(error);}
         }});
         ui.mount();
-        if(controller.engine.state.phase==='ended'&&!controller.saved)controller.finish().catch(error=>ui.error(error));
+        if(controller.engine.state.phase==='ended'&&!controller.saved&&!controller.engine.state.pendingMoves?.length)controller.finish().catch(error=>ui.error(error));
       });
     }catch(error){active=null;throw error;}
   }
