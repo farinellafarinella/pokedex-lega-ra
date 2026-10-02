@@ -1,6 +1,6 @@
 (function(global){
   'use strict';
-  const stylesheet=new URL('../css/route-battle.css?v=scenarios-1',document.currentScript.src).href;
+  const stylesheet=new URL('../css/route-battle.css?v=shared-lab-2',document.currentScript.src).href;
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const typeNames={normal:'Normale',fire:'Fuoco',water:'Acqua',electric:'Elettro',grass:'Erba',ice:'Ghiaccio',fighting:'Lotta',poison:'Veleno',ground:'Terra',flying:'Volante',psychic:'Psico',bug:'Coleottero',rock:'Roccia',ghost:'Spettro',dragon:'Drago',dark:'Buio',steel:'Acciaio','???':'???'};
   const statuses={PSN:'Avvelenato',BRN:'Scottato',PAR:'Paralizzato',SLP:'Addormentato',FRZ:'Congelato'};
