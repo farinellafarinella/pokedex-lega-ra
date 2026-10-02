@@ -230,7 +230,7 @@ function createStarterAPI(client) {
         payload = await error.context?.json();
       } catch {
       }
-      throw Error(payload?.error?.includes("ARENA_CLOSED_MONDAY_ONLY") ? "L’Arena Fossili è disponibile solo il lunedì, ora italiana." : payload?.error || "Il mio Starter non \xE8 raggiungibile. Riprova tra poco.");
+      throw Error(payload?.error?.includes("ARENA_CLOSED_MONDAY_ONLY") ? "Il Laboratorio Fossili è disponibile solo il lunedì, ora italiana." : payload?.error || "Il mio Starter non \xE8 raggiungibile. Riprova tra poco.");
     }
     if (data?.error) throw Error(data.error);
     if(typeof client.rpc==='function'){
@@ -263,7 +263,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   function render() {
     if (!isCurrent() || !host.isConnected) return;
     const p = result?.state.profile;
-    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Arena Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${[["starter", "Il mio Starter"], ["arena", "Arena Fossili"], ["shop", "Mosse"], ["inventory", "Fossili"]].filter(([id]) => id !== "arena" || section !== "starter" && page !== "starter").map(([id, label]) => button("page", label, busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#inventory">🎒 Apri lo Zaino →</a></p><p class="back"><a href="#fossil-hunt">Caccia ai Fossili classica \u2192</a></p>`;
+    view.innerHTML = `<div class="eyebrow">IL TUO COMPAGNO DI AVVENTURE</div><h1>${page === "starter" ? "Il mio Starter" : page === "arena" ? "Laboratorio Fossili" : page === "shop" ? "Scuola mosse" : "Fossili e vendita"}</h1><p id="status" role="status">${escape(message)}</p>${result ? `<p class="balance">Saldo: <strong>${result.balance} \u20BD</strong></p>` : ""}${p ? `<nav>${[["starter", "Il mio Starter"], ["arena", "Laboratorio Fossili"], ["shop", "Mosse"], ["inventory", "Fossili"]].filter(([id]) => id !== "arena" || section !== "starter" && page !== "starter").map(([id, label]) => button("page", label, busy, `data-page="${id}" aria-pressed="${page === id}"`)).join("")}</nav>` : ""}<div id="body"></div><p class="back"><a href="#inventory">🎒 Apri lo Zaino →</a></p><p class="back"><a href="#fossil-hunt">Caccia ai Fossili · Beta test \u2192</a></p>`;
     const body = view.querySelector("#body");
     if (!result) {
       body.innerHTML = button("reload", "Riprova", busy);
@@ -322,7 +322,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
   }
   async function send(command) {
     if (busy || !result) return;
-    if(["start","move"].includes(command.type)&&!arenaAccess().open){message="L’Arena Fossili è disponibile solo il lunedì, ora italiana.";render();return;}
+    if(["start","move"].includes(command.type)&&!arenaAccess().open){message="Il Laboratorio Fossili è disponibile solo il lunedì, ora italiana.";render();return;}
     busy = true;
     message = "Salvataggio in corso\u2026";
     render();
@@ -364,6 +364,7 @@ async function mountStarter(host, { client, section = "starter", onBalance = () 
       await load();
       return;
     }
+    if (a === "page" && b.dataset.page === "arena") { location.hash="fossil-arena"; return; }
     if (a === "page") {
       page = b.dataset.page;
       replacement=null;

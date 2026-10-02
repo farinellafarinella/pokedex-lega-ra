@@ -1,0 +1,6 @@
+Scavo adattato da DPP Mining di Totalaj Krantz: https://github.com/totalaj/dpp-mining-web
+Licenza del codice: mining/LICENSE.txt.
+Grafica e personaggi Pokémon appartengono ai rispettivi titolari.
+Font Pokémon DP Pro di crystalwalrein: mining/assets/font/license.txt (CC BY-SA).
+Sprite dei quattro Pokémon aggiuntivi: https://github.com/PokeAPI/sprites
+Questa simulazione modifica l'integrazione dello scavo: inventario esterno, tutti i gruppi di reperti, una sessione per tentativo, comandi touch, persistenza separata.

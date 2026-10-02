@@ -1,0 +1,466 @@
+[
+  {
+    "id": "Small Green Sphere",
+    "category": "SMALL_SPHERES",
+    "x": 13,
+    "y": 0,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Small Red Sphere",
+    "category": "SMALL_SPHERES",
+    "x": 15,
+    "y": 0,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Small Blue Sphere",
+    "category": "SMALL_SPHERES",
+    "x": 17,
+    "y": 0,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Small Prism Sphere",
+    "category": "SMALL_SPHERES",
+    "x": 19,
+    "y": 0,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Small Pale Sphere",
+    "category": "SMALL_SPHERES",
+    "x": 21,
+    "y": 0,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Large Green Sphere",
+    "category": "LARGE_SPHERES",
+    "x": 13,
+    "y": 2,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Large Red Sphere",
+    "category": "LARGE_SPHERES",
+    "x": 16,
+    "y": 2,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Large Blue Sphere",
+    "category": "LARGE_SPHERES",
+    "x": 19,
+    "y": 2,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Large Prism Sphere",
+    "category": "LARGE_SPHERES",
+    "x": 22,
+    "y": 2,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Large Pale Sphere",
+    "category": "LARGE_SPHERES",
+    "x": 25,
+    "y": 2,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Skull Fossil",
+    "category": "FOSSILS",
+    "x": 13,
+    "y": 5,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Armor Fossil",
+    "category": "FOSSILS",
+    "x": 17,
+    "y": 5,
+    "w": 5,
+    "h": 4
+  },
+  {
+    "id": "Dome Fossil",
+    "category": "FOSSILS",
+    "x": 22,
+    "y": 5,
+    "w": 5,
+    "h": 4
+  },
+  {
+    "id": "Helix Fossil",
+    "category": "FOSSILS",
+    "x": 27,
+    "y": 5,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Old Amber",
+    "category": "FOSSILS",
+    "x": 43,
+    "y": 5,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Root Fossil",
+    "category": "FOSSILS",
+    "x": 13,
+    "y": 9,
+    "w": 5,
+    "h": 5
+  },
+  {
+    "id": "Claw Fossil",
+    "category": "FOSSILS",
+    "x": 33,
+    "y": 9,
+    "w": 4,
+    "h": 5
+  },
+  {
+    "id": "Leaf Stone",
+    "category": "EVOLUTION_STONES",
+    "x": 13,
+    "y": 14,
+    "w": 3,
+    "h": 4
+  },
+  {
+    "id": "Fire Stone",
+    "category": "EVOLUTION_STONES",
+    "x": 20,
+    "y": 15,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Water Stone",
+    "category": "EVOLUTION_STONES",
+    "x": 23,
+    "y": 15,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Thunder Stone",
+    "category": "EVOLUTION_STONES",
+    "x": 26,
+    "y": 15,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Moon stone",
+    "category": "EVOLUTION_STONES",
+    "x": 29,
+    "y": 16,
+    "w": 4,
+    "h": 2
+  },
+  {
+    "id": "Sun Stone",
+    "category": "EVOLUTION_STONES",
+    "x": 35,
+    "y": 15,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Green Shard",
+    "category": "SHARDS",
+    "x": 13,
+    "y": 18,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Red Shard",
+    "category": "SHARDS",
+    "x": 17,
+    "y": 18,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Blue Shard",
+    "category": "SHARDS",
+    "x": 20,
+    "y": 18,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Yellow Shard",
+    "category": "SHARDS",
+    "x": 23,
+    "y": 18,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Heat Rock",
+    "category": "WEATHER_STONES",
+    "x": 13,
+    "y": 21,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Damp Rock",
+    "category": "WEATHER_STONES",
+    "x": 17,
+    "y": 21,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Icy Rock",
+    "category": "WEATHER_STONES",
+    "x": 20,
+    "y": 21,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Smooth Rock",
+    "category": "WEATHER_STONES",
+    "x": 24,
+    "y": 21,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Revive",
+    "category": "ITEMS",
+    "x": 13,
+    "y": 25,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Max Revive",
+    "category": "ITEMS",
+    "x": 16,
+    "y": 25,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Star Piece",
+    "category": "ITEMS",
+    "x": 19,
+    "y": 25,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Heart Scale",
+    "category": "ITEMS",
+    "x": 22,
+    "y": 26,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Hard Stone",
+    "category": "ITEMS",
+    "x": 14,
+    "y": 28,
+    "w": 2,
+    "h": 2
+  },
+  {
+    "id": "Everstone",
+    "category": "ITEMS",
+    "x": 16,
+    "y": 28,
+    "w": 4,
+    "h": 2
+  },
+  {
+    "id": "Light Clay",
+    "category": "ITEMS",
+    "x": 20,
+    "y": 28,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Iron Ball",
+    "category": "ITEMS",
+    "x": 24,
+    "y": 28,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Oval Stone",
+    "category": "ITEMS",
+    "x": 27,
+    "y": 28,
+    "w": 3,
+    "h": 3
+  },
+  {
+    "id": "Rare Bone",
+    "category": "ITEMS",
+    "x": 29,
+    "y": 18,
+    "w": 3,
+    "h": 6
+  },
+  {
+    "id": "Odd Keystone",
+    "category": "ITEMS",
+    "x": 38,
+    "y": 20,
+    "w": 4,
+    "h": 4
+  },
+  {
+    "id": "Insect Plate",
+    "category": "PLATES",
+    "x": 14,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Dread Plate",
+    "category": "PLATES",
+    "x": 18,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Draco Plate",
+    "category": "PLATES",
+    "x": 22,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Zap Plate",
+    "category": "PLATES",
+    "x": 26,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Fist Plate",
+    "category": "PLATES",
+    "x": 30,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Flame Plate",
+    "category": "PLATES",
+    "x": 34,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Sky Plate",
+    "category": "PLATES",
+    "x": 38,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Spooky Plate",
+    "category": "PLATES",
+    "x": 42,
+    "y": 32,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Meadow Plate",
+    "category": "PLATES",
+    "x": 14,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Earth Plate",
+    "category": "PLATES",
+    "x": 18,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Icicle Plate",
+    "category": "PLATES",
+    "x": 22,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Toxic Plate",
+    "category": "PLATES",
+    "x": 26,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Mind Plate",
+    "category": "PLATES",
+    "x": 30,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Stone Plate",
+    "category": "PLATES",
+    "x": 34,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Iron Plate",
+    "category": "PLATES",
+    "x": 38,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  },
+  {
+    "id": "Splash Plate",
+    "category": "PLATES",
+    "x": 42,
+    "y": 35,
+    "w": 4,
+    "h": 3
+  }
+]

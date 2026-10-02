@@ -1,0 +1,505 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta charset="utf-8"/><title>DPP Mining</title><link rel="icon" type="image/x-icon" href="./assets/favicon.png"><style>@font-face {
+      font-family: DPP;
+      src: url('./assets/font/pokemon-dp-pro.ttf');
+      size-adjust: 150%;
+    }
+
+    :root {
+      --bright: 1.2;
+      --dark: 0;
+      --background-color: #FFFFFF;
+      --background-color-invert: #382859;
+      --diamond-color: #48C0F8;
+      --diamond-color-dark: #30A8E0;
+      --pearl-color: #F8B0B0;
+      --pearl-color-dark: #D89090;
+      --platinum-color: #D0C098;
+      --platinum-color-dark: #B8A880;
+      --text-color: #52525A;
+      --text-shadow: #A5A5AD;
+      --text-dark: #101821;
+      --text-dark-shadow: #ADBDBD;
+      --text-invert: #FFFFFF;
+      --text-invert-shadow: #AE9EBE;
+      --text-highlight: #FFFF73;
+      --text-highlight-shadow: #393939;
+    }
+
+    p,
+    a,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    div,
+    dl,
+    dt,
+    hr,
+    li,
+    ol,
+    a,
+    b,
+    bdi,
+    mark,
+    s,
+    span,
+    button {
+      font-family: DPP;
+      font-weight: normal;
+      text-shadow: 1px 1px 0px var(--text-shadow), 2px 2px 0px var(--text-shadow);
+      color: var(--text-color);
+    }
+
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      text-shadow: 1px 1px 0px var(--text-dark-shadow), 2px 2px 0px var(--text-dark-shadow);
+      color: var(--text-dark);
+    }
+
+    mark {
+      color: var(--text-highlight);
+      text-shadow: 1px 1px 0px var(--text-highlight-shadow), 2px 2px 0px var(--text-highlight-shadow);
+      background-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      background-image: url("./assets/DS.png");
+      background-position-x: center;
+      background-size: calc(1920px* 1.4) calc(1080px* 1.4);
+      background-position-y: -307px;
+    }
+
+    .title {
+      text-align: center;
+      background: white;
+      border-style: outset;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .inverted-text {
+      text-shadow: 1px 1px 0px var(--text-invert-shadow), 2px 2px 0px var(--text-invert-shadow);
+      color: var(--text-invert);
+    }
+
+    .inverted-text-dark {
+      text-shadow: 1px 1px 0px var(--text-color), 2px 2px 0px var(--text-color);
+      color: var(--text-shadow);
+    }
+
+    .dark-text {
+      text-shadow: 1px 1px 0px var(--text-dark-shadow), 2px 2px 0px var(--text-dark-shadow);
+      color: var(--text-dark);
+    }
+
+    .gray-text {
+      text-shadow: 1px 1px 0px var(--text-shadow), 2px 2px 0px var(--text-shadow);
+      color: var(--text-color);
+    }
+
+    .red-text {
+      text-shadow: 1px 1px 0px var(--text-invert-shadow), 2px 2px 0px var(--text-invert-shadow);
+      color: var(--pearl-color-dark);
+    }
+
+    button {
+      width: fit-content;
+      height: fit-content;
+      background: var(--background-color);
+      border-style: outset;
+      border-color: var(--background-color);
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: var(--text-color);
+      border-color: var(--text-shadow);
+    }
+
+    #version-button {
+      min-width: 10em;
+      min-height: 4em;
+      font-size: 1.5em;
+      border-width: thick;
+    }
+
+    .diamond {
+      background: var(--diamond-color);
+      border-color: var(--diamond-color-dark);
+    }
+
+    .pearl {
+      background: var(--pearl-color);
+      border-color: var(--pearl-color-dark);
+    }
+
+    .platinum {
+      background: var(--platinum-color);
+      border-color: var(--platinum-color-dark);
+    }
+
+    .horizontal-spread {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      padding: 1em;
+      margin-top: 1em;
+      margin-bottom: 3em;
+    }
+
+    .centered-spread {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      padding: 1em;
+      margin-top: 1em;
+      margin-bottom: 3em;
+      align-items: center;
+    }
+
+    #main-content {
+      display: flex;
+      flex-direction: column;
+      justify-self: center;
+      width: fit-content;
+      margin: auto;
+    }
+
+    #board {
+      overflow: hidden;
+      position: relative;
+    }
+
+    #mining-grid {
+      display: grid;
+      width: fit-content;
+      height: fit-content;
+      position: absolute;
+    }
+
+    #mining-cell {
+      display: grid;
+      align-content: center;
+      justify-content: center;
+    }
+
+    #mining-cell:hover {
+      filter: brightness(1.25) contrast(1.5);
+    }
+
+    #mining-cell .sprite {
+      grid-area: 1 / 1;
+    }
+
+    .sprite {
+      image-rendering: pixelated;
+    }
+
+    .sprite.disabled {
+      filter: brightness(0.5);
+    }
+
+    .sprite.found {
+      animation: found 0.45s steps(1, end) 0s 1 forwards;
+      ;
+    }
+
+    @keyframes found {
+      0% {
+        filter: brightness(var(--bright))
+      }
+
+      20% {
+        filter: brightness(var(--dark))
+      }
+
+      40% {
+        filter: brightness(var(--bright))
+      }
+
+      60% {
+        filter: brightness(var(--dark))
+      }
+
+      80% {
+        filter: brightness(var(--bright))
+      }
+
+      100% {
+        filter: brightness(1)
+      }
+    }
+
+    #hammer {
+      position: absolute;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #item-spark {
+      position: absolute;
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    #hammer-button {
+      position: absolute;
+      cursor: pointer;
+    }
+
+    .simple-overlay {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
+    #overlay {
+      width: 100%;
+      height: 100%;
+      float: inline-end;
+      display: inline;
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #overlay * {
+      pointer-events: all;
+    }
+
+    .overlay-element {
+      position: absolute;
+    }
+
+    #health-bar {
+      position: absolute;
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      width: fit-content;
+      right: 0;
+    }
+
+    #progress-bar {
+      display: flex;
+      justify-content: center;
+    }
+
+    #collection {
+      padding: 4em 20%;
+    }
+
+    #collection-section {
+      display: flex;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 700px;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    #collection-item {
+      padding: 8px;
+      margin: 0 1em 0 0;
+      display: flex;
+      flex-direction: row;
+      background: var(--background-color-invert);
+      align-items: center;
+      border-style: inset;
+      border-color: var(--background-color-invert);
+    }
+
+    #collection-sprite {}
+
+    #collection-text {
+      margin-right: 1em;
+    }
+
+    .collection-title {
+      background: var(--background-color-invert);
+      width: fit-content;
+      height: fit-content;
+      padding: 4px 32px 4px 4px;
+      border-style: outset;
+      border-color: var(--background-color-invert);
+    }
+
+    #settings {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      background: var(--background-color-invert);
+      padding-right: 1em;
+      border: var(--background-color-invert);
+      border-style: outset;
+      z-index: 100;
+    }
+
+    .setting {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .setting-text {
+      margin: 0;
+    }
+
+    #message-overlay {
+      cursor: pointer;
+      position: absolute;
+      height: 100%;
+    }
+
+    #message-text {
+      font-size: 2em;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .highlight {
+      text-shadow: 1px 1px 0px var(--text-highlight-shadow), 2px 2px 0px var(--text-highlight-shadow);
+      color: var(--text-highlight);
+    }
+
+    #version-selector {
+      height: 100%;
+      width: 100%;
+      background: black;
+      position: absolute;
+      background: linear-gradient(-45deg, var(--background-color-invert), var(--platinum-color-dark), var(--pearl-color-dark), var(--diamond-color-dark), var(--background-color-invert));
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      z-index: 11;
+    }
+
+    @keyframes gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .animate-opacity {
+      opacity: 1;
+      transition: opacity 1s ease-in-out
+    }
+
+    .transparent {
+      opacity: 0;
+    }
+
+    #modifier-option {
+      padding: 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #modifier-cost {
+      display: flex;
+      padding-bottom: 16px;
+      align-items: baseline;
+    }
+
+    #modifier-button {
+      animation: appear 0.4s ease-out 0.2s both;
+    }
+
+    #modifier-cost * {
+      animation: appear 0.4s ease-out both;
+    }
+
+
+    #modifier-cost :nth-child(1) {
+      animation-delay: 0.05s
+    }
+
+    #modifier-cost :nth-child(2) {
+      animation-delay: 0.1s
+    }
+
+    #modifier-cost :nth-child(3) {
+      animation-delay: 0.15s
+    }
+
+    #modifier-cost :nth-child(4) {
+      animation-delay: 0.2s
+    }
+
+    #finalize-button {
+      margin: 1em 25%;
+      width: 50%;
+      font-size: x-large;
+      height: 3em;
+
+      animation: appear 0.4s ease-out both;
+    }
+
+    @keyframes appear {
+      from {
+        scale: 0;
+      }
+
+      to {
+        scale: 1;
+      }
+    }
+
+    #modifier-screen {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      padding: 0px 5%;
+      transition-duration: 0.3s;
+      height: 100%;
+      align-content: space-between;
+      justify-content: space-around;
+      transition: scale 0.3s ease-in, opacity 0.3s ease-in;
+      animation: modifier-screen-appear 0.25s ease-out;
+    }
+
+    @keyframes modifier-screen-appear {
+      from {
+        opacity: 0;
+        scale: 0.5;
+      }
+
+      to {
+        opacity: 1;
+        scale: 1
+      }
+    }
+
+    #flavour-text {
+      width: 100%;
+      text-align: center;
+    }
+
+    #active-modifier {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: absolute;
+      padding: 1em;
+      margin: 1em;
+      border-style: outset;
+      border-color: var(--background-color-invert);
+      background: var(--background-color-invert);
+    }</style><style>body{background:#17191f;overflow:hidden}#main-content{margin:0;width:768px}#board{isolation:isolate}#main-content>h2{margin:6px 0;padding:4px;background:#17191f!important;color:#fff;border:0!important;font:18px Arial;text-shadow:none}#mining-cell,#hammer-button{touch-action:manipulation;cursor:pointer}</style><style>#main-content{justify-self:start;position:absolute;left:0;top:0}</style><script defer="defer" src="bundle.js?v=buried-fossil-2"></script></head><body></body></html>
