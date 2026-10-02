@@ -58,11 +58,12 @@
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="./supabase-config.js"></script>
   <script src="./data/pokemon-db.js"></script>
+  <script src="./data/fossil-opponents.js?v=1"></script>
   <script src="./data/moves-db.js?v=it-1"></script>
   <script src="./js/route-pokemon-core.js?v=1"></script>
   <script src="./js/route-team.js?v=1"></script>
   <script src="./js/route-battle-engine.js?v=1"></script>
-  <script src="./js/route-battle-ui.js?v=scenarios-1"></script>
+  <script src="./js/route-battle-ui.js?v=shared-lab-2"></script>
   <script src="./js/route-encounters.js?v=scenarios-1"></script>
   <style>.route-battle-dialog{width:min(430px,calc(100vw - 20px));max-height:90dvh;overflow:auto;background:#181b20;color:#f1f3f6;border:1px solid #626974;border-radius:16px;padding:14px}.route-battle-dialog::backdrop{background:#000b}</style>
   <script src="./features/casino/casino-runtime.js?v=9"></script>
@@ -416,9 +417,9 @@
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
         host.textContent='Caricamento dello Zaino…';document.querySelector('#app').replaceChildren(host);
-        import('./features/inventory/inventory.mjs?v=fossils-controls-4').then(module=>{
+        import('./features/inventory/inventory.mjs?v=online-fossils-1').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
-          return module.mountInventory(host,{client:supabaseClient,userId,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
+          return module.mountInventory(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare lo Zaino. Riprova.';console.error(error);});return;
       }
       if(page==='regions'){
@@ -455,13 +456,8 @@
         safariModule().then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountSafari(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}}})}).catch(error=>{if(host.isConnected){const target=host.shadowRoot||host;target.innerHTML='<section role="alert"><h2>Zona Safari non disponibile</h2><p>Il caricamento della sezione non è riuscito.</p><button type="button">Ricarica</button><details open><summary>Dettagli dell’errore</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details></section>';target.querySelector('pre').textContent=error?.message||String(error);target.querySelector('button').addEventListener('click',()=>location.reload());console.error(error);}});return;
       }
       if(page==='fossil-arena'){
-        const frame=document.createElement('iframe');
-        frame.title='Laboratorio Fossili · Beta test';
-        const url=new URL('./features/fossils-beta/index.html',location.href);
-        url.searchParams.set('account',authSession.user.id);
-        url.searchParams.set('tab',param==='risveglio'?'lab':'mining');
-        frame.src=url.href;frame.style.cssText='display:block;width:100%;height:calc(100dvh - 220px);min-height:520px;border:0;border-radius:14px';
-        document.querySelector('#app').replaceChildren(frame);return;
+        const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Laboratorio Fossili…';document.querySelector('#app').replaceChildren(host);
+        import('./features/fossils-beta/online.mjs?v=real-team-1').then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountFossilLaboratory(host,{client:supabaseClient,userId,section:param==='risveglio'?'lab':'mining',isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&remoteProfile.balance!==value){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il laboratorio: '+error.message;});return;
       }
       if(['my-starter','starter-inventory'].includes(page)){
         document.querySelector('#app').innerHTML='<div id="starter-feature">Caricamento del tuo starter…</div>';
@@ -483,7 +479,7 @@
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'bug-contest\')"><img class="btn-icon" src="./icone%20menu/netball.png" alt=""><span>Gara Pigliamosche</span><span id="bug-contest-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'casino\')"><img class="btn-icon" src="./pokeball%20icon.png" alt=""><span>Casinò di Zafferanopoli</span><span id="casino-quick-status" class="quick-event-status">Verifica…</span></button>');updateBugContestQuickStatus();updateCasinoQuickStatus()}
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'fishing\')"><img class="btn-icon" src="./icone%20menu/pesca%20icon.png" alt=""><span>Gara di Pesca</span><span id="fishing-quick-status" class="quick-event-status">Verifica…</span></button>');updateFishingQuickStatus()}
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'safari\')"><img class="btn-icon" src="./icone%20menu/safari%20icon.png" alt=""><span>Zona Safari</span><span id="safari-quick-status" class="quick-event-status">Verifica…</span></button>');updateSafariQuickStatus()}
-        if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary with-icon" onclick="go(\'fossil-arena\')"><img class="btn-icon" src="./roccia%20icon.png" alt=""><span>Laboratorio Fossili</span><small class="fossils-beta-badge">Beta test</small></button>');
+        if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary with-icon" onclick="go(\'fossil-arena\')"><img class="btn-icon" src="./roccia%20icon.png" alt=""><span>Laboratorio Fossili</span></button>');
         if(actions)actions.insertAdjacentHTML('beforeend','<button class="btn secondary with-icon" type="button" onclick="go(\'gifts\')"><img class="btn-icon" src="./pokeball%20icon.png" alt=""><span>Regali</span></button>');
         document.querySelector('#app').insertAdjacentHTML('beforeend','<section class="panel pad no-print" style="margin-top:28px"><span class="eyebrow">Account</span><div class="form-actions"><button class="btn secondary" type="button" onclick="enablePushNotifications()">🔔 Attiva notifiche</button><button class="btn danger" type="button" onclick="handleAuthButton()">↪ Esci dall’account</button></div></section>');
       }

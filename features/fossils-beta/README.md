@@ -1,7 +1,9 @@
-# Laboratorio Fossili · Beta test
+# Laboratorio Fossili online
 
-Scavo DPP, reperti, zaino, vendita e risveglio di sette fossili con battaglie di prova. Sempre disponibile, con tre tentativi al giorno rinnovati a mezzanotte italiana. Nessun comando di prova per aggiungere reperti, ricaricare saldo o azzerare i progressi.
+La voce Laboratorio Fossili apre `online.mjs`: squadra reale, battaglie Route, scavi e inventario controllati da Supabase. Non usa Squirtle o un livello fisso. `index.html` rimanda al laboratorio autenticato nella Home.
 
-La voce unica Laboratorio Fossili del sito apre questa beta. I reperti compaiono nello Zaino principale, da cui vengono venduti o consumati dal laboratorio; non esiste uno zaino interno separato. Dati locali separati per account; nessun accredito sul saldo o sulla squadra reale. Per una prova indipendente aprire `index.html` tramite HTTP.
+Per attivarlo sono necessari `database/fossil-laboratory.sql`, l’Edge Function aggiornata e i file frontend. Istruzioni complete: `../../docs/laboratorio-fossili-online.md`.
 
-Istruzioni complete: `../../docs/fossili-beta.md`. Crediti e licenze: `CREDITI.txt`, `mining/LICENSE.txt` e `mining/assets/font/license.txt`.
+I vecchi moduli locali restano come sorgente storica, ma non vengono caricati dal sito né importati nell’economia reale. I salvataggi della beta non sono trasferiti sul server.
+
+Crediti delle risorse DPP: `CREDITI.txt`, `mining/LICENSE.txt` e `mining/assets/font/license.txt`.

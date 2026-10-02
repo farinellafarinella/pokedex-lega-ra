@@ -15,7 +15,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Verde piccola",
+    "price": 15
   },
   {
     "id": "Small Red Sphere",
@@ -33,7 +35,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Rossa piccola",
+    "price": 15
   },
   {
     "id": "Small Blue Sphere",
@@ -51,7 +55,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Blu piccola",
+    "price": 15
   },
   {
     "id": "Small Prism Sphere",
@@ -69,7 +75,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Prisma piccola",
+    "price": 15
   },
   {
     "id": "Small Pale Sphere",
@@ -87,7 +95,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Pallida piccola",
+    "price": 15
   },
   {
     "id": "Large Green Sphere",
@@ -112,7 +122,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Verde grande",
+    "price": 40
   },
   {
     "id": "Large Red Sphere",
@@ -137,7 +149,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Rossa grande",
+    "price": 40
   },
   {
     "id": "Large Blue Sphere",
@@ -162,7 +176,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Blu grande",
+    "price": 40
   },
   {
     "id": "Large Prism Sphere",
@@ -187,7 +203,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Prisma grande",
+    "price": 40
   },
   {
     "id": "Large Pale Sphere",
@@ -212,7 +230,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Sfera Pallida grande",
+    "price": 40
   },
   {
     "id": "Skull Fossil",
@@ -246,7 +266,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Fossilcranio",
+    "price": 300,
+    "speciesId": 408,
+    "pokemon": "Cranidos",
+    "image": "fossilcranio.png"
   },
   {
     "id": "Armor Fossil",
@@ -284,7 +309,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Fossilscudo",
+    "price": 300,
+    "speciesId": 410,
+    "pokemon": "Shieldon",
+    "image": "fossilscudo.png"
   },
   {
     "id": "Dome Fossil",
@@ -322,7 +352,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Domofossile",
+    "price": 250,
+    "speciesId": 140,
+    "pokemon": "Kabuto",
+    "image": "domofossil.png"
   },
   {
     "id": "Helix Fossil",
@@ -356,7 +391,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Fossilhelix",
+    "price": 250,
+    "speciesId": 138,
+    "pokemon": "Omanyte",
+    "image": "fossilhelix.png"
   },
   {
     "id": "Old Amber",
@@ -390,7 +430,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Ambra Antica",
+    "price": 400,
+    "speciesId": 142,
+    "pokemon": "Aerodactyl",
+    "image": "ambra antica.png"
   },
   {
     "id": "Root Fossil",
@@ -435,7 +480,12 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Radifossile",
+    "price": 280,
+    "speciesId": 345,
+    "pokemon": "Lileep",
+    "image": "radiofossile.png"
   },
   {
     "id": "Claw Fossil",
@@ -475,7 +525,12 @@
         false,
         false
       ]
-    ]
+    ],
+    "name": "Fossilunghia",
+    "price": 280,
+    "speciesId": 347,
+    "pokemon": "Anorith",
+    "image": "fossilunghia.png"
   },
   {
     "id": "Leaf Stone",
@@ -505,7 +560,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Pietrafoglia",
+    "price": 120
   },
   {
     "id": "Fire Stone",
@@ -530,7 +587,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Pietrafocaia",
+    "price": 120
   },
   {
     "id": "Water Stone",
@@ -555,7 +614,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Pietraidrica",
+    "price": 120
   },
   {
     "id": "Thunder Stone",
@@ -580,7 +641,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Pietratuono",
+    "price": 120
   },
   {
     "id": "Moon stone",
@@ -602,7 +665,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Pietralunare",
+    "price": 120
   },
   {
     "id": "Sun Stone",
@@ -627,7 +692,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Pietrasolare",
+    "price": 120
   },
   {
     "id": "Green Shard",
@@ -655,7 +722,9 @@
         false,
         true
       ]
-    ]
+    ],
+    "name": "Coccio Verde",
+    "price": 30
   },
   {
     "id": "Red Shard",
@@ -680,7 +749,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Coccio Rosso",
+    "price": 30
   },
   {
     "id": "Blue Shard",
@@ -705,7 +776,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Coccio Blu",
+    "price": 30
   },
   {
     "id": "Yellow Shard",
@@ -733,7 +806,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Coccio Giallo",
+    "price": 30
   },
   {
     "id": "Heat Rock",
@@ -761,7 +836,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Roccia Calda",
+    "price": 60
   },
   {
     "id": "Damp Rock",
@@ -786,7 +863,9 @@
         false,
         true
       ]
-    ]
+    ],
+    "name": "Roccia Umida",
+    "price": 60
   },
   {
     "id": "Icy Rock",
@@ -820,7 +899,9 @@
         false,
         true
       ]
-    ]
+    ],
+    "name": "Roccia Fredda",
+    "price": 60
   },
   {
     "id": "Smooth Rock",
@@ -854,7 +935,9 @@
         false,
         false
       ]
-    ]
+    ],
+    "name": "Roccia Liscia",
+    "price": 60
   },
   {
     "id": "Revive",
@@ -879,7 +962,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Revitalizzante",
+    "price": 80
   },
   {
     "id": "Max Revive",
@@ -904,7 +989,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Revitalizzante Max",
+    "price": 80
   },
   {
     "id": "Star Piece",
@@ -929,7 +1016,9 @@
         true,
         false
       ]
-    ]
+    ],
+    "name": "Pezzo Stella",
+    "price": 80
   },
   {
     "id": "Heart Scale",
@@ -947,7 +1036,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Squama Cuore",
+    "price": 80
   },
   {
     "id": "Hard Stone",
@@ -965,7 +1056,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Pietradura",
+    "price": 80
   },
   {
     "id": "Everstone",
@@ -987,7 +1080,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Pietrastante",
+    "price": 80
   },
   {
     "id": "Light Clay",
@@ -1021,7 +1116,9 @@
         false,
         true
       ]
-    ]
+    ],
+    "name": "Creta Luce",
+    "price": 80
   },
   {
     "id": "Iron Ball",
@@ -1046,7 +1143,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Ferropalla",
+    "price": 80
   },
   {
     "id": "Oval Stone",
@@ -1071,7 +1170,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Pietraovale",
+    "price": 80
   },
   {
     "id": "Rare Bone",
@@ -1111,7 +1212,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Ossostesso",
+    "price": 80
   },
   {
     "id": "Odd Keystone",
@@ -1145,7 +1248,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Roccianima",
+    "price": 80
   },
   {
     "id": "Insect Plate",
@@ -1173,7 +1278,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastra Insetto",
+    "price": 150
   },
   {
     "id": "Dread Plate",
@@ -1201,7 +1308,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastratimore",
+    "price": 150
   },
   {
     "id": "Draco Plate",
@@ -1229,7 +1338,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastradrakon",
+    "price": 150
   },
   {
     "id": "Zap Plate",
@@ -1257,7 +1368,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastrasaetta",
+    "price": 150
   },
   {
     "id": "Fist Plate",
@@ -1285,7 +1398,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastrapugno",
+    "price": 150
   },
   {
     "id": "Flame Plate",
@@ -1313,7 +1428,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastrarogo",
+    "price": 150
   },
   {
     "id": "Sky Plate",
@@ -1341,7 +1458,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastracielo",
+    "price": 150
   },
   {
     "id": "Spooky Plate",
@@ -1369,7 +1488,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastratetra",
+    "price": 150
   },
   {
     "id": "Meadow Plate",
@@ -1397,7 +1518,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastraprato",
+    "price": 150
   },
   {
     "id": "Earth Plate",
@@ -1425,7 +1548,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastraterra",
+    "price": 150
   },
   {
     "id": "Icicle Plate",
@@ -1453,7 +1578,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastragelo",
+    "price": 150
   },
   {
     "id": "Toxic Plate",
@@ -1481,7 +1608,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastrafiele",
+    "price": 150
   },
   {
     "id": "Mind Plate",
@@ -1509,7 +1638,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastramente",
+    "price": 150
   },
   {
     "id": "Stone Plate",
@@ -1537,7 +1668,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastrapietra",
+    "price": 150
   },
   {
     "id": "Iron Plate",
@@ -1565,7 +1698,9 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastraferro",
+    "price": 150
   },
   {
     "id": "Splash Plate",
@@ -1593,6 +1728,8 @@
         true,
         true
       ]
-    ]
+    ],
+    "name": "Lastraidro",
+    "price": 150
   }
 ]
