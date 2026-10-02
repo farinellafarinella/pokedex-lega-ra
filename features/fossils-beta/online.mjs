@@ -1,7 +1,7 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const messages={NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',DAILY_LIMIT:'Hai completato i tre scavi di oggi. Nuovi tentativi a mezzanotte italiana.',INSUFFICIENT_BALANCE:'Pokédollari insufficienti.',DIG_ACTIVE:'Concludi prima lo scavo in corso.',NO_ACTIVE_DIG:'Lo scavo è già concluso. Aggiorna il laboratorio.',BATTLE_ACTIVE:'Riprendi e concludi la battaglia in sospeso.',TEAM_EXHAUSTED:'La squadra è esausta. Curala prima di combattere.',ITEM_NOT_OWNED:'Questo reperto non è più nello Zaino.',STALE_REVISION:'Il laboratorio è cambiato. Aggiorna e riprova.',WALL_GENERATION_FAILED:'Non riesco a preparare la parete. Riprova: nessun costo è stato addebitato.'};
 export async function mountFossilLaboratory(host,{client,userId,battles=window.RouteEncounters,isCurrent=()=>true,onBalance=()=>{},section='mining'}){
- const root=host.attachShadow({mode:'open'});root.innerHTML=`<link rel="stylesheet" href="${new URL('./online.css?v=mining-touch-3',import.meta.url)}"><main></main>`;
+ const root=host.attachShadow({mode:'open'});root.innerHTML=`<link rel="stylesheet" href="${new URL('./online.css?v=mining-strike-4',import.meta.url)}"><main></main>`;
  const main=root.querySelector('main'),key='champion:fossil-online-operation:'+userId;
  let recovered=new Set();
  let state=null,catalog=[],busy=false,error='',tab=section,tool='pick',selected=65,pending=null;
@@ -34,6 +34,15 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
    }
   }
   return result;
+ }
+ function animateStrike(){
+  const wall=root.querySelector('.wall');if(!wall)return Promise.resolve();
+  const effect=document.createElement('div');effect.className='strike-effect';effect.dataset.tool=tool;
+  effect.style.left=(selected%13+.5)/13*100+'%';effect.style.top=(Math.floor(selected/13)+.5)/10*100+'%';
+  const y=tool==='pick'?16:64,sparkY=tool==='pick'?16:80;
+  effect.innerHTML='<span class="strike-sparks">'+sprite(80,sparkY,64,64)+'</span><span class="strike-tool strike-raised">'+sprite(48,y,32,32)+'</span><span class="strike-tool strike-impact">'+sprite(16,y,32,32)+'</span>';
+  wall.append(effect);
+  return new Promise(resolve=>setTimeout(()=>{effect.remove();resolve();},400));
  }
  function updateAim(){
   root.querySelectorAll('[data-cell]').forEach(cell=>{const active=Number(cell.dataset.cell)===selected;cell.classList.toggle('selected',active);cell.setAttribute('aria-pressed',String(active));});
@@ -85,7 +94,8 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
   if(action==='abandon'&&!confirm('Concludere lo scavo? Recupererai soltanto gli oggetti già completamente liberati.'))return;
   busy=true;error='';
   const previousRecovered=new Set(recovered);
-  if(action==='hit'){root.querySelector('[data-action=hit]').disabled=true;root.querySelector('.operation-status').textContent='Salvataggio…';}else render();
+  const strike=action==='hit'?animateStrike():Promise.resolve();
+  if(action==='hit'){root.querySelectorAll('button').forEach(button=>{button.disabled=true;});root.querySelector('.operation-status').textContent='Salvataggio…';}else render();
   try{
    if(action==='refresh')await load();
    else if(action==='retry'){await execute();await load();}
@@ -94,7 +104,7 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
    else if(action==='revive'){await command('revive',{item:button.dataset.item});await battle();}
    else if(action==='hit')await command('hit',{x:selected%13,y:Math.floor(selected/13),tool});
    else if(['dig','abandon'].includes(action))await command(action);
-  }catch(e){error=e.message;}finally{busy=false;render();if(action==='hit'||action==='retry')for(const i of recovered)if(!previousRecovered.has(i))root.querySelector('[data-cell="'+i+'"]')?.classList.add('just-found');}
+  }catch(e){error=e.message;}finally{await strike;busy=false;render();if(action==='hit'||action==='retry')for(const i of recovered)if(!previousRecovered.has(i))root.querySelector('[data-cell="'+i+'"]')?.classList.add('just-found');}
  });
  busy=true;render();
  try{await loadCatalog();if(pending)await execute();await load();}catch(e){error=e.message;}finally{busy=false;render();}
