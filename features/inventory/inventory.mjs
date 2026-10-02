@@ -1,5 +1,5 @@
-import {readBeta,updateBeta,betaCatalog,betaInventoryEntries,betaKey} from '../fossils-beta/store.mjs?v=normal-exp-1';
-import {sell} from '../fossils-beta/model.mjs?v=normal-exp-1';
+import {readBeta,updateBeta,betaCatalog,betaInventoryEntries,betaKey} from '../fossils-beta/store.mjs?v=player-controls-1';
+import {sell} from '../fossils-beta/model.mjs?v=player-controls-1';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fossils={kabuto:['Domofossile','domofossil.png'],omanyte:['Fossilhelix','fossilhelix.png'],aerodactyl:['Ambra Antica','ambra antica.png'],unown:['Runa Unown'],kabutops:['Fossile Kabutops'],omastar:['Fossile Omastar']};
 export function inventoryEntries(data){

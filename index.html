@@ -416,7 +416,7 @@
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
         host.textContent='Caricamento dello Zaino…';document.querySelector('#app').replaceChildren(host);
-        import('./features/inventory/inventory.mjs?v=fossils-exp-3').then(module=>{
+        import('./features/inventory/inventory.mjs?v=fossils-controls-4').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountInventory(host,{client:supabaseClient,userId,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare lo Zaino. Riprova.';console.error(error);});return;

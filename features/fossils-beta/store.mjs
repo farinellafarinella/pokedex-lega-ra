@@ -1,11 +1,11 @@
-import {fresh,FOSSILS,itemName,price} from './model.mjs?v=normal-exp-1';
+import {fresh,refreshExcavations,FOSSILS,itemName,price} from './model.mjs?v=player-controls-1';
 export const betaKey=account=>'champion:fossils-beta:v1:'+account;
 export function readBeta(account){
  const raw=localStorage.getItem(betaKey(account));
  if(!raw)return fresh();
  const saved=JSON.parse(raw);
  if(saved?.version!==1||!saved.inventory||!Number.isFinite(saved.balance))throw Error('Salvataggio beta non leggibile.');
- return saved;
+ return refreshExcavations(saved);
 }
 export async function updateBeta(account,change){
  const commit=()=>{const state=readBeta(account);change(state);localStorage.setItem(betaKey(account),JSON.stringify(state));window.dispatchEvent(new CustomEvent('fossils-beta-change',{detail:{account}}));return state;};
