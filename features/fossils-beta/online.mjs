@@ -1,7 +1,7 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const messages={NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',DAILY_LIMIT:'Hai completato i tre scavi di oggi. Nuovi tentativi a mezzanotte italiana.',INSUFFICIENT_BALANCE:'Pokédollari insufficienti.',DIG_ACTIVE:'Concludi prima lo scavo in corso.',NO_ACTIVE_DIG:'Lo scavo è già concluso. Aggiorna il laboratorio.',BATTLE_ACTIVE:'Riprendi e concludi la battaglia in sospeso.',TEAM_EXHAUSTED:'La squadra è esausta. Curala prima di combattere.',ITEM_NOT_OWNED:'Questo reperto non è più nello Zaino.',STALE_REVISION:'Il laboratorio è cambiato. Aggiorna e riprova.',WALL_GENERATION_FAILED:'Non riesco a preparare la parete. Riprova: nessun costo è stato addebitato.'};
 export async function mountFossilLaboratory(host,{client,userId,battles=window.RouteEncounters,isCurrent=()=>true,onBalance=()=>{},section='mining'}){
- const root=host.attachShadow({mode:'open'});root.innerHTML=`<link rel="stylesheet" href="${new URL('./online.css?v=1',import.meta.url)}"><main></main>`;
+ const root=host.attachShadow({mode:'open'});root.innerHTML=`<link rel="stylesheet" href="${new URL('./online.css?v=original-mining-2',import.meta.url)}"><main></main>`;
  const main=root.querySelector('main'),key='champion:fossil-online-operation:'+userId;
  let state=null,catalog=[],busy=false,error='',tab=section,tool='pick',selected=65,pending=null;
  try{pending=JSON.parse(localStorage.getItem(key));}catch{}
@@ -9,6 +9,12 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
  const item=id=>catalog.find(i=>i.id===id);
  const title=id=>item(id)?.name||id;
  function art(i){return `<span class="artifact" aria-hidden="true"><span style="width:${i.w*16}px;height:${i.h*16}px;background-position:-${i.x*16}px -${i.y*16}px"></span></span>`;}
+ function sprite(x,y,w,h,sheet='board_sheet'){return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true"><image href="${new URL('./mining/assets/'+sheet+'.png',import.meta.url)}" x="${-x}" y="${-y}" width="${sheet==='health_bar'?128:512}" height="${sheet==='health_bar'?128:512}" /></svg>`;}
+ function cracks(health){
+  if(health===49)return '';
+  const damage=51-health,count=Math.floor(damage/6),parts=[[65,0,15],[60,25,20],[57,50,23],[12,0,28],[8,25,32],[5,50,35]],part=parts[damage%6];
+  return '<div class="cracks">'+Array.from({length:count},()=>'<span style="width:11.54%">'+sprite(85,0,24,25,'health_bar')+'</span>').join('')+'<span style="width:'+part[2]/208*100+'%">'+sprite(part[0],part[1],part[2],25,'health_bar')+'</span></div>';
+ }
  function render(){
   if(!current())return;
   const disabled=busy||!!pending,team=state?.team||[],level=Math.max(1,...team.map(p=>p.level)),owned=catalog.filter(i=>i.speciesId&&state?.inventory[i.id]>0),dig=state?.dig;
@@ -22,8 +28,9 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
    ${tab==='mining'?`<section><h2>Scavi nei sotterranei</h2><p>Piccone: colpo preciso. Martello: area più ampia, ma consuma più resistenza. Libera completamente i reperti prima del crollo.</p>
     ${!dig||dig.done?`<button data-action="dig" ${disabled||state.attempts>=3||state.pending||state.balance<50?'disabled':''}>Inizia scavo · 50 ₽</button>${state.attempts>=3?'<p>Nuovi scavi a mezzanotte, ora italiana.</p>':''}`:''}
     ${dig&&!dig.done?`<div class="wall-header"><span>${dig.count} reperti nascosti</span><label>Resistenza ${dig.health}/49 <progress max="49" value="${dig.health}"></progress></label></div>
-     <div class="wall" role="group" aria-label="Parete da scavare">${dig.cells.map((cell,i)=>`<button class="cell ${i===selected?'selected':''}" data-cell="${i}" data-depth="${cell.depth}" aria-label="Colonna ${i%13+1}, riga ${Math.floor(i/13)+1}, ${cell.depth?cell.depth+' strati':'scoperta'}" aria-pressed="${i===selected}">${cell.spriteX!==undefined?`<span style="background-position:${cell.spriteX/63*100}% ${cell.spriteY/63*100}%"></span>`:''}</button>`).join('')}</div>
-     <p>Tocca una casella per mirare, poi premi Scava.</p><div class="tools"><button data-tool="pick" aria-pressed="${tool==='pick'}">Piccone</button><button data-tool="hammer" aria-pressed="${tool==='hammer'}">Martello</button><button class="primary" data-action="hit" ${disabled?'disabled':''}>⛏ Scava</button></div>
+     <div class="mining-board"><div class="board-art">${sprite(80,144,256,192)}</div>${cracks(dig.health)}<div class="wall" role="group" aria-label="Parete da scavare">${dig.cells.map((cell,i)=>`<button class="cell ${i===selected?'selected':''}" data-cell="${i}" style="--terrain-x:${(cell.depth?1+cell.depth:1)/31*100}%" data-depth="${cell.depth}" aria-label="Colonna ${i%13+1}, riga ${Math.floor(i/13)+1}, ${cell.depth?cell.depth+' strati':'scoperta'}" aria-pressed="${i===selected}">${cell.spriteX!==undefined?`<span style="background-position:${cell.spriteX/63*100}% ${cell.spriteY/63*100}%"></span>`:''}</button>`).join('')}</div>
+     <div class="board-tools"><button data-tool="pick" aria-label="Piccone" title="Piccone" aria-pressed="${tool==='pick'}">${sprite(tool==='pick'?272:224,416,48,64)}</button><button data-tool="hammer" aria-label="Martello" title="Martello" aria-pressed="${tool==='hammer'}">${sprite(tool==='hammer'?272:224,352,48,64)}</button></div></div>
+     <div class="touch-mining"><p>Tocca una casella per mirare, correggi con le frecce e premi <b>Scava</b>.</p><div class="aim-pad"><button data-step="up" aria-label="Mira in alto">▲</button><button data-step="left" aria-label="Mira a sinistra">◀</button><button class="primary" data-action="hit" ${disabled?'disabled':''}>⛏ Scava</button><button data-step="right" aria-label="Mira a destra">▶</button><button data-step="down" aria-label="Mira in basso">▼</button></div><output aria-live="polite">Colonna ${selected%13+1} · Riga ${Math.floor(selected/13)+1}</output></div><p class="desktop-hint">Scegli piccone o martello e clicca sulla parete per scavare.</p>
      <button data-action="abandon" ${disabled?'disabled':''}>Concludi scavo</button>`:''}
     ${dig?.done?`<section class="notice"><h3>${dig.health===0?'La parete è crollata':'Scavo completato'}</h3><p>${state.loot.length?'Reperti recuperati e salvati nello Zaino:':'Nessun reperto completamente liberato.'}</p><div class="loot">${state.loot.map(id=>`<div>${art(item(id))}<span>${esc(title(id))}</span></div>`).join('')}</div><a href="#inventory">Apri lo Zaino →</a></section>`:''}</section>`:`
     <section><h2>La tua squadra</h2><p>${team.length?team.map(p=>`${esc(window.ROUTE_POKEMON_DB[p.speciesId]?.name||p.speciesId)} · Lv. ${p.level}`).join(' / '):'Scegli prima il tuo starter dalla pagina La mia squadra.'}</p><p>Il fossile si risveglia al livello del membro più forte: <strong>${level}</strong>. Potrai cambiare Pokémon durante la lotta.</p>
@@ -46,9 +53,10 @@ export async function mountFossilLaboratory(host,{client,userId,battles=window.R
  root.addEventListener('click',async event=>{
   const button=event.target.closest('button');if(!button||button.disabled||busy||!current())return;
   if(button.dataset.tab){tab=button.dataset.tab;render();return;}
-  if(button.dataset.cell!==undefined){selected=Number(button.dataset.cell);render();return;}
+  if(button.dataset.step){const [dx,dy]=({up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]})[button.dataset.step];selected=Math.max(0,Math.min(9,Math.floor(selected/13)+dy))*13+Math.max(0,Math.min(12,selected%13+dx));render();return;}
+  if(button.dataset.cell!==undefined){selected=Number(button.dataset.cell);if(matchMedia('(max-width: 760px), (pointer: coarse)').matches){render();return;}}
   if(button.dataset.tool){tool=button.dataset.tool;render();return;}
-  const action=button.dataset.action;if(pending&&action!=='retry')return;
+  const action=button.dataset.cell!==undefined?'hit':button.dataset.action;if(pending&&action!=='retry')return;
   if(action==='revive'&&!confirm(`Risvegliare ${item(button.dataset.item).pokemon}? Consumerai un fossile dello Zaino e combatterai con la tua squadra reale.`))return;
   if(action==='abandon'&&!confirm('Concludere lo scavo? Recupererai soltanto gli oggetti già completamente liberati.'))return;
   busy=true;error='';render();
