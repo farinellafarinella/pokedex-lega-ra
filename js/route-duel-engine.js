@@ -2,6 +2,15 @@
  'use strict';
  const Core=global.RoutePokemonCore,Base=global.RouteBattle.BattleEngine;
  class DuelEngine extends Base{
+  emit(type,data={}){
+   if(this.state&&['move','miss','cannot_act','protected','switch','enemy_switch'].includes(type)){
+    const side=data.side||(type==='enemy_switch'?'enemy':'player');
+    const actor=side==='enemy'?this.enemy():this.active();
+    (this.state.turnEvents??=[]).push({type,...data,side,speciesId:actor?.speciesId});
+    if(type==='move'&&side==='enemy')this.state.lastEnemyMove=data.moveKey;
+   }
+   return super.emit(type,data);
+  }
   move(key){return key==='STRUGGLE'?{name:'Scontro',type:'???',category:'physical',power:50,accuracy:100,effect:'recoil_hit',pp:1}:super.move(key);}
   maxHp(mon){return mon.routeStats?.maxHp||super.maxHp(mon);}
   prepareMon(instance){const mon=super.prepareMon(instance);if(mon.routeStats)mon.currentHp=Math.min(instance.currentHp??mon.routeStats.maxHp,mon.routeStats.maxHp);return mon;}
@@ -18,8 +27,13 @@
    const m=this.move(key),eff=this.typeEffect(m.type,this.species(target).types);
    if(!m.power){
     if(['heal','morning_sun','synthesis','milk_drink','softboiled','moonlight'].includes(m.effect))return (1-user.currentHp/this.maxHp(user))*65;
+    // Follow setup with damage, even when a low-level attack has a small score.
+    const previous=this.move(this.state.lastEnemyMove);
+    if(previous&&!previous.power&&this.usable(user).some(k=>this.move(k).power>0&&this.typeEffect(this.move(k).type,this.species(target).types)>0))return 0;
     if(['sleep','poison','toxic','paralyze','confuse'].includes(m.effect))return target.status?0:20;
-    return 5;
+    const setup=/^(attack|defense|speed|accuracy|evasion|sp_atk|sp_def)_(up|down)(?:_2)?$/.exec(m.effect||'');
+    if(setup){const stat={sp_atk:'spAttack',sp_def:'spDefense'}[setup[1]]||setup[1],up=setup[2]==='up',mon=up?user:target;return (up?mon.battle[stat]>=6:mon.battle[stat]<=-6)?0:5;}
+    return 0;
    }
    const saved=this.rng;this.rng=()=>.5;let damage;try{damage=this.damage(user,target,m).damage;}finally{this.rng=saved;}
    return eff===0?0:damage*(m.accuracy||100)/100+(damage>=target.currentHp?20:0);
@@ -45,6 +59,7 @@
   hit(side,key){const user=side==='player'?this.active():this.enemy(),target=side==='player'?this.enemy():this.active();if(user.currentHp<=0||target.currentHp<=0)return;this.ppAction={user,key};try{super.executeMove(user,target,key,side);}finally{this.ppAction=null;}}
   command(type,value){
    if(this.state.phase!=='battle')throw Error('BATTLE_ENDED');
+   this.state.turnEvents=[];
    if(type==='flee'){this.state.phase='ended';this.state.result='loss';return this.snapshot();}
    if(type==='switch'){
     if(!Number.isInteger(value)||value===this.state.activeIndex||!this.state.party[value]||this.state.party[value].currentHp<=0)throw Error('INVALID_SWITCH');
