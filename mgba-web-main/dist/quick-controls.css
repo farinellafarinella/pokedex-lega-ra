@@ -25,3 +25,5 @@
   .game-quick-controls select { width: 86px; }
   .pokemon-nav { gap: 6px; }
 }
+
+.game-quick-controls{flex-wrap:wrap;justify-content:flex-end}.game-quick-controls .boot-menu{font:700 12px Arial,sans-serif;padding:8px;border:1px solid #ffffff45;border-radius:8px;color:#f2c94c;text-decoration:none}
