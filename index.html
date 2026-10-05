@@ -408,7 +408,7 @@
       }
       if(page==='gameboy'){
         const host=document.createElement('div');host.textContent='Caricamento Game Boy…';document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy/gameboy.mjs?v=mgba-3').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host);}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
+        import('./features/gameboy/gameboy.mjs?v=badges-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
       }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Lavandonia…';document.querySelector('#app').replaceChildren(host);
