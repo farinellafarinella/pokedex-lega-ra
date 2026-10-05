@@ -4,7 +4,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const messages={ROUTE_NOT_INSTALLED:'Route 01 deve essere installata su Supabase: controlla la migrazione SQL e la Edge Function route01.',NOT_AUTHORIZED:'Accesso non autorizzato.',STATION_BUSY:'Allenatore impegnato in una lotta o posto riservato al vincitore.',STATION_LOCKED:'Supera prima la postazione precedente.',ROUTE_CLOSED:'Le nuove sfide sono temporaneamente chiuse.',BATTLE_ACTIVE:'Hai già una battaglia da riprendere.',STARTER_REQUIRED:'Scegli prima il tuo starter in La mia squadra.',INSUFFICIENT_BALANCE:'Saldo disponibile insufficiente.',OWN_STATION:'Questo posto è tuo: puoi proseguire.',PAIR_DAILY_LIMIT:'Hai già disputato una sfida con posta con questo allenatore oggi.',PASS_NOT_ALLOWED:'Per superare la tappa devi aver vinto contro questo allenatore.',DEFENSE_ACTIVE:'La tua copia sta difendendo: attendi la fine prima di cambiare posto, aggiornare o ritirarti.',RESERVATION_EXPIRED:'La prenotazione di 60 secondi è scaduta.',NOT_OWNER:'Questa postazione non ti appartiene.',STALE_BATTLE:'La battaglia è stata aggiornata: ricarico il turno.',STALE_CONFIG:'La configurazione è cambiata. Riapri il modulo prima di salvare.',INVALID_MOVE:'Mossa non disponibile o PP esauriti.',INVALID_SWITCH:'Quel Pokémon non può entrare.',INVALID_TEAM:'Controlla squadra e livelli.',INVALID_MOVES:'Scegli da una a quattro mosse valide.',BLOCKED_POSITION:'Ingresso e allenatori devono trovarsi su caselle percorribili.',INVALID_MAP:'La mappa non è valida.',ROUTE_INCOMPLETE:'Supera tutte e cinque le postazioni prima di ricominciare.',OPERATION_MISMATCH:'Il tentativo non corrisponde all’operazione precedente.'};
 export async function mountRoute01(host,{client,userId,test=false,admin=false,profile=false,canTest=false,isCurrent=()=>true,onBalance=()=>{}}){
  const root=host.attachShadow({mode:'open'}),key=`champion:route01:${userId}:${test}`;
- let state,battle,busy=false,pending=null,selected=null,message='',navigationHint='',mapView,draftMap,editPosition=1,destroyed=false;
+ let state,battle,busy=false,pending=null,selected=null,message='Caricamento Route…',navigationHint='',mapView,draftMap,editPosition=1,destroyed=false;
  try{pending=JSON.parse(localStorage.getItem(key));}catch{}
  const current=()=>host.isConnected&&isCurrent();
  const sprites=await fetch(new URL('./sprites.json?v=2',import.meta.url)).then(r=>r.json());
@@ -12,10 +12,32 @@ export async function mountRoute01(host,{client,userId,test=false,admin=false,pr
  root.innerHTML=`<link rel="stylesheet" href="${new URL('../../css/route-battle.css?v=move-choice-1',import.meta.url)}"><link rel="stylesheet" href="${new URL('./style.css?v=6',import.meta.url)}"><main><a href="${admin?'#admin':'#dashboard'}">← ${admin?'Admin':'Profilo'}</a><h1>${profile?'Personaggio esplorazione':admin?'Gestione Route 01':'Route 01'}</h1>${test?'<p class="test">MODALITÀ TEST · saldo di prova separato. Squadre e regole sono quelle della Route; nessun movimento di PD reali.</p>':''}<p class="status" role="status"></p><div data-toolbar></div><div data-profile></div>${!profile&&!admin?'<section class="route-guide" data-guide tabindex="-1"></section><div class="exploration"><canvas class="map" aria-label="Mappa Route 01"></canvas><div class="controls"><button data-direction="up" aria-label="Su">▲</button><button data-direction="left" aria-label="Sinistra">◀</button><button data-direction="down" aria-label="Giù">▼</button><button data-direction="right" aria-label="Destra">▶</button><button data-interact disabled>Avvicinati a un allenatore</button></div></div><p class="control-help">Cammina con frecce, WASD o pulsanti. Vicino a un allenatore, premi Parla oppure E / Invio.</p><div data-summary></div>':''}<div data-admin></div><details><summary>Resoconto e movimenti</summary><div class="history" data-history></div></details></main><dialog><div data-dialog></div></dialog>`;
  const dialog=root.querySelector('dialog'),content=root.querySelector('[data-dialog]');
  dialog.addEventListener('cancel',e=>{if(busy||battle?.status==='active')e.preventDefault();});dialog.addEventListener('close',()=>{selected=null;mapView?.stop();});
- async function request(body){const {data,error}=await client.functions.invoke('route01',{body:{test,...body}});let problem=data?.error;if(error){try{problem=(await error.context?.json())?.error;}catch{}}if(error?.context?.status===404||/Could not find the function|does not exist/.test(problem||''))problem='ROUTE_NOT_INSTALLED';if(error||problem){const e=Error(messages[problem]||'Operazione non confermata. Premi Riprova per recuperare lo stesso tentativo.');e.definitive=!!messages[problem]||/^(INVALID_|BATTLE_ENDED|BATTLE_NOT_INITIALIZED)/.test(problem||'');throw e;}return data;}
+ async function request(body){
+  let timer;
+  try{
+   const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('REQUEST_TIMEOUT')),20000);});
+   const response=await Promise.race([client.functions.invoke('route01',{body:{test,...body}}),timeout]);
+   const {data,error}=response;let details=data?.error?data:null,status=error?.context?.status;
+   if(error?.context){try{const context=error.context.clone?.()||error.context;details=await context.json();}catch{}}
+   let problem=typeof details?.error==='string'?details.error:details?.message||details?.error?.message;
+   if(status===404||/Could not find the function|function .* does not exist|Could not find.*get_route01/i.test(problem||''))problem='ROUTE_NOT_INSTALLED';
+   if(error||problem){
+    const code=problem||error?.message||'REQUEST_FAILED';
+    let text=messages[code];
+    if(!text&&/Invalid JWT|JWT expired|missing authorization|NOT_AUTHORIZED/i.test(code))text='Sessione non valida. Esci dal profilo e accedi di nuovo. Se il problema continua, controlla la configurazione JWT della funzione route01 su Supabase.';
+    if(!text)text=(body.type==='read'?'Impossibile caricare la Route. ':'Operazione non confermata. ')+(problem?'Il server risponde: '+problem+'. ':'Controlla la connessione e la funzione route01 su Supabase'+(status?' (HTTP '+status+')':'')+'. ')+(body.type==='read'?'Premi Riprova caricamento.':'Premi Riprova per recuperare lo stesso tentativo.');
+    const e=Error(text);e.definitive=!!messages[code]||/^(INVALID_|BATTLE_ENDED|BATTLE_NOT_INITIALIZED)/.test(code);throw e;
+   }
+   if(!data||typeof data!=='object'){throw Error('Il server ha restituito una risposta vuota. Premi Riprova caricamento.');}
+   return data;
+  }catch(error){
+   if(error.message==='REQUEST_TIMEOUT')throw Error('Il server non risponde. Premi Riprova per recuperare la richiesta senza ripetere addebiti.');
+   throw error;
+  }finally{clearTimeout(timer);}
+ }
  function accept(data){state=data;if(!test)onBalance(data.balance,data.locked);if(data.active)battle=data.active;else if(battle?.status==='active'){const history=data.history.find(b=>b.id===battle.id);if(history?.status==='settled')battle={...battle,...history};}mapView?.setState(data);}
  async function load(){accept(await request({type:'read',admin}));ensureMap();}
- function ensureMap(){if(!profile&&!admin&&!mapView){mapView=new RouteMap(root.querySelector('.map'),{map:state.config.map,sprites,userId,blocked:()=>busy||!!pending||dialog.open,onInteract:openStation,onNear:n=>{const button=root.querySelector('[data-interact]');button.disabled=!n||busy;button.textContent=n?'Parla · Posto '+n:'Avvicinati a un allenatore';}});mapView.setState(state);mapView.controls(root);}}
+ function ensureMap(){if(!profile&&!admin&&!mapView){mapView=new RouteMap(root.querySelector('.map'),{map:state.config.map,sprites,userId,blocked:()=>busy||dialog.open,onInteract:n=>{if(pending){message='Recupera prima l’operazione in sospeso con Riprova.';render();return;}openStation(n);},onNear:n=>{const button=root.querySelector('[data-interact]');button.disabled=!n||busy||!!pending;button.textContent=n?'Parla · Posto '+n:'Avvicinati a un allenatore';}});mapView.setState(state);mapView.controls(root);}}
  async function perform(body){
   if(busy)return;busy=true;mapView?.stop();message='';render();
   try{
@@ -36,8 +58,10 @@ export async function mountRoute01(host,{client,userId,test=false,admin=false,pr
  function render(){
   if(!current())return;
   if(!busy&&!pending)root.querySelectorAll('[data-busy-disabled]').forEach(b=>{b.disabled=false;delete b.dataset.busyDisabled;});
-  root.querySelector('.status').textContent=busy?'Salvataggio…':message;
-  if(!state)return;
+  root.querySelector('.status').textContent=busy?'Connessione al server…':message||(pending?'Hai un’operazione in sospeso. Premi Riprova per recuperarla.':'');
+  root.querySelectorAll('[data-direction]').forEach(b=>{b.disabled=!state||busy;delete b.dataset.busyDisabled;});
+  const interact=root.querySelector('[data-interact]');if(interact){interact.disabled=!state||busy||!!pending||!mapView?.near;delete interact.dataset.busyDisabled;}
+  if(!state){root.querySelector('[data-toolbar]').innerHTML='<button data-action="refresh" '+(busy?'disabled':'')+'>Riprova caricamento</button>'+(pending?'<button data-action="retry" '+(busy?'disabled':'')+'>Riprova ultima operazione</button>':'');return;}
   root.querySelector('[data-toolbar]').innerHTML=`<div class="funds"><strong>Disponibili: ${state.balance} PD</strong><span>Bloccati: ${state.locked} PD</span></div>${!state.config.opened&&!test?'<p>Le nuove sfide reali sono chiuse. Puoi esplorare, gestire il tuo posto o riprendere una lotta.</p>':''}<div class="toolbar"><button data-action="refresh">Aggiorna</button>${pending?'<button data-action="retry">Riprova ultima operazione</button>':''}${state.active?'<button data-action="resume">Riprendi battaglia</button>':''}${!admin&&!profile?'<a href="#route01-profile">Scegli personaggio</a>':''}${test?'<a href="#route01">Esci dalla prova</a>':canTest?'<a href="#route01-test">Prova amministratore</a>':''}${state.progress.unlocked===6&&!profile?'<button data-action="restart">Nuova percorrenza</button>':''}</div>`;
   const guide=root.querySelector('[data-guide]');
   if(guide){const next=Math.min(5,state.progress.unlocked),done=state.progress.unlocked===6;guide.innerHTML=`<small>IL TUO PERCORSO</small><strong>${state.active?'Riprendi la battaglia in corso':done?'Hai sbloccato tutte le tappe!':'Raggiungi il posto '+next}</strong><p>${esc(navigationHint)||(state.active?'Usa il pulsante Riprendi battaglia per continuare.':done?'Puoi tornare dagli allenatori o iniziare una nuova percorrenza.':'Segui il sentiero e parla con l’allenatore numerato. Vinci per sbloccare la prossima tappa.')}</p><ol class="route-steps" aria-label="Tappe">${state.stations.map(s=>`<li class="${s.position<state.progress.unlocked?'complete':s.position===next?'current':''}" ${!done&&s.position===next?'aria-current="step"':''}><span>${s.position<state.progress.unlocked?'✓':s.position}</span><small>${s.position<state.progress.unlocked?'Sbloccata':s.position===next?'Obiettivo':'Bloccata'}</small></li>`).join('')}</ol>`;}
@@ -47,7 +71,7 @@ export async function mountRoute01(host,{client,userId,test=false,admin=false,pr
   if(dialog.open){if(battle&&content.dataset.kind==='battle')renderBattle();else if(selected)renderStation();}
   if(dialog.open&&pending)content.insertAdjacentHTML('afterbegin','<button data-action="retry">Riprova ultima operazione</button>');
   if(dialog.open&&message)content.insertAdjacentHTML('afterbegin','<p role="alert" class="status">'+esc(message)+'</p>');
-  if(busy||pending)root.querySelectorAll('button,input,select,textarea').forEach(b=>{if((busy||b.dataset.action!=='retry')&&!b.disabled){b.dataset.busyDisabled='true';b.disabled=true;}});
+  if(busy||pending)root.querySelectorAll('button,input,select,textarea').forEach(b=>{if((busy||!['retry','refresh'].includes(b.dataset.action))&&!b.hasAttribute('data-direction')&&!b.disabled){b.dataset.busyDisabled='true';b.disabled=true;}});
  }
  function renderProfile(){root.querySelector('[data-profile]').innerHTML=`<p>Scegli tra tutti gli ${Object.keys(sprites.sprites).length} personaggi dello sheet. La scelta vale per l’esplorazione e le nuove copie difensive.</p><div class="sprite-options">${Object.entries(sprites.sprites).map(([id,s])=>`<button data-action="sprite" data-sprite="${id}" aria-pressed="${state.sprite===id}"><canvas class="sprite-preview" data-preview="${id}" width="64" height="64"></canvas>${esc(s.name)}${state.sprite===id?' ✓':''}</button>`).join('')}</div>`;loadTrainerAtlas(sprites).then(img=>root.querySelectorAll('[data-preview]').forEach(c=>{const r=sprites.sprites[c.dataset.preview].down[1],ctx=c.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.drawImage(img,r.x,r.y,r.w,r.h,0,0,r.w*2,r.h*2);})).catch(()=>{});}
  function teamHTML(team){return `<div class="team">${team.map(p=>`<article><img src="${esc(db[p.speciesId]?.sprites.front)}" alt=""><b>${esc(name(p))}</b><small>Lv. ${p.level}</small></article>`).join('')}</div>`;}
@@ -90,10 +114,10 @@ export async function mountRoute01(host,{client,userId,test=false,admin=false,pr
  root.addEventListener('change',e=>{if(e.target.matches('[data-edit-position]')){editPosition=Number(e.target.value);adminRender();}});
  root.addEventListener('submit',async e=>{if(!e.target.matches('[data-rule]'))return;e.preventDefault();if(busy||pending)return;const f=new FormData(e.target),bot_team=[];for(let i=0;i<6;i++){if(!f.get('species-'+i))continue;const m=f.getAll('moves-'+i);if(m.length>4){message='Scegli al massimo quattro mosse per Pokémon.';render();return;}bot_team.push({speciesId:Number(f.get('species-'+i)),level:Number(f.get('level-'+i)),...(m.length?{moves:m}:{})});}const r=state.stations.find(s=>s.position===editPosition).rules;await perform({type:'admin',action:'rule',args:{position:editPosition,revision:r.revision,bot_name:f.get('bot_name'),bot_sprite:f.get('bot_sprite'),stake:Number(f.get('stake')),reward:Number(f.get('reward')),daily_limit:Number(f.get('daily_limit')),bot_team}});if(!pending)adminRender();});
  root.addEventListener('click',async e=>{
-  const b=e.target.closest('button');if(!b||b.disabled||busy)return;if(b.hasAttribute('data-interact')){mapView?.interact();return;}const a=b.dataset.action;if(!a)return;if(pending&&a!=='retry')return;
+  const b=e.target.closest('button');if(!b||b.disabled||busy)return;if(b.hasAttribute('data-interact')){mapView?.interact();return;}const a=b.dataset.action;if(!a)return;if(pending&&!['retry','refresh'].includes(a))return;
   if(a==='close'){dialog.close();battle=null;return;}if(a==='station'){openStation(Number(b.dataset.position));return;}if(a==='resume'){battle=state.active;openBattle();return;}
   if(a==='retry'){await perform(pending||{});return;}
-  if(a==='refresh'){try{busy=true;render();await load();if(admin)adminRender();}catch(e){message=e.message;}finally{busy=false;render();}return;}
+  if(a==='refresh'){try{busy=true;render();await load();message='';if(admin)adminRender();}catch(e){message=e.message;}finally{busy=false;render();}return;}
   if(a==='sprite'){await command('sprite',{sprite:b.dataset.sprite});return;}
   if(a==='challenge'){if(!confirm('Iniziare questa sfida con le condizioni mostrate? La posta, se prevista, sarà bloccata fino alla conclusione.'))return;await perform({type:'start',position:selected});return;}
   if(a==='init'){await perform({type:'init',battleId:battle.id,revision:battle.revision});return;}
@@ -108,7 +132,7 @@ export async function mountRoute01(host,{client,userId,test=false,admin=false,pr
   if(a==='reset-all'||a==='reset-one'){if(confirm('Reset '+(a==='reset-all'?'dell’intera Route':'del posto '+editPosition)+': i proprietari perderanno il posto e recupereranno i depositi non impegnati. Le difese attive finiranno prima del reset. Lo storico rimane. Confermi?')){await perform({type:'admin',action:'reset',args:a==='reset-one'?{position:editPosition}:{}});adminRender();}}
   if(a==='technical'&&confirm('Annullare per errore tecnico? Restituisce la posta allo sfidante; il difensore conserva il deposito. Nessun premio o conquista.'))await perform({type:'admin',action:'cancel',args:{battle:b.dataset.battle}});
  });
- try{await load();if(!current())return;render();if(admin)adminRender();}catch(e){message=e.message;root.querySelector('.status').textContent=message;root.querySelector('[data-toolbar]').innerHTML='<button data-action="refresh">Riprova caricamento</button>';}
+ try{render();await load();if(!current())return;message='';render();if(admin)adminRender();}catch(e){message=e.message;render();}
  const poll=setInterval(async()=>{if(!current()){cleanup();return;}if(!busy&&!dialog.open&&!admin){try{await load();render();}catch{}}},15000);
  function cleanup(){if(destroyed)return;destroyed=true;clearInterval(poll);mapView?.destroy();dialog.close();}
  const observer=new MutationObserver(()=>{if(!current()){cleanup();observer.disconnect();}});observer.observe(document.body,{childList:true,subtree:true});
