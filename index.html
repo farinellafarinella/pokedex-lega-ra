@@ -366,7 +366,7 @@
       if(page==='fossil-hunt'){location.replace('#fossil-arena');return;}
       if(page==='pokeathlon'){location.replace('#casino');return;}
       const requiresAdmin=page==='admin'||page.startsWith('admin-')||page==='ticket'||page==='gift-ticket';
-      const requiresAuth=['route01','route01-test','route01-profile','rocket-list','dashboard','my-team','pokemon-claim','gameboy','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts','halloween'].includes(page)||requiresAdmin;
+      const requiresAuth=['route01','route01-test','route01-profile','rocket-list','dashboard','my-team','pokemon-claim','gameboy','gameboy-rewards','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts','halloween'].includes(page)||requiresAdmin;
       document.querySelector('#nav').innerHTML=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('');
       if(!authReady){document.querySelector('#app').innerHTML='<section class="panel form success"><h2>Connessione sicura…</h2></section>';return}
       if(page==='forgot-password'){document.querySelector('#app').innerHTML=forgotPasswordPage();return}
@@ -408,7 +408,11 @@
       }
       if(page==='gameboy'){
         const host=document.createElement('div');host.textContent='Caricamento Game Boy…';document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy/gameboy.mjs?v=badges-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
+        import('./features/gameboy/gameboy.mjs?v=separate-2').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
+      }
+      if(page==='gameboy-rewards'){
+        const host=document.createElement('div');host.textContent='Caricamento ricompense…';document.querySelector('#app').replaceChildren(host);
+        import('./features/gameboy/rewards.mjs?v=1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountGameBoyRewards(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare le ricompense. Riprova.';console.error(error);});return;
       }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Lavandonia…';document.querySelector('#app').replaceChildren(host);
