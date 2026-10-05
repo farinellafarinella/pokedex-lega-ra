@@ -27,7 +27,16 @@ export class RouteMap{
   const ctx=this.canvas.getContext('2d');ctx.setTransform(this.dpr,0,0,this.dpr,0,0);ctx.imageSmoothingEnabled=false;ctx.fillStyle='#152f20';ctx.fillRect(0,0,this.width,this.height);if(!this.state)return;
   const scale=Math.max(2,Math.ceil(this.width/this.map.width),Math.ceil(this.height/this.map.height)),viewW=this.width/scale,viewH=this.height/scale,cx=Math.max(0,Math.min(this.map.width-viewW,this.position.x-viewW/2)),cy=Math.max(0,Math.min(this.map.height-viewH,this.position.y-viewH/2));this.camera={x:cx,y:cy,scale};ctx.scale(scale,scale);ctx.translate(-Math.round(cx*scale)/scale,-Math.round(cy*scale)/scale);
   if(this.background.complete&&this.background.naturalWidth)ctx.drawImage(this.background,0,0,this.map.width,this.map.height);
-  for(const [i,p] of this.map.stations.entries()){const s=this.state.stations[i];this.trainer(ctx,s.sprite||s.rules.bot_sprite,p.x,p.y,'down',1);ctx.fillStyle=s.owner_id?'#a10d29':'#172331';ctx.fillRect(p.x-5,p.y-37,10,9);ctx.fillStyle='#fff';ctx.font='8px monospace';ctx.fillText(String(i+1),p.x-3,p.y-30);}
+  for(const [i,p] of this.map.stations.entries()){const s=this.state.stations[i];this.trainer(ctx,s.sprite||s.rules.bot_sprite,p.x,p.y,'down',1);ctx.font='8px monospace';
+   if(s.owner_id){
+    let label=String(s.owner_name||'Allenatore');
+    const maxWidth=Math.min(112,viewW-12);
+    while(label.length>1&&ctx.measureText(label).width>maxWidth)label=label.slice(0,-2)+'…';
+    const width=ctx.measureText(label).width+8;
+    const x=Math.max(cx+3,Math.min(cx+viewW-width-3,p.x-width/2));
+    ctx.fillStyle='#a10d29';ctx.fillRect(x,p.y-39,width,13);
+    ctx.fillStyle='#fff';ctx.fillText(label,x+4,p.y-30);
+   }else{ctx.fillStyle='#172331';ctx.fillRect(p.x-5,p.y-37,10,9);ctx.fillStyle='#fff';ctx.fillText(String(i+1),p.x-3,p.y-30);}}
   this.trainer(ctx,this.sprite,this.position.x,this.position.y,this.direction,this.walking?[1,0,1,2][Math.floor(this.frame)%4]:1);
  }
  destroy(){this.destroyed=true;cancelAnimationFrame(this.raf);this.observer.disconnect();this.listeners.forEach(off=>off());this.stop();}
