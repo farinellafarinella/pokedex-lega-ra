@@ -391,7 +391,7 @@
       }
       if(['my-team','my-starter','pokemon-claim'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento squadra…';document.querySelector('#app').replaceChildren(host);
-        import('./features/team/team.mjs?v=evolutions-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
+        import('./features/team/team.mjs?v=items-trades-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,userId,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
       }
       if(page==='pokedex'){
         const host=document.createElement('div');host.textContent='Caricamento Pokédex…';document.querySelector('#app').replaceChildren(host);
@@ -421,7 +421,7 @@
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
         host.textContent='Caricamento dello Zaino…';document.querySelector('#app').replaceChildren(host);
-        import('./features/inventory/inventory.mjs?v=online-fossils-1').then(module=>{
+        import('./features/inventory/inventory.mjs?v=items-trades-1').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountInventory(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare lo Zaino. Riprova.';console.error(error);});return;
