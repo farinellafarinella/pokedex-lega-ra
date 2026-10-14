@@ -4,12 +4,12 @@ export const generatePokemonUid=()=>`PKM-${crypto.randomUUID()}`;
 export function calculateExpForLevel(speciesId,level){
  const species=getPokemonById(speciesId);if(!species)throw Error('Specie non valida.');
  const n=Math.max(1,Math.min(100,Math.floor(level)));
- const formulas={fast:()=>4*n**3/5,slow:()=>5*n**3/4,medium_slow:()=>6*n**3/5-15*n**2+100*n-140,slightly_fast:()=>3*n**3/4+10*n**2-30,slightly_slow:()=>3*n**3/4+20*n**2-70};
+ const formulas={erratic:()=>n<=50?n**3*(100-n)/50:n<=68?n**3*(150-n)/100:n<=98?n**3*Math.floor((1911-10*n)/3)/500:n**3*(160-n)/100,fluctuating:()=>n<=15?n**3*(Math.floor((n+1)/3)+24)/50:n<=36?n**3*(n+14)/50:n**3*(Math.floor(n/2)+32)/50,fast:()=>4*n**3/5,slow:()=>5*n**3/4,medium_slow:()=>6*n**3/5-15*n**2+100*n-140,slightly_fast:()=>3*n**3/4+10*n**2-30,slightly_slow:()=>3*n**3/4+20*n**2-70};
  return n===1?0:Math.max(0,Math.floor((formulas[species.growth]||(()=>n**3))()));
 }
 export function calculateStats(speciesId,level){
  const p=getPokemonById(speciesId);if(!p)throw Error('Specie non valida.');
- return Object.fromEntries(Object.entries(p.baseStats).map(([key,value])=>[key,Math.floor((2*value+10)*level/100)+(key==='hp'?level+10:5)]));
+ return Object.fromEntries(Object.entries(p.baseStats).map(([key,value])=>[key,Number(speciesId)===292&&key==='hp'?1:Math.floor((2*value+10)*level/100)+(key==='hp'?level+10:5)]));
 }
 export function createOwnedPokemon(speciesId,level=5,{isStarter=false,obtainedFrom='QR',uid=generatePokemonUid(),obtainedAt=new Date().toISOString()}={}){
  if(!Number.isInteger(level)||level<1||level>100)throw Error('Livello non valido.');

@@ -14,6 +14,8 @@
     if(n===1)return 0;
     let x;
     switch(growth){
+      case "erratic": x = n<=50?n**3*(100-n)/50:n<=68?n**3*(150-n)/100:n<=98?n**3*Math.floor((1911-10*n)/3)/500:n**3*(160-n)/100; break;
+      case "fluctuating": x = n<=15?n**3*(Math.floor((n+1)/3)+24)/50:n<=36?n**3*(n+14)/50:n**3*(Math.floor(n/2)+32)/50; break;
       case "fast": x = 4*n**3/5; break;
       case "slow": x = 5*n**3/4; break;
       case "medium_slow": x = 6*n**3/5 - 15*n**2 + 100*n - 140; break;
@@ -43,7 +45,7 @@
     const b = p.baseStats;
     const normal = v => Math.floor(((2*v + iv) * L)/100) + 5;
     return {
-      maxHp: Math.floor(((2*b.hp + iv) * L)/100) + L + 10,
+      maxHp: Number(speciesId)===292 ? 1 : Math.floor(((2*b.hp + iv) * L)/100) + L + 10,
       attack: normal(b.attack),
       defense: normal(b.defense),
       spAttack: normal(b.spAttack),
