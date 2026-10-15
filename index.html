@@ -399,7 +399,7 @@
       }
       if(['my-team','my-starter','pokemon-claim'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento squadra…';document.querySelector('#app').replaceChildren(host);
-        import('./features/team/team.mjs?v=paid-heal-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,userId,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
+        import('./features/team/team.mjs?v=trainer-picker-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,userId,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
       }
       if(page==='pokedex'){
         const host=document.createElement('div');host.textContent='Caricamento Pokédex…';document.querySelector('#app').replaceChildren(host);
@@ -420,7 +420,7 @@
       }
       if(page==='gameboy-trades'){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy-trades/trades.mjs?v=1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountROMTrades(host,{client:supabaseClient,userId,isCurrent:()=>host.isConnected&&authSession?.user.id===userId});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare gli scambi Game Boy. Riprova.';console.error(error);});return;
+        import('./features/gameboy-trades/trades.mjs?v=trainer-picker-1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountROMTrades(host,{client:supabaseClient,userId,isCurrent:()=>host.isConnected&&authSession?.user.id===userId});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare gli scambi Game Boy. Riprova.';console.error(error);});return;
       }
       if(page==='gameboy-rewards'){
         const host=document.createElement('div');host.textContent='Caricamento ricompense…';document.querySelector('#app').replaceChildren(host);

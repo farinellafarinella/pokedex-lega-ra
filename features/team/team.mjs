@@ -1,5 +1,6 @@
+import {readTradeTrainers,trainerPicker,bindTrainerPicker} from './trainer-picker.mjs';
 import {createTeamAPI} from './api.mjs?v=gifts-1';
-import {createEvolutionAPI,evolutionControls,evolutionShop,tradeList,speciesChoices,heldItemChoices,tradeResult,itemName,learningControls} from './evolutions.mjs?v=level-moves-1';
+import {createEvolutionAPI,evolutionControls,evolutionShop,tradeList,speciesChoices,heldItemChoices,tradeResult,itemName,learningControls} from './evolutions.mjs?v=trainer-picker-1';
 import {calculateStats,calculateExpForLevel,TEAM_LIMIT} from './model.mjs';
 import {getPokemonById,getMoveById,typeNames,evolutionChain,evolutionMethod} from '../pokedex/data.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -52,14 +53,14 @@ export async function mountTeam(host,{client,isCurrent=()=>true,onBalance=()=>{}
   const snapshot=evolutionData.evolutions,i=snapshot?.items.find(i=>i.id===item);if(!i||operationPending())return;
   modal('Compra '+i.name,'<p>Acquista un oggetto per '+i.price+' PD dal saldo disponibile.</p>',async()=>{dialog.close();await perform(()=>evolutionAPI.buy(item,snapshot));});
  }
- function offerTrade(uid){
+ async function offerTrade(uid){
   const p=state.team.find(p=>p.uid===uid);if(!p||p.isStarter||operationPending())return;
-  const revision=state.revision;
-  modal('Proponi scambio', '<p>Offri '+esc(getPokemonById(p.speciesId).name)+' Lv. '+p.level+'. Il destinatario riceverà questo Pokémon; tu riceverai la specie richiesta.</p><label>Codice del destinatario<input data-trainer-code placeholder="TR-0001" required></label><label>Pokémon richiesto<select data-request-species>'+speciesChoices()+'</select></label><label>Livello minimo richiesto<input data-request-level type="number" min="1" max="100" value="1" required></label><label>Oggetto da affidare al tuo Pokémon<select data-held-item>'+heldItemChoices(p,evolutionData.evolutions)+'</select></label><p>Se è previsto, il Pokémon si evolverà quando lo scambio verrà accettato. L’oggetto si consuma solo allora. La proposta dura 24 ore. Cambiare la squadra rende la proposta non più accettabile.</p>',async()=>{
-   const code=root.querySelector('[data-trainer-code]'),level=root.querySelector('[data-request-level]');if(!code.reportValidity()||!level.reportValidity())return;
+  const revision=state.revision;let trainers;busy=true;render();try{trainers=await readTradeTrainers(client);}catch(e){message=e.message;return;}finally{busy=false;render();}if(!current())return;
+  modal('Proponi scambio', '<p>Offri '+esc(getPokemonById(p.speciesId).name)+' Lv. '+p.level+'. Il destinatario riceverà questo Pokémon; tu riceverai la specie richiesta.</p>'+trainerPicker(trainers)+'<label>Pokémon richiesto<select data-request-species>'+speciesChoices()+'</select></label><label>Livello minimo richiesto<input data-request-level type="number" min="1" max="100" value="1" required></label><label>Oggetto da affidare al tuo Pokémon<select data-held-item>'+heldItemChoices(p,evolutionData.evolutions)+'</select></label><p>Se è previsto, il Pokémon si evolverà quando lo scambio verrà accettato. L’oggetto si consuma solo allora. La proposta dura 24 ore. Cambiare la squadra rende la proposta non più accettabile.</p>',async()=>{
+   if(!trainers.length)return;const code=root.querySelector('[data-trainer-code]'),level=root.querySelector('[data-request-level]');if(!code.reportValidity()||!level.reportValidity())return;
    const args={p_action:'offer',p_revision:revision,p_uid:uid,p_item:root.querySelector('[data-held-item]').value||null,p_trainer_code:code.value.trim(),p_requested_species:Number(root.querySelector('[data-request-species]').value),p_min_level:Number(level.value)};
    dialog.close();await perform(()=>evolutionAPI.trade(args));
-  });
+  });bindTrainerPicker(root,trainers);if(!trainers.length)root.querySelector('[data-confirm]').disabled=true;
  }
  function acceptTrade(id){
   const t=evolutionData.trades.find(t=>t.id===id&&!t.outgoing),revision=state.revision;if(!t||operationPending())return;
