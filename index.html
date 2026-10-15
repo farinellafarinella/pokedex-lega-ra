@@ -415,7 +415,7 @@
       }
       if(page==='gameboy'){
         const host=document.createElement('div');host.textContent='Caricamento Game Boy…';document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy/gameboy.mjs?v=trades-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
+        import('./features/gameboy/gameboy.mjs?v=emerald-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)module.mountGameBoy(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Game Boy. Riprova.';console.error(error);});return;
       }
       if(page==='gameboy-trades'){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
@@ -423,7 +423,7 @@
       }
       if(page==='gameboy-rewards'){
         const host=document.createElement('div');host.textContent='Caricamento ricompense…';document.querySelector('#app').replaceChildren(host);
-        import('./features/gameboy/rewards.mjs?v=gold-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountGameBoyRewards(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare le ricompense. Riprova.';console.error(error);});return;
+        import('./features/gameboy/rewards.mjs?v=emerald-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountGameBoyRewards(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare le ricompense. Riprova.';console.error(error);});return;
       }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Lavandonia…';document.querySelector('#app').replaceChildren(host);

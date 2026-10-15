@@ -1,3 +1,4 @@
+import {emeraldProofFromSave} from './emerald-save.mjs';
 // International Red SRAM, verified against the local Italian ROM's load/checksum routines.
 export const saveLayout={size:0x8000,start:0x2598,end:0x3523,badges:0x2602,party:0x2f2c};
 export function validateBadgeProof(value){
@@ -24,8 +25,9 @@ export async function readLocalRedSave({database=indexedDB,game="red"}={}){
   request.onblocked=()=>reject(Error('SAVE_STORAGE'));
   request.onsuccess=()=>{
    const db=request.result;if(!db.objectStoreNames.contains('FILE_DATA')){db.close();reject(Error('SAVE_NOT_FOUND'));return;}
-   const tx=db.transaction('FILE_DATA','readonly'),read=tx.objectStore('FILE_DATA').get(game==='gold'?'/data/saves/Pokemon - Versione Oro (Italy) (SGB Enhanced).sav':'/data/saves/Pokemon - Versione Rossa (I).sav');
-   read.onsuccess=()=>{db.close();if(!read.result?.contents){reject(Error('SAVE_NOT_FOUND'));return;}try{resolve(game==='gold'?goldProofFromSave(read.result.contents):proofFromSave(read.result.contents));}catch(error){reject(error);}};
+   if(!['red','gold','emerald'].includes(game)){db.close();reject(Error('SAVE_INVALID'));return;}
+   const tx=db.transaction('FILE_DATA','readonly'),read=tx.objectStore('FILE_DATA').get(game==='emerald'?'/data/saves/Pokemon - Versione Smeraldo (Italy).sav':game==='gold'?'/data/saves/Pokemon - Versione Oro (Italy) (SGB Enhanced).sav':'/data/saves/Pokemon - Versione Rossa (I).sav');
+   read.onsuccess=()=>{db.close();if(!read.result?.contents){reject(Error('SAVE_NOT_FOUND'));return;}try{resolve(game==='emerald'?emeraldProofFromSave(read.result.contents):game==='gold'?goldProofFromSave(read.result.contents):proofFromSave(read.result.contents));}catch(error){reject(error);}};
    read.onerror=()=>{db.close();reject(Error('SAVE_STORAGE'));};
   };
  });
