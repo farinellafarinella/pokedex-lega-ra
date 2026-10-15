@@ -390,7 +390,7 @@
       }
       if(['rocket-list','admin-rocket-events'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
-        import('./features/rocket-shop/shop.mjs?v=route01-funds-1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountRocketShop(host,{client:supabaseClient,userId,admin:page==='admin-rocket-events',isCurrent:()=>host.isConnected&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il negozio Team Rocket. Riprova.';console.error(error);});return;
+        import('./features/rocket-shop/shop.mjs?v=weekly-prices-300-1000').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountRocketShop(host,{client:supabaseClient,userId,admin:page==='admin-rocket-events',isCurrent:()=>host.isConnected&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il negozio Team Rocket. Riprova.';console.error(error);});return;
       }
       if(page==='admin-pokemon-gifts'){
         const host=document.createElement('div'),userId=authSession.user.id;document.querySelector('#app').replaceChildren(host);
