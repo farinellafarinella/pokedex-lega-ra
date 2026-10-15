@@ -1,6 +1,6 @@
 import {readTradeTrainers,trainerPicker,bindTrainerPicker} from './trainer-picker.mjs';
 import {createTeamAPI} from './api.mjs?v=gifts-1';
-import {createEvolutionAPI,evolutionControls,evolutionShop,tradeList,speciesChoices,heldItemChoices,tradeResult,itemName,learningControls} from './evolutions.mjs?v=trainer-picker-1';
+import {createEvolutionAPI,evolutionControls,evolutionShop,tradeList,heldItemChoices,tradeResult,itemName,learningControls} from './evolutions.mjs?v=open-trades-1';
 import {calculateStats,calculateExpForLevel,TEAM_LIMIT} from './model.mjs';
 import {getPokemonById,getMoveById,typeNames,evolutionChain,evolutionMethod} from '../pokedex/data.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -56,16 +56,16 @@ export async function mountTeam(host,{client,isCurrent=()=>true,onBalance=()=>{}
  async function offerTrade(uid){
   const p=state.team.find(p=>p.uid===uid);if(!p||p.isStarter||operationPending())return;
   const revision=state.revision;let trainers;busy=true;render();try{trainers=await readTradeTrainers(client);}catch(e){message=e.message;return;}finally{busy=false;render();}if(!current())return;
-  modal('Proponi scambio', '<p>Offri '+esc(getPokemonById(p.speciesId).name)+' Lv. '+p.level+'. Il destinatario riceverà questo Pokémon; tu riceverai la specie richiesta.</p>'+trainerPicker(trainers)+'<label>Pokémon richiesto<select data-request-species>'+speciesChoices()+'</select></label><label>Livello minimo richiesto<input data-request-level type="number" min="1" max="100" value="1" required></label><label>Oggetto da affidare al tuo Pokémon<select data-held-item>'+heldItemChoices(p,evolutionData.evolutions)+'</select></label><p>Se è previsto, il Pokémon si evolverà quando lo scambio verrà accettato. L’oggetto si consuma solo allora. La proposta dura 24 ore. Cambiare la squadra rende la proposta non più accettabile.</p>',async()=>{
-   if(!trainers.length)return;const code=root.querySelector('[data-trainer-code]'),level=root.querySelector('[data-request-level]');if(!code.reportValidity()||!level.reportValidity())return;
-   const args={p_action:'offer',p_revision:revision,p_uid:uid,p_item:root.querySelector('[data-held-item]').value||null,p_trainer_code:code.value.trim(),p_requested_species:Number(root.querySelector('[data-request-species]').value),p_min_level:Number(level.value)};
+  modal('Proponi scambio', '<p>Offri '+esc(getPokemonById(p.speciesId).name)+' Lv. '+p.level+'. Il destinatario sceglierà un suo Pokémon da darti in cambio.</p>'+trainerPicker(trainers)+'<label>Oggetto da affidare al tuo Pokémon<select data-held-item>'+heldItemChoices(p,evolutionData.evolutions)+'</select></label><p>Se è previsto, il Pokémon si evolverà quando lo scambio verrà accettato. L’oggetto si consuma solo allora. La proposta dura 24 ore. Cambiare la squadra rende la proposta non più accettabile.</p>',async()=>{
+   if(!trainers.length)return;const code=root.querySelector('[data-trainer-code]');if(!code.reportValidity())return;
+   const args={p_action:'offer',p_revision:revision,p_uid:uid,p_item:root.querySelector('[data-held-item]').value||null,p_trainer_code:code.value.trim()};
    dialog.close();await perform(()=>evolutionAPI.trade(args));
   });bindTrainerPicker(root,trainers);if(!trainers.length)root.querySelector('[data-confirm]').disabled=true;
  }
  function acceptTrade(id){
   const t=evolutionData.trades.find(t=>t.id===id&&!t.outgoing),revision=state.revision;if(!t||operationPending())return;
-  const members=state.team.filter(p=>!p.isStarter&&p.speciesId===t.requestedSpecies&&p.level>=t.minLevel);
-  if(!members.length){message='Non hai un Pokémon scambiabile della specie e del livello richiesti.';render();return;}
+  const members=state.team.filter(p=>!p.isStarter&&(!t.requestedSpecies||(p.speciesId===t.requestedSpecies&&p.level>=(t.minLevel||1))));
+  if(!members.length){message='Non hai un Pokémon scambiabile disponibile per questa proposta.';render();return;}
   modal('Accetta scambio','<p>Riceverai '+esc(tradeResult(t.pokemon,t.item))+' Lv. '+t.pokemon.level+' da '+esc(t.name)+'. Scegli il Pokémon da cedere. Lo scambio è definitivo.</p><label>Pokémon da dare<select data-return-pokemon>'+members.map(p=>'<option value="'+esc(p.uid)+'">'+esc(getPokemonById(p.speciesId).name)+' Lv. '+p.level+'</option>').join('')+'</select></label><label>Oggetto da affidare<select data-return-item></select></label><p data-trade-preview></p>',async()=>{
    const p=members.find(p=>p.uid===root.querySelector('[data-return-pokemon]').value),item=root.querySelector('[data-return-item]').value||null;
    dialog.close();await perform(()=>evolutionAPI.trade({p_action:'accept',p_trade:id,p_revision:revision,p_uid:p.uid,p_item:item}));
