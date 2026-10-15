@@ -14,7 +14,7 @@
       const explain=message=>body.type==='start'&&[345,347,408,410].includes(Number(body.speciesId))&&message==='Incontro non valido.'
         ? 'Il server delle battaglie non riconosce questo fossile. L’amministratore deve aggiornare la funzione route-encounters. Il tuo incontro resta salvato: non usare un altro fossile.' : message;
       if(error){let detail;try{detail=await error.context?.json();}catch{}
-        const messages={STARTER_PROTECTED:'Lo starter non può essere liberato.',STALE_TEAM:'La squadra è cambiata: ricarica il gioco.',ENCOUNTER_EXPIRED:'Questo incontro è scaduto.',NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',BATTLE_ACTIVE:'Riprendi e concludi l’incontro salvato dalla pagina La mia squadra.',TEAM_EXHAUSTED:'Cura la squadra prima di combattere.',STALE_EVENT:'L’evento è cambiato. Riprova il salvataggio.',EVENT_INTEGRATION_REQUIRED:'Il servizio battaglie è in aggiornamento. Il risultato resta in attesa.'};
+        const messages={HEALING_BLOCKED_PARCO:'Non puoi curare la squadra durante una scalata del Parco Lotta. Concludila o abbandonala prima.',INSUFFICIENT_BALANCE:'Servono 25 Pd disponibili per curare la squadra.',TEAM_ALREADY_HEALTHY:'La squadra è già in salute: nessun costo addebitato.',STARTER_PROTECTED:'Lo starter non può essere liberato.',STALE_TEAM:'La squadra è cambiata: ricarica il gioco.',ENCOUNTER_EXPIRED:'Questo incontro è scaduto.',NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',BATTLE_ACTIVE:'Riprendi e concludi l’incontro salvato dalla pagina La mia squadra.',TEAM_EXHAUSTED:'Cura la squadra prima di combattere.',STALE_EVENT:'L’evento è cambiato. Riprova il salvataggio.',EVENT_INTEGRATION_REQUIRED:'Il servizio battaglie è in aggiornamento. Il risultato resta in attesa.'};
         throw Error(messages[detail?.error]||explain(detail?.error)||'Le battaglie non sono ancora disponibili. Riprova più tardi.');}
       if(data?.error)throw Error(explain(data.error));
       return data;
@@ -29,7 +29,7 @@
     if(active)throw Error('Concludi prima la battaglia in corso.');
     healOperation=healOperation||global.crypto.randomUUID();
     const data=await remoteTransport().request({type:'heal',operationId:healOperation});
-    healOperation=null;return data;
+    healOperation=null;if(Number.isFinite(data?.balance))global.dispatchEvent(new CustomEvent('route:balance-updated',{detail:{balance:data.balance,userId:data.userId}}));return data;
   }
   async function pendingEncounter(){
     if(!client)throw Error('Accedi prima di riprendere una battaglia.');

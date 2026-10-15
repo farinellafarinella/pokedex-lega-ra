@@ -66,7 +66,7 @@
   <script src="./js/route-battle-engine.js?v=move-choice-1"></script>
   <script src="./js/route-duel-engine.js?v=autofarm-2"></script>
   <script src="./js/route-battle-ui.js?v=move-choice-1"></script>
-  <script src="./js/route-encounters.js?v=move-choice-1"></script>
+  <script src="./js/route-encounters.js?v=paid-heal-1"></script>
   <style>.route-battle-dialog{width:min(430px,calc(100vw - 20px));max-height:90dvh;overflow:auto;background:#181b20;color:#f1f3f6;border:1px solid #626974;border-radius:16px;padding:14px}.route-battle-dialog::backdrop{background:#000b}</style>
   <script src="./features/casino/casino-runtime.js?v=9"></script>
   <script src="./features/tournaments/tournaments-runtime.js?v=5"></script>
@@ -198,6 +198,7 @@
     let state=JSON.parse(localStorage.getItem('champion-league')||'null')||{trainers:[],transactions:[],gyms:initialGyms,registrations:[],rocketEvents:initialRocketEvents,rocketPokemon:initialRocketPokemon,rocketPurchases:[]};
     state.trainers=[];state.transactions=[];state.gyms=[];state.registrations=state.registrations||[];state.devices=state.devices||[];state.activationAttempts=state.activationAttempts||[];state.rocketEvents=[];state.rocketPokemon=[];state.rocketPurchases=state.rocketPurchases||[];
     const me=()=>remoteProfile||trainer(state.currentTrainerId)||state.trainers[0], money=n=>'₽ '+Number(n).toLocaleString('it-IT'), trainer=id=>state.trainers.find(t=>t.id===id), ranking=()=>[...state.trainers].sort((a,b)=>b.balance-a.balance||a.name.localeCompare(b.name,'it')), save=()=>localStorage.setItem('champion-league',JSON.stringify(state));
+    window.addEventListener('route:balance-updated',event=>{if(remoteProfile&&authSession?.user.id===event.detail?.userId&&Number.isFinite(event.detail.balance)){remoteProfile.balance=event.detail.balance;loadRemoteTransactions();loadPublicTrainers();}});
     const navItems=[['dashboard','Home'],['events','Eventi'],['rocket-list','Rocket'],['my-tickets','Biglietti'],['transactions','Movimenti'],['ranking','Classifica'],['admin','Admin']];
     function go(page,param=''){location.hash=page+(param?'/'+param:'')}
     function header(k,t,s){return `<div class="eyebrow">${k}</div><h1 class="title">${t}</h1><p class="sub">${s||''}</p>`}
@@ -369,7 +370,7 @@
       if(page==='fossil-hunt'){location.replace('#fossil-arena');return;}
       if(page==='pokeathlon'){location.replace('#casino');return;}
       const requiresAdmin=page==='admin'||page.startsWith('admin-')||page==='ticket'||page==='gift-ticket';
-      const requiresAuth=['route01','route01-test','route01-profile','rocket-list','tm-shop','dashboard','my-team','pokemon-claim','gameboy','gameboy-trades','gameboy-rewards','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts','halloween'].includes(page)||requiresAdmin;
+      const requiresAuth=['parco-lotta','exp-towers','route01','route01-test','route01-profile','rocket-list','tm-shop','dashboard','my-team','pokemon-claim','gameboy','gameboy-trades','gameboy-rewards','inventory','starter-inventory','regions','my-starter','fossil-arena','transfer','transactions','my-tickets','qr','scan','claim','badge','bug-contest','fossil-hunt','events','tournaments','casino','pokeathlon','fishing','safari','gifts','halloween'].includes(page)||requiresAdmin;
       document.querySelector('#nav').innerHTML=navItems.map(x=>`<button class="${page===x[0]?'active':''}" onclick="go('${x[0]}')">${x[1]}</button>`).join('');
       if(!authReady){document.querySelector('#app').innerHTML='<section class="panel form success"><h2>Connessione sicura…</h2></section>';return}
       if(page==='forgot-password'){document.querySelector('#app').innerHTML=forgotPasswordPage();return}
@@ -398,7 +399,7 @@
       }
       if(['my-team','my-starter','pokemon-claim'].includes(page)){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento squadra…';document.querySelector('#app').replaceChildren(host);
-        import('./features/team/team.mjs?v=tm-shop-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,userId,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
+        import('./features/team/team.mjs?v=paid-heal-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';return module.mountTeam(host,{client:supabaseClient,userId,token:page==='pokemon-claim'?param:null,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value))remoteProfile.balance=value;}});}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la squadra. Riprova.';console.error(error);});return;
       }
       if(page==='pokedex'){
         const host=document.createElement('div');host.textContent='Caricamento Pokédex…';document.querySelector('#app').replaceChildren(host);
@@ -425,9 +426,13 @@
         const host=document.createElement('div');host.textContent='Caricamento ricompense…';document.querySelector('#app').replaceChildren(host);
         import('./features/gameboy/rewards.mjs?v=emerald-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountGameBoyRewards(host,{client:supabaseClient,userId:authSession.user.id,isCurrent:()=>starterRenderVersion===starterVersion&&host.isConnected});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare le ricompense. Riprova.';console.error(error);});return;
       }
+      if((page==='exp-towers'||page==='parco-lotta')){
+        const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Parco Lotta…';document.querySelector('#app').replaceChildren(host);
+        import('./features/exp-towers/towers.mjs?v=parco-cure-1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountExpTowers(host,{client:supabaseClient,userId,isCurrent:()=>host.isConnected&&authSession?.user.id===userId});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare le Parco Lotta. Riprova.';});return;
+      }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Lavandonia…';document.querySelector('#app').replaceChildren(host);
-        import('./features/halloween/tower.mjs?v=icons-2').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountHalloween(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onGift:()=>checkPokemonGiftPopup()});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare la torre. Ricarica la pagina per riprovare.';});return;
+        import('./features/halloween/tower.mjs?v=paid-heal-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected)return module.mountHalloween(host,{client:supabaseClient,isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onGift:()=>checkPokemonGiftPopup()});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare la torre. Ricarica la pagina per riprovare.';});return;
       }
       if(page==='inventory'){
         const host=document.createElement('div'),userId=authSession.user.id;
@@ -472,7 +477,7 @@
       }
       if(page==='fossil-arena'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Laboratorio Fossili…';document.querySelector('#app').replaceChildren(host);
-        import('./features/fossils-beta/online.mjs?v=mining-strike-4').then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountFossilLaboratory(host,{client:supabaseClient,userId,section:param==='risveglio'?'lab':'mining',isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&remoteProfile.balance!==value){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il laboratorio: '+error.message;});return;
+        import('./features/fossils-beta/online.mjs?v=paid-heal-1').then(module=>{if(starterRenderVersion!==starterVersion)return;return module.mountFossilLaboratory(host,{client:supabaseClient,userId,section:param==='risveglio'?'lab':'mining',isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&remoteProfile.balance!==value){remoteProfile.balance=value;loadRemoteTransactions();loadPublicTrainers();}}});}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il laboratorio: '+error.message;});return;
       }
       if(['my-starter','starter-inventory'].includes(page)){
         document.querySelector('#app').innerHTML='<div id="starter-feature">Caricamento del tuo starter…</div>';
@@ -488,8 +493,9 @@
       document.querySelector('#app').innerHTML=page==='trainer'?publicTrainer(param):page==='transfer'?transferPage(param):(views[page]||dashboard)();
       if(page==='dashboard'&&authSession){
         let actions=document.querySelector('#app .actions');
-        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary with-icon" type="button" onclick="go('pokedex')"><img class="btn-icon" src="./icone%20menu/pokedex%20icon.webp" alt="">Pokédex</button><button class="btn secondary with-icon" type="button" onclick="go('inventory')"><img class="btn-icon" src="./icone%20menu/zaino%20icon%20.png" alt="">Zaino</button><button class="btn secondary" type="button" onclick="go('gameboy')">🎮 Game Boy · Rosso e Oro</button>`);
+        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary with-icon" type="button" onclick="go('pokedex')"><img class="btn-icon" src="./icone%20menu/pokedex%20icon.webp" alt="">Pokédex</button><button class="btn secondary with-icon" type="button" onclick="go('inventory')"><img class="btn-icon" src="./icone%20menu/zaino%20icon%20.png" alt="">Zaino</button><button class="btn secondary" type="button" onclick="go('gameboy')">🎮 Game Boy · Rosso, Oro e Smeraldo</button>`);
         if(actions)actions.insertAdjacentHTML('afterbegin','<button class="btn primary with-icon" onclick="go(\'my-team\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">La mia squadra</button><button class="btn secondary with-icon" type="button" onclick="go(\'events\')"><img class="btn-icon" src="./pokeball%20icon.png" alt="">Eventi</button>');
+        if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary" type="button" onclick="go('parco-lotta')">Parco Lotta · 100 piani</button>`);
         if(actions)actions.insertAdjacentHTML('beforeend',`<button class="btn secondary with-icon limited-event-button" type="button" onclick="go('halloween')"><img class="btn-icon" src="./Fantasma_2_LGPE.png" alt=""><span class="limited-event-copy"><span>Lavandonia</span><small>Evento limitato · fino al 31 ottobre</small></span></button>`);
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'bug-contest\')"><img class="btn-icon" src="./icone%20menu/netball.png" alt=""><span>Gara Pigliamosche</span><span id="bug-contest-quick-status" class="quick-event-status">Verifica…</span></button><button class="btn secondary quick-event-button" type="button" onclick="go(\'casino\')"><img class="btn-icon" src="./pokeball%20icon.png" alt=""><span>Casinò di Zafferanopoli</span><span id="casino-quick-status" class="quick-event-status">Verifica…</span></button>');updateBugContestQuickStatus();updateCasinoQuickStatus()}
         if(actions){actions.insertAdjacentHTML('beforeend','<button class="btn secondary quick-event-button" type="button" onclick="go(\'fishing\')"><img class="btn-icon" src="./icone%20menu/pesca%20icon.png" alt=""><span>Gara di Pesca</span><span id="fishing-quick-status" class="quick-event-status">Verifica…</span></button>');updateFishingQuickStatus()}
