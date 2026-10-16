@@ -428,7 +428,7 @@
       }
       if((page==='exp-towers'||page==='parco-lotta')){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Parco Lotta…';document.querySelector('#app').replaceChildren(host);
-        import('./features/exp-towers/towers.mjs?v=parco-cure-1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountExpTowers(host,{client:supabaseClient,userId,isCurrent:()=>host.isConnected&&authSession?.user.id===userId});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare le Parco Lotta. Riprova.';});return;
+        import('./features/exp-towers/towers.mjs?v=admin-autobot-1').then(module=>{if(host.isConnected&&authSession?.user.id===userId)return module.mountExpTowers(host,{client:supabaseClient,userId,isCurrent:()=>host.isConnected&&authSession?.user.id===userId});}).catch(()=>{if(host.isConnected)host.textContent='Impossibile caricare le Parco Lotta. Riprova.';});return;
       }
       if(page==='halloween'){
         const host=document.createElement('div'),userId=authSession.user.id;host.textContent='Caricamento Lavandonia…';document.querySelector('#app').replaceChildren(host);

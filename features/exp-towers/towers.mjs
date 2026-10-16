@@ -1,12 +1,14 @@
+import {createTowerAutobot} from './autobot.mjs';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const colors={water:'#54b7ff',fire:'#ff8c65',electric:'#f2d763',grass:'#88d884',ice:'#80e0e2',normal:'#bfc6c9',fighting:'#e69285',poison:'#d29ae8',ground:'#d2af77',flying:'#a5bfff',psychic:'#f5a0ca',bug:'#b2c65e',rock:'#bcac80',ghost:'#b1a0f2',dragon:'#b497ff',dark:'#b2a6a1',steel:'#a2c7cd'};
 const icons={water:'≈',fire:'♨',electric:'ϟ',grass:'❧',ice:'❄',normal:'○',fighting:'✊',poison:'◉',ground:'▱',flying:'⌁',psychic:'✧',bug:'❖',rock:'◆',ghost:'☾',dragon:'♜',dark:'◒',steel:'⬡'};
-const errors={PARK_CLIMB_ACTIVE:'Hai già una scalata attiva: completala o abbandonala prima di iniziare un’altra arena.',HEALING_BLOCKED_PARCO:'Non puoi curare la squadra durante una scalata del Parco Lotta.',NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',STARTER_REQUIRED:'Scegli prima lo starter nella tua squadra.',TEAM_EXHAUSTED:'La squadra è esausta: curala prima di entrare.',TEAM_PENDING:'Completa prima l’acquisizione in sospeso nella squadra.',BATTLE_ACTIVE:'Concludi o riprendi la battaglia in sospeso.',TOWER_CATALOG_REQUIRED:'I piani delle arene devono essere installati sul server.',TOWER_COMPLETED:'Hai completato questa arena: puoi iniziare una nuova scalata.',TOWERS_CLOSED:'Le Parco Lotta sono temporaneamente chiuse.',OPERATION_MISMATCH:'Il tentativo salvato appartiene a un’altra arena.'};
+const errors={ADMIN_REQUIRED:'Autobot riservato agli amministratori attivi.',AUTOBOT_NO_DAMAGE:'Autobot fermato: nessuna mossa efficace. Riprendi la battaglia manualmente.',AUTOBOT_TURN_LIMIT:'Autobot fermato dopo 300 turni: riprendi manualmente.',PARK_CLIMB_ACTIVE:'Hai già una scalata attiva: completala o abbandonala prima di iniziare un’altra arena.',HEALING_BLOCKED_PARCO:'Non puoi curare la squadra durante una scalata del Parco Lotta.',NOT_AUTHORIZED:'Accedi con una scheda allenatore attiva.',STARTER_REQUIRED:'Scegli prima lo starter nella tua squadra.',TEAM_EXHAUSTED:'La squadra è esausta: curala prima di entrare.',TEAM_PENDING:'Completa prima l’acquisizione in sospeso nella squadra.',BATTLE_ACTIVE:'Concludi o riprendi la battaglia in sospeso.',TOWER_CATALOG_REQUIRED:'I piani delle arene devono essere installati sul server.',TOWER_COMPLETED:'Hai completato questa arena: puoi iniziare una nuova scalata.',TOWERS_CLOSED:'Le Parco Lotta sono temporaneamente chiuse.',OPERATION_MISMATCH:'Il tentativo salvato appartiene a un’altra arena.'};
 export async function mountExpTowers(host,{client,userId,isCurrent=()=>true,battles=globalThis.RouteEncounters}={}){
  const root=host.attachShadow({mode:'open'}),key='champion:exp-towers:start:'+userId;
- let state=null,selected='water',busy=false,message='',attempt=null,abandonConfirm=false;
+ let state=null,selected='water',busy=false,message='',attempt=null,abandonConfirm=false,canAuto=false,autoBattle=null;
  try{attempt=JSON.parse(localStorage.getItem(key));if(attempt?.type)selected=attempt.type;}catch{}
  const current=()=>host.isConnected&&isCurrent();
+ const bot=createTowerAutobot({client,userId,isCurrent:current,onUpdate:async({view,battle})=>{if(view)state=view;if(battle)autoBattle=battle;if(battle?.saved)await load();message='Autobot in corso…';render();}});
  const species=id=>globalThis.ROUTE_POKEMON_DB?.[id];
  async function rpc(fn,args={}){const {data,error}=await client.rpc(fn,args);if(error)throw Error(error.message);return data;}
  async function load(){state=await rpc('get_exp_towers');if(state.pending){selected=state.pending.towerType;attempt=null;localStorage.removeItem(key);}}
@@ -14,6 +16,7 @@ export async function mountExpTowers(host,{client,userId,isCurrent=()=>true,batt
   if(!state){root.innerHTML=`<link rel="stylesheet" href="${new URL('./style.css',import.meta.url)}"><main><a href="#dashboard">← Home</a><h1>Parco Lotta</h1><p role="status">${esc(message||'Caricamento delle arene…')}</p><button data-action="refresh">Riprova</button></main>`;return;}
   const tower=state.towers.find(t=>t.type===selected)||state.towers[0],complete=tower.nextFloor===101,mon=species(tower.speciesId),cleared=Math.min(100,tower.nextFloor-1),last=state.lastResult;
   root.innerHTML=`<link rel="stylesheet" href="${new URL('./style.css',import.meta.url)}"><main style="--accent:${colors[tower.type]}"><a href="#dashboard">← Home</a><header><p class="eyebrow">ALLENAMENTO · 17 ARENE · 1.700 PIANI</p><h1>Parco Lotta<br><em>100 piani. Nessuna cura.</em></h1><p>Combatti con la tua squadra e guadagna esperienza. Una vittoria apre il piano successivo; una sconfitta ti riporta al piano 1 della arena in corso.</p><div class="toolbar"><a href="#my-team">La mia squadra →</a><button data-action="refresh" ${busy?'disabled':''}>Aggiorna</button></div></header><p class="status" role="status" aria-live="polite">${esc(message)}</p>
+  ${canAuto?`<aside data-autobot><strong>Autobot · Solo admin</strong><p>Sceglie le mosse e prosegue fino alla sconfitta o al piano 100. Nessuna cura. Tieni aperta questa pagina.</p>${autoBattle?`<p>Piano ${autoBattle.state.enemy.level} · Turno ${autoBattle.state.turn} · ${esc(species(autoBattle.state.enemy.speciesId)?.name)}: ${autoBattle.state.enemy.currentHp} PS</p>`:''}${bot.running?'<button data-action="auto-stop">Stop autobot</button>':`<button data-action="auto-start" ${busy||complete||attempt?'disabled':''}>Avvia autobot · ${esc(tower.name)}</button>`}</aside>`:''}
   ${state.pending?`<aside><strong>Hai una sfida in sospeso · piano ${state.pending.floor}</strong><p>Riprendila per salvare EXP e avanzamento.</p><button data-action="resume" ${busy?'disabled':''}>Riprendi battaglia</button></aside>`:''}
   ${attempt&&!state.pending?`<aside>Un ingresso attende conferma. Verifica il tentativo prima di entrare in un’altra arena.<button data-action="fight" ${busy?'disabled':''}>Verifica ingresso</button></aside>`:''}
   ${state.healingBlocked?`<aside><strong>Scalata attiva · cure bloccate</strong><p>La squadra non può essere curata neanche dalle altre pagine. Concludi o abbandona la scalata per tornare a curarla.</p></aside>`:''}<nav class="types" aria-label="Scegli una arena">${state.towers.map(t=>`<button data-type="${t.type}" style="--type:${colors[t.type]}" aria-pressed="${t.type===tower.type}" ${busy?'disabled':''}><span aria-hidden="true">${icons[t.type]}</span><strong>${esc(t.name)}</strong><small>${t.nextFloor===101?'Completata':`Piano ${t.nextFloor} / 100`}</small></button>`).join('')}</nav>
@@ -22,12 +25,13 @@ export async function mountExpTowers(host,{client,userId,isCurrent=()=>true,batt
  }
  async function fight(){if(!state.pending)return;const result=await battles.startPokemonEncounter({...state.pending});await load();message=result?.result==='win'?'Vittoria! EXP salvata e piano successivo sbloccato.':result?.result==='loss'?'Sconfitta. Questa arena riparte dal piano 1. Cura la squadra e riprova.':'Ritirata. Questa arena riparte dal piano 1.';}
  root.addEventListener('click',async e=>{
-  const b=e.target.closest('button');if(!b||b.disabled||busy||!current())return;
+  const b=e.target.closest('button');if(!b||b.disabled||!current())return;if(b.dataset.action==='auto-stop'){bot.stop();message='Arresto dopo il salvataggio dell’azione in corso…';render();return;}if(busy)return;
   if(b.dataset.action==='abandon'||b.dataset.action==='cancel-abandon'){abandonConfirm=b.dataset.action==='abandon';render();return;}
   if(b.dataset.type){abandonConfirm=false;selected=b.dataset.type;message='';render();root.querySelector('.challenge')?.scrollIntoView({block:'start'});return;}
   busy=true;message='';render();
   try{
    const action=b.dataset.action;
+   if(action==='auto-start'){const result=await bot.run(selected);await load();message={loss:'Autobot fermato: sconfitta. L’arena riparte dal piano 1.',complete:'Autobot completato: hai vinto il piano 100!',learning:'Autobot in pausa: riprendi la battaglia per scegliere le nuove mosse.',stopped:'Autobot fermato. I progressi sono salvati; puoi riprendere l’incontro.'}[result]||'Autobot fermato.';}
    if(action==='refresh')await load();
    if(action==='confirm-abandon'){state=await rpc('abandon_exp_climb',{p_type:selected});abandonConfirm=false;message='Scalata abbandonata. L’arena riparte dal piano 1; l’EXP guadagnata resta tua.';}
    if(action==='resume')await fight();
@@ -40,5 +44,5 @@ export async function mountExpTowers(host,{client,userId,isCurrent=()=>true,batt
   finally{busy=false;render();}
  });
  root.addEventListener('error',e=>{if(e.target.tagName==='IMG'){e.target.removeAttribute('src');e.target.alt='Sprite non disponibile';}},true);
- render();try{await load();}catch(e){message=e.message;}render();
+ render();try{canAuto=await rpc('exp_autobot_access').catch(()=>false);await load();}catch(e){message=e.message;}render();
 }
