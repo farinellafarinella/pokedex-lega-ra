@@ -1,0 +1,1 @@
+export function quickTagURL(href,identifier){if(!['POKEDEX-0001','POKEDEX-0002'].includes(identifier))throw Error('CHIP_UNKNOWN');const url=new URL(href);url.search='';url.hash='nfc-demo-pronta/'+identifier;return url.href;}
