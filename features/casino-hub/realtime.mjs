@@ -7,6 +7,8 @@ export function subscribeCasino(client,{userId,onSync,onStatus=()=>{}}){
  .on('postgres_changes',{event:'*',schema:'public',table:'route_casino_games'},schedule)
  .on('postgres_changes',{event:'*',schema:'public',table:'route_casino_sessions',filter:'user_id=eq.'+userId},schedule)
  .on('postgres_changes',{event:'*',schema:'public',table:'profiles',filter:'user_id=eq.'+userId},schedule)
+ .on('postgres_changes',{event:'*',schema:'public',table:'route_casino_draws'},schedule)
+ .on('postgres_changes',{event:'*',schema:'public',table:'route_casino_entries',filter:'user_id=eq.'+userId},schedule)
  .subscribe(status=>{if(!alive)return;onStatus(status==='SUBSCRIBED'?'Sincronizzato':status==='CHANNEL_ERROR'||status==='TIMED_OUT'?'Riconnessione…':'Connessione…');if(status==='SUBSCRIBED')schedule();});
  const visible=()=>{if(document.visibilityState==='visible')schedule();};
  addEventListener('online',schedule);addEventListener('focus',schedule);document.addEventListener('visibilitychange',visible);const poll=setInterval(schedule,20000);

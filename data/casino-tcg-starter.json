@@ -1,0 +1,82 @@
+[
+  {
+    "print_id": "tcgdex:base1-1",
+    "name": "Alakazam",
+    "set_name": "Base Set",
+    "collector_number": "1",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/1/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-1"
+  },
+  {
+    "print_id": "tcgdex:base1-2",
+    "name": "Blastoise",
+    "set_name": "Base Set",
+    "collector_number": "2",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/2/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-2"
+  },
+  {
+    "print_id": "tcgdex:base1-3",
+    "name": "Chansey",
+    "set_name": "Base Set",
+    "collector_number": "3",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/3/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-3"
+  },
+  {
+    "print_id": "tcgdex:base1-4",
+    "name": "Charizard",
+    "set_name": "Base Set",
+    "collector_number": "4",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/4/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-4"
+  },
+  {
+    "print_id": "tcgdex:base1-5",
+    "name": "Clefairy",
+    "set_name": "Base Set",
+    "collector_number": "5",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/5/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-5"
+  },
+  {
+    "print_id": "tcgdex:base1-6",
+    "name": "Gyarados",
+    "set_name": "Base Set",
+    "collector_number": "6",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/6/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-6"
+  },
+  {
+    "print_id": "tcgdex:base1-7",
+    "name": "Hitmonchan",
+    "set_name": "Base Set",
+    "collector_number": "7",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/7/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-7"
+  },
+  {
+    "print_id": "tcgdex:base1-8",
+    "name": "Machamp",
+    "set_name": "Base Set",
+    "collector_number": "8",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/8/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-8"
+  },
+  {
+    "print_id": "tcgdex:base1-9",
+    "name": "Magneton",
+    "set_name": "Base Set",
+    "collector_number": "9",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/9/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-9"
+  },
+  {
+    "print_id": "tcgdex:base1-10",
+    "name": "Mewtwo",
+    "set_name": "Base Set",
+    "collector_number": "10",
+    "image_url": "https://assets.tcgdex.net/en/base/base1/10/high.webp",
+    "source_url": "https://api.tcgdex.net/v2/en/cards/base1-10"
+  }
+]
