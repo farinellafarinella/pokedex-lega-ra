@@ -3,8 +3,8 @@ export const money=value=>new Intl.NumberFormat('it-IT').format(Number(value))+'
 export const dateTime=value=>new Intl.DateTimeFormat('it-IT',{timeZone:'Europe/Rome',dateStyle:'medium',timeStyle:'short'}).format(new Date(value));
 export const gameArt={slots:{icon:'777',color:'pink',pokemon:25},voltorb:{icon:'×3',color:'green',pokemon:100},blackjack:{icon:'A♠',color:'blue',pokemon:52},roulette:{icon:'◉',color:'gold',pokemon:35},tcg:{icon:'TCG',color:'pink',pokemon:137},scratch:{icon:'R',color:'red',pokemon:52},tombola:{icon:'90',color:'blue',pokemon:113},memory:{icon:'♫',color:'green',pokemon:39},'high-card':{icon:'K♣',color:'gold',pokemon:65},jackpot:{icon:'★',color:'pink',pokemon:149}};
 // Resolve existing species assets, without copying images or inventing external URLs.
-// Phase 1 uses only the existing local fallback until asset rights are validated.
-export function pokemonSprite(id,{database=globalThis.ROUTE_POKEMON_DB||{},allowExternal=false}={}){
+// Reuse the same Pokémon GIFs already displayed throughout Pokémon Route.
+export function pokemonSprite(id,{database=globalThis.ROUTE_POKEMON_DB||{},allowExternal=true}={}){
  const p=database[id],fallback=new URL('../../pokeball%20icon.png',import.meta.url).href;
  const front=p?.sprites?.front;let animated=null;try{if(front&&allowExternal&&new URL(front).protocol==='https:')animated=front;}catch{}
  return {name:p?.name||'Pokémon #'+id,animated,fallback};
