@@ -14,6 +14,6 @@ export function createTeamAPI(client){
  replaceTeamPokemon:uid=>canReleasePokemon(state.team.find(p=>p.uid===uid))?command('replace',{p_uid:uid}):Promise.resolve(false),
  movePokemonInTeam:(from,to)=>command('move',{p_uid:state.team[from]?.uid,p_position:to}),
  // Only a server-authorized QR can add a member; raw client Pokémon are never accepted.
- addPokemonToTeam:token=>command('claim',{p_token:token}),acceptPending:()=>command('accept')
+ addPokemonToTeam:async token=>{const claimed=await command('claim',{p_token:token});try{return await rpc('get_route_boxes');}catch(e){if(e.code!=='PGRST202')throw e;return {...claimed,boxesAvailable:false};}},acceptPending:()=>command('accept')
  };
 }
