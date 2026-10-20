@@ -7,15 +7,21 @@ export const getPokemonEvolution=id=>(getPokemonById(id)?.evolutions||[]).map(e=
 export const getPokemonLevelMoves=(id,level=100)=>(getPokemonById(id)?.learnset.levelUp||[]).filter(m=>m.level<=level).map(m=>({...m,data:getMoveById(m.move)}));
 export function listPokemon({query='',generation='',type=''}={}){
  const q=query.trim().toLowerCase().replace(/^#/,'');
- return Object.values(pokemonDB()).filter(p=>p.id<=386&&(!generation||p.generation===Number(generation))&&(!type||p.types.includes(type))&&(!q||p.name.toLowerCase().includes(q)||p.slug.includes(q)||(/^\d+$/.test(q)&&p.id===Number(q)))).sort((a,b)=>a.id-b.id);
+ return Object.values(pokemonDB()).filter(p=>p.id<=493&&(!generation||p.generation===Number(generation))&&(!type||p.types.includes(type))&&(!q||p.name.toLowerCase().includes(q)||p.slug.includes(q)||(/^\d+$/.test(q)&&p.id===Number(q)))).sort((a,b)=>a.id-b.id);
 }
 export const typeNames={normal:'Normale',fire:'Fuoco',water:'Acqua',electric:'Elettro',grass:'Erba',ice:'Ghiaccio',fighting:'Lotta',poison:'Veleno',ground:'Terra',flying:'Volante',psychic:'Psico',bug:'Coleottero',rock:'Roccia',ghost:'Spettro',dragon:'Drago',dark:'Buio',steel:'Acciaio'};
-const items={thunderstone:'Pietratuono',water_stone:'Pietraidrica',fire_stone:'Pietrafocaia',leaf_stone:'Pietrafoglia',moon_stone:'Pietralunare',sun_stone:'Pietrasolare',metal_coat:'Metalcoperta',kings_rock:'Roccia di Re',dragon_scale:'Squama Drago',up_grade:'Upgrade'};
+const items={thunderstone:'Pietratuono',water_stone:'Pietraidrica',fire_stone:'Pietrafocaia',leaf_stone:'Pietrafoglia',moon_stone:'Pietralunare',sun_stone:'Pietrasolare',metal_coat:'Metalcoperta',kings_rock:'Roccia di Re',dragon_scale:'Squama Drago',up_grade:'Upgrade',shiny_stone:'Pietrabrillo',dusk_stone:'Neropietra',dawn_stone:'Pietralbore',razor_claw:'Affilartigli',razor_fang:'Affilodente',protector:'Copertura',electirizer:'Elettritore',magmarizer:'Magmatore',dubious_disc:'Dubbiodisco',reaper_cloth:'Terrorpanno'};
 export function evolutionMethod(e){
  switch(e.method){
  case 'personality':return `Livello ${e.level} · personalità`;
  case 'beauty':return `Bellezza ≥ ${e.minBeauty}`;
  case 'shed':return 'Livello 20 · posto in squadra e Poké Ball';
+ case 'known_move':return 'Sale di livello conoscendo '+(getMoveById(e.move)?.name||e.move);
+ case 'location':return 'Sale di livello presso '+({'mt-coronet':'Monte Corona','eterna-forest':'Roccia Muschio','sinnoh-route-217':'Roccia Ghiaccio'}[e.location]||e.location);
+ case 'level_gender':return `Livello ${e.level} · ${e.gender==='female'?'femmina':'maschio'}`;
+ case 'level_held_item':return 'Sale di livello con '+(items[e.item]||e.item)+(e.time==='night'?' · notte':e.time==='day'?' · giorno':'');
+ case 'level_time':return `Livello ${e.level} · ${e.time==='night'?'notte':'giorno'}`;
+ case 'party_species':return 'Sale di livello con '+(getPokemonBySlug(e.species)?.name||e.species)+' in squadra';
  case 'level':return `Livello ${e.level}`;
  case 'item':return items[e.item?.replaceAll('-','_')]||items[e.item]||e.item;
  case 'happiness':return `Felicità ≥ ${e.minFriendship}${e.time==='day'?' · giorno':e.time==='night'?' · notte':''}`;

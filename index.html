@@ -61,6 +61,8 @@
   <script src="./data/fossil-opponents.js?v=1"></script>
   <script src="./data/moves-db.js?v=it-1"></script>
   <script src="./data/gen3-db.js?v=1"></script>
+  <script src="./data/pokemon-gen4.js?v=1"></script>
+  <script src="./data/moves-gen4.js?v=1"></script>
   <script src="./js/route-pokemon-core.js?v=gen3-1"></script>
   <script src="./js/route-team.js?v=1"></script>
   <script src="./js/route-battle-engine.js?v=move-choice-1"></script>
@@ -403,7 +405,7 @@
       }
       if(page==='pokedex'){
         const host=document.createElement('div');host.textContent='Caricamento Pokédex…';document.querySelector('#app').replaceChildren(host);
-        import('./features/pokedex/pokedex.mjs?v=gen3-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';module.mountPokedex(host);}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Pokédex. Ricarica la pagina.';console.error(error);});return;
+        import('./features/pokedex/pokedex.mjs?v=gen4-1').then(module=>{if(starterRenderVersion===starterVersion&&host.isConnected){host.textContent='';module.mountPokedex(host);}}).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare il Pokédex. Ricarica la pagina.';console.error(error);});return;
       }
       if(page==='bug-contest'){
 
