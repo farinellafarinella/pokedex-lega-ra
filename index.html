@@ -201,7 +201,7 @@
     state.trainers=[];state.transactions=[];state.gyms=[];state.registrations=state.registrations||[];state.devices=state.devices||[];state.activationAttempts=state.activationAttempts||[];state.rocketEvents=[];state.rocketPokemon=[];state.rocketPurchases=state.rocketPurchases||[];
     const me=()=>remoteProfile||trainer(state.currentTrainerId)||state.trainers[0], money=n=>'₽ '+Number(n).toLocaleString('it-IT'), trainer=id=>state.trainers.find(t=>t.id===id), leagueBalance=t=>t.leagueBalance??state.trainers.find(s=>s.id===t.id)?.leagueBalance??t.balance, ranking=()=>[...state.trainers].sort((a,b)=>leagueBalance(b)-leagueBalance(a)||a.name.localeCompare(b.name,'it')), save=()=>localStorage.setItem('champion-league',JSON.stringify(state));
     window.addEventListener('route:balance-updated',event=>{if(remoteProfile&&authSession?.user.id===event.detail?.userId&&Number.isFinite(event.detail.balance)){remoteProfile.balance=event.detail.balance;loadRemoteTransactions();loadPublicTrainers();}});
-    const navItems=[['dashboard','Home'],['casino','Casinò'],['events','Eventi'],['rocket-list','Rocket'],['my-tickets','Biglietti'],['transactions','Movimenti'],['ranking','Classifica'],['admin','Admin']];
+    const navItems=[['dashboard','Home'],['events','Eventi'],['rocket-list','Rocket'],['my-tickets','Biglietti'],['transactions','Movimenti'],['ranking','Classifica'],['admin','Admin']];
     function go(page,param=''){location.hash=page+(param?'/'+param:'')}
     function header(k,t,s){return `<div class="eyebrow">${k}</div><h1 class="title">${t}</h1><p class="sub">${s||''}</p>`}
     function escapeHtml(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -231,7 +231,7 @@
     function transactionsPage(){return header('Registro personale','Storico movimenti','I Pokédollari ricevuti sono verdi, quelli inviati hanno il segno meno.')+`<section class="panel">${state.transactions.map(txLine).join('')||'<div class="pad muted">Non ci sono ancora movimenti.</div>'}</section>`}
     async function updateBugContestQuickStatus(){const badge=document.querySelector('#bug-contest-quick-status');if(!badge)return;const {data,error}=await supabaseClient.rpc('get_bug_game_status');if(!badge.isConnected)return;badge.textContent=error?'Non disponibile':data.isOpen?'Aperta':'Giovedì';badge.className='quick-event-status'+(!error&&data.isOpen?' open':'');}
     async function updateCasinoQuickStatus(){const b=document.querySelector('#casino-quick-status');if(b){b.textContent='Sala giochi';b.className='quick-event-status closed';}}
-    async function updateFishingQuickStatus(){let b=document.querySelector('#fishing-quick-status');if(!b)return;if(italyWeekday()!==2){b.closest('button')?.remove();return}let {data,error}=await supabaseClient.rpc('get_fishing_game_status');if(!b.isConnected)return;let open=!error&&data?.[0]?.is_open;if(!open){b.closest('button')?.remove();return}b.textContent='Aperta';b.className='quick-event-status open'}
+    async function updateFishingQuickStatus(){let b=document.querySelector('#fishing-quick-status');if(!b)return;b.textContent='Classifica';b.className='quick-event-status';let {data,error}=await supabaseClient.rpc('get_fishing_game_status');if(!b.isConnected)return;if(!error&&data?.[0]?.is_open){b.textContent='Aperta';b.className='quick-event-status open'}}
     async function updateSafariQuickStatus(){
       const b=document.querySelector('#safari-quick-status');if(!b)return;const userId=authSession?.user.id;
       try{const module=await safariModule(),s=await module.createSafariAPI(supabaseClient).read();if(!b.isConnected||authSession?.user.id!==userId)return;const active=s.state.session&&s.state.session.phase!=='done';b.textContent=active?'Riprendi':s.legacyPending?'Bottino da incassare':s.access.allowed?'Aperta':'Domani';b.className='quick-event-status '+(active||s.access.allowed?'open':'closed');}catch{if(b.isConnected)b.textContent='Non disponibile';}
@@ -468,7 +468,7 @@
         const host=document.createElement('div'),userId=authSession.user.id;
         document.querySelector('#app').replaceChildren(host);
         host.textContent='Caricamento della Gara di Pesca…';
-        import('./features/fishing/game.mjs?v=pesca-johto-7').then(module=>{
+        import('./features/fishing/game.mjs?v=pesca-risultati-1').then(module=>{
           if(starterRenderVersion!==starterVersion)return;
           return module.mountFishing(host,{client:supabaseClient,userId,onBalance:value=>{if(authSession?.user.id===userId&&remoteProfile&&Number.isFinite(value)){const changed=remoteProfile.balance!==value;remoteProfile.balance=value;if(changed){loadRemoteTransactions();loadPublicTrainers();}}},isCurrent:()=>starterRenderVersion===starterVersion&&authSession?.user.id===userId});
         }).catch(error=>{if(host.isConnected)host.textContent='Impossibile caricare la pesca: '+error.message;});return;

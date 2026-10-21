@@ -2,7 +2,7 @@ import {readLeaderboard,readStatus,startFishing,finishFishing,closeFishingBattle
 import {getTrainerCompanion,SPECIES} from '../starter/starter-ui.js?v=johto-7';
 import {FISH,RULES} from './config.mjs';
 import {generateFishingEncounter} from './engine.mjs?v=route-1';
-import {button,FishingScene,FishingResult,RecordView,FishingLeaderboard,esc} from './components.mjs?v=johto-7';
+import {button,FishingScene,FishingResult,RecordView,FishingLeaderboard,esc} from './components.mjs?v=risultati-1';
 import {createRecordStore} from './storage.mjs';
 
 export async function mountFishing(host,{client,userId,onBalance=()=>{},isCurrent=()=>true}){
